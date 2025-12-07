@@ -1,19 +1,13 @@
 import Dashboard from './pages/Dashboard';
-import Incomes from './pages/Incomes';
 import Expenses from './pages/Expenses';
-import Goals from './pages/Goals';
-import Settings from './pages/Settings';
-import Simulation from './pages/Simulation';
+import Income from './pages/Income';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "Dashboard": Dashboard,
-    "Incomes": Incomes,
     "Expenses": Expenses,
-    "Goals": Goals,
-    "Settings": Settings,
-    "Simulation": Simulation,
+    "Income": Income,
 }
 
 export const pagesConfig = {
