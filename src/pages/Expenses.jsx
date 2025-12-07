@@ -6,15 +6,14 @@ import {
   Plus, 
   Home, 
   ShoppingCart, 
-  Sparkles, 
-  Shield, 
-  TrendingUp,
+  Sparkles,
   MoreVertical,
   Pencil,
   Trash2,
-  Filter,
   Calendar,
-  Search
+  Search,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,15 +37,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Switch } from "@/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const EXPENSE_CATEGORIES = {
   fixed: { label: "Gastos Fixos", icon: Home, color: "bg-[#0A1A3A]", textColor: "text-[#0A1A3A]" },
-  essential: { label: "Essenciais Variáveis", icon: ShoppingCart, color: "bg-[#00A8A0]", textColor: "text-[#00A8A0]" },
-  superfluous: { label: "Supérfluos", icon: Sparkles, color: "bg-amber-500", textColor: "text-amber-500" },
-  emergency: { label: "Reserva Emergência", icon: Shield, color: "bg-green-500", textColor: "text-green-500" },
-  investment: { label: "Investimentos", icon: TrendingUp, color: "bg-violet-500", textColor: "text-violet-500" }
+  essential: { label: "Essenciais", icon: ShoppingCart, color: "bg-[#00A8A0]", textColor: "text-[#00A8A0]" },
+  superfluous: { label: "Supérfluos", icon: Sparkles, color: "bg-amber-500", textColor: "text-amber-500" }
 };
 
 export default function Expenses() {
@@ -60,9 +55,7 @@ export default function Expenses() {
     description: "",
     amount: "",
     category: "essential",
-    subcategory: "",
-    date: new Date().toISOString().slice(0, 10),
-    is_recurring: false
+    date: new Date().toISOString().slice(0, 10)
   });
 
   const queryClient = useQueryClient();
@@ -72,9 +65,12 @@ export default function Expenses() {
     queryFn: () => base44.entities.Expense.filter({ month_year: selectedMonth }, '-date')
   });
 
-  const { data: incomes = [] } = useQuery({
-    queryKey: ['incomes'],
-    queryFn: () => base44.entities.Income.filter({ is_active: true })
+  const { data: incomeData } = useQuery({
+    queryKey: ['income'],
+    queryFn: async () => {
+      const result = await base44.entities.Income.list();
+      return result[0] || null;
+    }
   });
 
   const createMutation = useMutation({
@@ -105,9 +101,7 @@ export default function Expenses() {
         description: expense.description,
         amount: expense.amount.toString(),
         category: expense.category,
-        subcategory: expense.subcategory || "",
-        date: expense.date,
-        is_recurring: expense.is_recurring || false
+        date: expense.date
       });
     } else {
       setEditingExpense(null);
@@ -115,9 +109,7 @@ export default function Expenses() {
         description: "",
         amount: "",
         category: "essential",
-        subcategory: "",
-        date: new Date().toISOString().slice(0, 10),
-        is_recurring: false
+        date: new Date().toISOString().slice(0, 10)
       });
     }
     setIsDialogOpen(true);
@@ -150,7 +142,7 @@ export default function Expenses() {
     }).format(value);
   };
 
-  const totalIncome = incomes.reduce((sum, i) => sum + (i.amount || 0), 0);
+  const monthlyIncome = incomeData?.monthly_amount || 0;
   const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
 
   const filteredExpenses = expenses.filter(expense => {
@@ -164,16 +156,17 @@ export default function Expenses() {
     return acc;
   }, {});
 
-  // Generate months for selector
-  const months = [];
-  for (let i = 0; i < 12; i++) {
-    const date = new Date();
-    date.setMonth(date.getMonth() - i);
-    months.push({
-      value: date.toISOString().slice(0, 7),
-      label: date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-    });
-  }
+  // Month navigation
+  const navigateMonth = (direction) => {
+    const date = new Date(selectedMonth + "-01");
+    date.setMonth(date.getMonth() + direction);
+    setSelectedMonth(date.toISOString().slice(0, 7));
+  };
+
+  const monthName = new Date(selectedMonth + "-01").toLocaleDateString('pt-BR', { 
+    month: 'long', 
+    year: 'numeric' 
+  });
 
   return (
     <div className="space-y-6 pb-8">
@@ -184,8 +177,8 @@ export default function Expenses() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Gastos</h1>
-          <p className="text-slate-500 mt-1">Controle seus gastos mensais</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Meus Gastos</h1>
+          <p className="text-slate-500 mt-1">Registre e acompanhe seus gastos</p>
         </div>
         <Button 
           onClick={() => handleOpenDialog()}
@@ -196,90 +189,109 @@ export default function Expenses() {
         </Button>
       </motion.div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Month Selector & Summary */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
         >
-          <p className="text-sm text-slate-500 mb-1">Renda do Mês</p>
-          <p className="text-2xl font-bold text-emerald-600">{formatCurrency(totalIncome)}</p>
+          <div className="flex items-center justify-between mb-3">
+            <button
+              onClick={() => navigateMonth(-1)}
+              className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5 text-slate-600" />
+            </button>
+            <div className="text-center">
+              <p className="text-xs text-slate-500">Mês</p>
+              <p className="font-semibold text-slate-800 capitalize">{monthName}</p>
+            </div>
+            <button
+              onClick={() => navigateMonth(1)}
+              className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <ChevronRight className="w-5 h-5 text-slate-600" />
+            </button>
+          </div>
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
         >
-          <p className="text-sm text-slate-500 mb-1">Total de Gastos</p>
-          <p className="text-2xl font-bold text-rose-500">{formatCurrency(totalExpenses)}</p>
+          <p className="text-sm text-slate-500 mb-1">Renda</p>
+          <p className="text-xl font-bold text-emerald-600">{formatCurrency(monthlyIncome)}</p>
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
           className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
         >
-          <p className="text-sm text-slate-500 mb-1">Saldo Restante</p>
-          <p className={`text-2xl font-bold ${totalIncome - totalExpenses >= 0 ? 'text-[#00A8A0]' : 'text-red-500'}`}>
-            {formatCurrency(totalIncome - totalExpenses)}
+          <p className="text-sm text-slate-500 mb-1">Gastei</p>
+          <p className="text-xl font-bold text-rose-500">{formatCurrency(totalExpenses)}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className={`bg-white rounded-xl p-5 shadow-sm border ${
+            monthlyIncome - totalExpenses >= 0 ? 'border-emerald-200' : 'border-red-200'
+          }`}
+        >
+          <p className="text-sm text-slate-500 mb-1">Saldo</p>
+          <p className={`text-xl font-bold ${
+            monthlyIncome - totalExpenses >= 0 ? 'text-[#00A8A0]' : 'text-red-500'
+          }`}>
+            {formatCurrency(monthlyIncome - totalExpenses)}
           </p>
         </motion.div>
       </div>
 
-      {/* Category Summary */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+      {/* Category Filters */}
+      <div className="grid grid-cols-3 gap-3">
         {Object.entries(EXPENSE_CATEGORIES).map(([key, config]) => {
           const Icon = config.icon;
+          const isSelected = selectedCategory === key;
+          
           return (
-            <motion.div
+            <motion.button
               key={key}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              onClick={() => setSelectedCategory(selectedCategory === key ? "all" : key)}
-              className={`p-4 rounded-xl cursor-pointer transition-all ${
-                selectedCategory === key 
+              onClick={() => setSelectedCategory(isSelected ? "all" : key)}
+              className={`p-4 rounded-xl transition-all ${
+                isSelected
                   ? `${config.color} text-white shadow-lg` 
                   : 'bg-white border border-slate-100 hover:border-slate-300'
               }`}
             >
-              <Icon className={`w-5 h-5 mb-2 ${selectedCategory === key ? 'text-white' : config.textColor}`} />
-              <p className={`text-xs ${selectedCategory === key ? 'text-white/80' : 'text-slate-500'}`}>
+              <Icon className={`w-5 h-5 mb-2 ${isSelected ? 'text-white' : config.textColor}`} />
+              <p className={`text-xs mb-1 ${isSelected ? 'text-white/80' : 'text-slate-500'}`}>
                 {config.label}
               </p>
-              <p className={`text-lg font-bold ${selectedCategory === key ? 'text-white' : 'text-slate-800'}`}>
+              <p className={`text-base font-bold ${isSelected ? 'text-white' : 'text-slate-800'}`}>
                 {formatCurrency(expensesByCategory[key])}
               </p>
-            </motion.div>
+            </motion.button>
           );
         })}
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <Input
-            placeholder="Buscar gastos..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-          <SelectTrigger className="w-full sm:w-48">
-            <Calendar className="w-4 h-4 mr-2" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {months.map(month => (
-              <SelectItem key={month.value} value={month.value}>
-                {month.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <Input
+          placeholder="Buscar gastos..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       {/* Expense List */}
@@ -313,7 +325,7 @@ export default function Expenses() {
             <p className="text-slate-500 mb-4">
               {searchQuery || selectedCategory !== "all" 
                 ? "Tente ajustar os filtros" 
-                : "Registre seu primeiro gasto"}
+                : "Registre seu primeiro gasto do mês"}
             </p>
             <Button 
               onClick={() => handleOpenDialog()}
@@ -339,25 +351,21 @@ export default function Expenses() {
                   className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className={`p-2.5 rounded-xl ${categoryConfig?.color || 'bg-slate-500'}`}>
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className={`p-2.5 rounded-xl ${categoryConfig?.color || 'bg-slate-500'} flex-shrink-0`}>
                         <Icon className="w-4 h-4 text-white" />
                       </div>
-                      <div>
-                        <h3 className="font-medium text-slate-800">{expense.description}</h3>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-slate-800 truncate">{expense.description}</h3>
                         <div className="flex items-center gap-2 mt-0.5">
+                          <Calendar className="w-3 h-3 text-slate-400" />
                           <span className="text-xs text-slate-400">
                             {new Date(expense.date).toLocaleDateString('pt-BR')}
                           </span>
-                          {expense.is_recurring && (
-                            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full">
-                              Recorrente
-                            </span>
-                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-shrink-0">
                       <p className="text-lg font-bold text-slate-800">
                         {formatCurrency(expense.amount)}
                       </p>
@@ -403,7 +411,7 @@ export default function Expenses() {
               <Label htmlFor="description">Descrição</Label>
               <Input
                 id="description"
-                placeholder="Ex: Aluguel, Supermercado..."
+                placeholder="Ex: Supermercado, Aluguel..."
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 required
@@ -412,7 +420,7 @@ export default function Expenses() {
             
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="amount">Valor</Label>
+                <Label htmlFor="amount">Valor (R$)</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -450,25 +458,6 @@ export default function Expenses() {
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="subcategory">Subcategoria (opcional)</Label>
-              <Input
-                id="subcategory"
-                placeholder="Ex: Alimentação, Transporte..."
-                value={formData.subcategory}
-                onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="is_recurring">Gasto recorrente</Label>
-              <Switch
-                id="is_recurring"
-                checked={formData.is_recurring}
-                onCheckedChange={(checked) => setFormData({ ...formData, is_recurring: checked })}
-              />
             </div>
 
             <div className="flex gap-3 pt-4">
