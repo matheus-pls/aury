@@ -5,9 +5,7 @@ import {
   LayoutDashboard, 
   Wallet, 
   Receipt, 
-  Target, 
-  Calculator, 
-  Settings,
+  Crown,
   Menu,
   X,
   ChevronRight
@@ -19,12 +17,9 @@ export default function Layout({ children, currentPageName }) {
   const location = useLocation();
 
   const navigation = [
-    { name: "Dashboard", page: "Dashboard", icon: LayoutDashboard },
-    { name: "Rendas", page: "Incomes", icon: Wallet },
-    { name: "Gastos", page: "Expenses", icon: Receipt },
-    { name: "Metas", page: "Goals", icon: Target },
-    { name: "Simulação", page: "Simulation", icon: Calculator },
-    { name: "Configurações", page: "Settings", icon: Settings },
+    { name: "Início", page: "Dashboard", icon: LayoutDashboard },
+    { name: "Minha Renda", page: "Income", icon: Wallet },
+    { name: "Meus Gastos", page: "Expenses", icon: Receipt },
   ];
 
   useEffect(() => {
@@ -129,12 +124,24 @@ export default function Layout({ children, currentPageName }) {
             })}
           </nav>
 
-          {/* Footer */}
+          {/* Premium CTA */}
           <div className="p-4 border-t border-slate-100">
-            <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4">
-              <p className="text-xs text-slate-500 mb-1">Organize suas finanças</p>
-              <p className="text-sm font-semibold text-rendy-secondary">de forma simples e segura</p>
-            </div>
+            <Link to={createPageUrl("Premium")}>
+              <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-4 hover:shadow-md transition-shadow cursor-pointer border border-amber-200">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="p-2 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl">
+                    <Crown className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-amber-900">Rendy Premium</p>
+                    <p className="text-xs text-amber-700">Desbloqueie todos os recursos</p>
+                  </div>
+                </div>
+                <button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 text-white py-2 rounded-lg text-sm font-semibold hover:from-amber-600 hover:to-amber-700 transition-all">
+                  Conhecer Premium
+                </button>
+              </div>
+            </Link>
           </div>
         </div>
       </aside>
