@@ -39,6 +39,13 @@ export default function Dashboard() {
 
   const currentMonth = new Date().toISOString().slice(0, 7);
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
   const { data: incomeData } = useQuery({
     queryKey: ['income'],
     queryFn: async () => {
