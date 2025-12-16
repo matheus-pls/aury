@@ -5,43 +5,46 @@ import { Button } from "@/components/ui/button";
 
 const PROFILES = [
   {
-    id: "conservative",
-    name: "Conservador",
+    id: "essential",
+    name: "Essencial",
     emoji: "🛡️",
     icon: Shield,
-    description: "Prioriza segurança e reserva de emergência",
+    description: "Para quem prefere ir com calma",
     color: "from-blue-500 to-blue-600",
     features: [
-      "20% para reserva de emergência",
-      "Foco em estabilidade",
-      "Baixo risco"
+      "Poupa cerca de 10% da renda",
+      "Prioriza conforto no dia a dia",
+      "Ideal para quem está começando a se organizar",
+      "Menos impacto no orçamento mensal"
     ]
   },
   {
-    id: "moderate",
-    name: "Moderado",
+    id: "balanced",
+    name: "Equilibrado",
     emoji: "⚖️",
     icon: TrendingUp,
-    description: "Equilíbrio entre segurança e crescimento",
+    description: "Organização sem abrir mão da vida",
     color: "from-[#00A8A0] to-[#008F88]",
     features: [
-      "15% para reserva + 10% investimentos",
-      "Equilíbrio ideal",
-      "Risco moderado"
+      "Poupa cerca de 15% da renda",
+      "Mantém equilíbrio entre consumo e reserva",
+      "Boa previsibilidade financeira",
+      "Ritmo saudável de organização"
     ],
     recommended: true
   },
   {
-    id: "aggressive",
-    name: "Agressivo",
-    emoji: "🚀",
+    id: "focused",
+    name: "Focado",
+    emoji: "⚡",
     icon: Zap,
-    description: "Foco em investimentos e crescimento",
+    description: "Para quem quer avançar mais rápido",
     color: "from-purple-500 to-purple-600",
     features: [
-      "20% para investimentos",
-      "Máximo crescimento",
-      "Maior risco"
+      "Poupa cerca de 25% da renda",
+      "Mais disciplina financeira",
+      "Ideal para acelerar objetivos pessoais",
+      "Maior controle sobre gastos"
     ]
   }
 ];
@@ -114,7 +117,7 @@ export default function ProfileSelector({ onSelect }) {
 
                   {/* Button */}
                   <div className={`w-full py-3 rounded-xl bg-gradient-to-r ${profile.color} text-white font-semibold flex items-center justify-center gap-2 group-hover:shadow-lg transition-shadow`}>
-                    Escolher {profile.name}
+                    Perfil {profile.name}
                     <ChevronRight className="w-4 h-4" />
                   </div>
                 </button>

@@ -29,20 +29,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 
 const RISK_PROFILES = {
-  conservative: {
-    label: "Conservador",
-    description: "Prioriza segurança e reserva de emergência",
-    distribution: { fixed: 50, essential: 20, superfluous: 5, emergency: 20, investment: 5 }
+  essential: {
+    label: "Essencial",
+    emoji: "🛡️",
+    description: "Para quem prefere ir com calma - Poupa ~10%",
+    distribution: { fixed: 50, essential: 25, superfluous: 15, emergency: 7, investment: 3 }
   },
-  moderate: {
-    label: "Moderado",
-    description: "Equilíbrio entre segurança e crescimento",
+  balanced: {
+    label: "Equilibrado",
+    emoji: "⚖️",
+    description: "Organização sem abrir mão da vida - Poupa ~15%",
+    distribution: { fixed: 50, essential: 20, superfluous: 15, emergency: 10, investment: 5 }
+  },
+  focused: {
+    label: "Focado",
+    emoji: "⚡",
+    description: "Para quem quer avançar mais rápido - Poupa ~25%",
     distribution: { fixed: 50, essential: 15, superfluous: 10, emergency: 15, investment: 10 }
-  },
-  aggressive: {
-    label: "Agressivo",
-    description: "Foco em investimentos e crescimento",
-    distribution: { fixed: 45, essential: 15, superfluous: 10, emergency: 10, investment: 20 }
   }
 };
 
@@ -50,12 +53,12 @@ export default function Settings() {
   const queryClient = useQueryClient();
   
   const [settings, setSettings] = useState({
-    risk_profile: "moderate",
+    risk_profile: "balanced",
     fixed_percentage: 50,
-    essential_percentage: 15,
-    superfluous_percentage: 10,
-    emergency_percentage: 15,
-    investment_percentage: 10,
+    essential_percentage: 20,
+    superfluous_percentage: 15,
+    emergency_percentage: 10,
+    investment_percentage: 5,
     emergency_fund_goal_months: 6,
     current_emergency_fund: 0,
     notifications_enabled: true
@@ -74,12 +77,12 @@ export default function Settings() {
   useEffect(() => {
     if (existingSettings) {
       setSettings({
-        risk_profile: existingSettings.risk_profile || "moderate",
+        risk_profile: existingSettings.risk_profile || "balanced",
         fixed_percentage: existingSettings.fixed_percentage || 50,
-        essential_percentage: existingSettings.essential_percentage || 15,
-        superfluous_percentage: existingSettings.superfluous_percentage || 10,
-        emergency_percentage: existingSettings.emergency_percentage || 15,
-        investment_percentage: existingSettings.investment_percentage || 10,
+        essential_percentage: existingSettings.essential_percentage || 20,
+        superfluous_percentage: existingSettings.superfluous_percentage || 15,
+        emergency_percentage: existingSettings.emergency_percentage || 10,
+        investment_percentage: existingSettings.investment_percentage || 5,
         emergency_fund_goal_months: existingSettings.emergency_fund_goal_months || 6,
         current_emergency_fund: existingSettings.current_emergency_fund || 0,
         notifications_enabled: existingSettings.notifications_enabled ?? true
@@ -123,7 +126,11 @@ export default function Settings() {
     setSettings(prev => ({
       ...prev,
       risk_profile: profile,
-      ...distribution
+      fixed_percentage: distribution.fixed,
+      essential_percentage: distribution.essential,
+      superfluous_percentage: distribution.superfluous,
+      emergency_percentage: distribution.emergency,
+      investment_percentage: distribution.investment
     }));
     setHasChanges(true);
   };
@@ -194,23 +201,31 @@ export default function Settings() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
+              <p className="text-sm text-amber-800">
+                💡 <strong>Dica:</strong> Ao selecionar um perfil, todas as porcentagens abaixo serão ajustadas automaticamente. Você pode personalizá-las depois se quiser.
+              </p>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {Object.entries(RISK_PROFILES).map(([key, profile]) => (
                 <button
                   key={key}
                   onClick={() => handleRiskProfileChange(key)}
-                  className={`p-4 rounded-xl border-2 text-left transition-all ${
+                  className={`p-5 rounded-xl border-2 text-left transition-all ${
                     settings.risk_profile === key
-                      ? 'border-[#00A8A0] bg-[#00A8A0]/5'
+                      ? 'border-[#00A8A0] bg-[#00A8A0]/5 shadow-md'
                       : 'border-slate-200 hover:border-slate-300'
                   }`}
                 >
-                  <p className={`font-semibold ${
-                    settings.risk_profile === key ? 'text-[#00A8A0]' : 'text-slate-700'
-                  }`}>
-                    {profile.label}
-                  </p>
-                  <p className="text-xs text-slate-500 mt-1">{profile.description}</p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-2xl">{profile.emoji}</span>
+                    <p className={`font-semibold text-lg ${
+                      settings.risk_profile === key ? 'text-[#00A8A0]' : 'text-slate-700'
+                    }`}>
+                      {profile.label}
+                    </p>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed">{profile.description}</p>
                 </button>
               ))}
             </div>

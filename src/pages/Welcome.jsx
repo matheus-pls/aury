@@ -8,26 +8,26 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 const PROFILE_DISTRIBUTIONS = {
-  conservative: {
+  essential: {
+    fixed_percentage: 50,
+    essential_percentage: 25,
+    superfluous_percentage: 15,
+    emergency_percentage: 7,
+    investment_percentage: 3
+  },
+  balanced: {
     fixed_percentage: 50,
     essential_percentage: 20,
-    superfluous_percentage: 5,
-    emergency_percentage: 20,
+    superfluous_percentage: 15,
+    emergency_percentage: 10,
     investment_percentage: 5
   },
-  moderate: {
+  focused: {
     fixed_percentage: 50,
     essential_percentage: 15,
     superfluous_percentage: 10,
     emergency_percentage: 15,
     investment_percentage: 10
-  },
-  aggressive: {
-    fixed_percentage: 45,
-    essential_percentage: 15,
-    superfluous_percentage: 10,
-    emergency_percentage: 10,
-    investment_percentage: 20
   }
 };
 

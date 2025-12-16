@@ -18,26 +18,26 @@ import { Progress } from "@/components/ui/progress";
 import ProfileSelector from "@/components/onboarding/ProfileSelector";
 
 const PROFILE_DISTRIBUTIONS = {
-  conservative: {
+  essential: {
+    fixed_percentage: 50,
+    essential_percentage: 25,
+    superfluous_percentage: 15,
+    emergency_percentage: 7,
+    investment_percentage: 3
+  },
+  balanced: {
     fixed_percentage: 50,
     essential_percentage: 20,
-    superfluous_percentage: 5,
-    emergency_percentage: 20,
+    superfluous_percentage: 15,
+    emergency_percentage: 10,
     investment_percentage: 5
   },
-  moderate: {
+  focused: {
     fixed_percentage: 50,
     essential_percentage: 15,
     superfluous_percentage: 10,
     emergency_percentage: 15,
     investment_percentage: 10
-  },
-  aggressive: {
-    fixed_percentage: 45,
-    essential_percentage: 15,
-    superfluous_percentage: 10,
-    emergency_percentage: 10,
-    investment_percentage: 20
   }
 };
 
@@ -160,11 +160,11 @@ export default function Dashboard() {
   // Get profile info
   const getProfileInfo = () => {
     const profiles = {
-      conservative: { name: "Conservador", emoji: "🛡️", color: "from-blue-500 to-blue-600" },
-      moderate: { name: "Moderado", emoji: "⚖️", color: "from-[#00A8A0] to-[#008F88]" },
-      aggressive: { name: "Agressivo", emoji: "🚀", color: "from-purple-500 to-purple-600" }
+      essential: { name: "Essencial", emoji: "🛡️", color: "from-blue-500 to-blue-600", savings: "~10%" },
+      balanced: { name: "Equilibrado", emoji: "⚖️", color: "from-[#00A8A0] to-[#008F88]", savings: "~15%" },
+      focused: { name: "Focado", emoji: "⚡", color: "from-purple-500 to-purple-600", savings: "~25%" }
     };
-    return profiles[currentSettings.risk_profile] || profiles.moderate;
+    return profiles[currentSettings.risk_profile] || profiles.balanced;
   };
 
   const profileInfo = getProfileInfo();
@@ -190,11 +190,14 @@ export default function Dashboard() {
       >
         <button
           onClick={() => setShowProfileSelector(true)}
-          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${profileInfo.color} text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all`}
+          className={`inline-flex items-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-r ${profileInfo.color} text-white font-medium shadow-lg hover:shadow-xl transition-all group`}
         >
-          <span className="text-lg">{profileInfo.emoji}</span>
-          <span>Perfil {profileInfo.name}</span>
-          <ChevronRight className="w-4 h-4" />
+          <span className="text-2xl">{profileInfo.emoji}</span>
+          <div className="text-left">
+            <p className="text-sm opacity-90">Seu perfil</p>
+            <p className="font-semibold">{profileInfo.name} {profileInfo.savings}</p>
+          </div>
+          <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </button>
       </motion.div>
 
