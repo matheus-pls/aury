@@ -1,27 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { 
-  Home, 
-  ShoppingCart, 
-  Sparkles, 
-  Shield, 
-  TrendingUp,
-  Calendar,
-  ArrowRight
+  Plus,
+  Wallet,
+  TrendingDown,
+  Shield,
+  Target,
+  ChevronRight,
+  Info
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import ProfileSelector from "@/components/onboarding/ProfileSelector";
 
-import QuickStats from "@/components/dashboard/QuickStats";
-import CategoryCard from "@/components/dashboard/CategoryCard";
-import DistributionChart from "@/components/dashboard/DistributionChart";
-import AlertCard from "@/components/dashboard/AlertCard";
-import EmergencyFundProgress from "@/components/dashboard/EmergencyFundProgress";
-import HealthIndicator from "@/components/dashboard/HealthIndicator";
+const PROFILE_DISTRIBUTIONS = {
+  conservative: {
+    fixed_percentage: 50,
+    essential_percentage: 20,
+    superfluous_percentage: 5,
+    emergency_percentage: 20,
+    investment_percentage: 5
+  },
+  moderate: {
+    fixed_percentage: 50,
+    essential_percentage: 15,
+    superfluous_percentage: 10,
+    emergency_percentage: 15,
+    investment_percentage: 10
+  },
+  aggressive: {
+    fixed_percentage: 45,
+    essential_percentage: 15,
+    superfluous_percentage: 10,
+    emergency_percentage: 10,
+    investment_percentage: 20
+  }
+};
 
 export default function Dashboard() {
+  const [showProfileSelector, setShowProfileSelector] = useState(false);
+  const queryClient = useQueryClient();
   const currentMonth = new Date().toISOString().slice(0, 7);
 
   const { data: incomes = [] } = useQuery({
@@ -34,13 +56,39 @@ export default function Dashboard() {
     queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth })
   });
 
-  const { data: settings = null } = useQuery({
+  const { data: settings = null, isLoading: settingsLoading } = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
       const result = await base44.entities.UserSettings.list();
       return result[0] || null;
     }
   });
+
+  const updateSettingsMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.UserSettings.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['settings']);
+      setShowProfileSelector(false);
+    }
+  });
+
+  const createSettingsMutation = useMutation({
+    mutationFn: (data) => base44.entities.UserSettings.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['settings']);
+      setShowProfileSelector(false);
+    }
+  });
+
+  // Show profile selector if no settings exist
+  useEffect(() => {
+    if (!settingsLoading && !settings) {
+      const hasSelectedProfile = localStorage.getItem("rendy_profile_selected");
+      if (!hasSelectedProfile) {
+        setShowProfileSelector(true);
+      }
+    }
+  }, [settings, settingsLoading]);
 
   const { data: goals = [] } = useQuery({
     queryKey: ['goals'],
@@ -72,131 +120,54 @@ export default function Dashboard() {
 
   const currentSettings = settings || defaultSettings;
 
+  const handleProfileSelect = async (profileId) => {
+    localStorage.setItem("rendy_profile_selected", profileId);
+    const distribution = PROFILE_DISTRIBUTIONS[profileId];
+    
+    const data = {
+      risk_profile: profileId,
+      ...distribution,
+      emergency_fund_goal_months: 6,
+      current_emergency_fund: currentSettings.current_emergency_fund || 0,
+      notifications_enabled: true
+    };
+
+    if (settings) {
+      updateSettingsMutation.mutate({ id: settings.id, data });
+    } else {
+      createSettingsMutation.mutate(data);
+    }
+  };
+
   // Calculate limits based on income and percentages
   const limits = {
     fixed: totalIncome * (currentSettings.fixed_percentage / 100),
-    essential: totalIncome * (currentSettings.essential_percentage / 100),
     superfluous: totalIncome * (currentSettings.superfluous_percentage / 100),
-    emergency: totalIncome * (currentSettings.emergency_percentage / 100),
-    investment: totalIncome * (currentSettings.investment_percentage / 100)
+    emergency: totalIncome * (currentSettings.emergency_percentage / 100)
   };
 
-  // Calculate suggested distribution
-  const suggestedDistribution = {
-    fixed: limits.fixed,
-    essential: limits.essential,
-    superfluous: limits.superfluous,
-    emergency: limits.emergency,
-    investment: limits.investment
+  // Calculate available for the month
+  const totalSpent = totalExpenses;
+  const availableBalance = totalIncome - totalSpent;
+  const spentPercentage = totalIncome > 0 ? (totalSpent / totalIncome) * 100 : 0;
+
+  // Emergency fund progress
+  const emergencyGoal = expensesByCategory.fixed * currentSettings.emergency_fund_goal_months;
+  const emergencyProgress = emergencyGoal > 0 
+    ? Math.min((currentSettings.current_emergency_fund / emergencyGoal) * 100, 100) 
+    : 0;
+
+  // Get profile info
+  const getProfileInfo = () => {
+    const profiles = {
+      conservative: { name: "Conservador", emoji: "🛡️", color: "from-blue-500 to-blue-600" },
+      moderate: { name: "Moderado", emoji: "⚖️", color: "from-[#00A8A0] to-[#008F88]" },
+      aggressive: { name: "Agressivo", emoji: "🚀", color: "from-purple-500 to-purple-600" }
+    };
+    return profiles[currentSettings.risk_profile] || profiles.moderate;
   };
 
-  // Generate alerts
-  const generateAlerts = () => {
-    const alerts = [];
-    
-    if (expensesByCategory.fixed > limits.fixed) {
-      alerts.push({
-        type: "danger",
-        title: "Gastos fixos acima do limite",
-        message: `Você gastou ${((expensesByCategory.fixed / limits.fixed - 1) * 100).toFixed(0)}% a mais do que o recomendado.`
-      });
-    }
-    
-    if (expensesByCategory.superfluous > limits.superfluous) {
-      alerts.push({
-        type: "warning",
-        title: "Atenção com gastos supérfluos",
-        message: "Considere reduzir gastos não essenciais este mês."
-      });
-    }
-    
-    if (totalExpenses > totalIncome) {
-      alerts.push({
-        type: "danger",
-        title: "Gastos excedem a renda!",
-        message: "Seus gastos totais ultrapassaram sua renda mensal."
-      });
-    }
-
-    const emergencyGoal = expensesByCategory.fixed * currentSettings.emergency_fund_goal_months;
-    if (currentSettings.current_emergency_fund < emergencyGoal * 0.5) {
-      alerts.push({
-        type: "warning",
-        title: "Reserva de emergência baixa",
-        message: "Priorize completar sua reserva de emergência."
-      });
-    }
-
-    return alerts;
-  };
-
-  // Calculate health score
-  const calculateHealthScore = () => {
-    let score = 100;
-    
-    // Deduct points for over-budget categories
-    if (expensesByCategory.fixed > limits.fixed) score -= 20;
-    if (expensesByCategory.superfluous > limits.superfluous) score -= 15;
-    if (totalExpenses > totalIncome) score -= 30;
-    
-    // Add points for good habits
-    const emergencyGoal = expensesByCategory.fixed * currentSettings.emergency_fund_goal_months;
-    if (currentSettings.current_emergency_fund >= emergencyGoal) score += 10;
-    
-    return Math.max(0, Math.min(100, score));
-  };
-
-  const healthScore = calculateHealthScore();
-  const getHealthStatus = () => {
-    if (healthScore >= 80) return "excellent";
-    if (healthScore >= 60) return "good";
-    if (healthScore >= 40) return "warning";
-    return "danger";
-  };
-
-  const stats = {
-    totalIncome,
-    totalExpenses,
-    availableBalance: totalIncome - totalExpenses,
-    emergencyFund: currentSettings.current_emergency_fund,
-    expensesTrend: -5,
-    emergencyProgress: ((currentSettings.current_emergency_fund / (expensesByCategory.fixed * 6)) * 100).toFixed(0)
-  };
-
-  const categoryCards = [
-    { 
-      title: "Gastos Fixos", 
-      icon: Home, 
-      current: expensesByCategory.fixed, 
-      limit: limits.fixed,
-      color: "text-[#0A1A3A]",
-      bgColor: "bg-slate-100"
-    },
-    { 
-      title: "Essenciais Variáveis", 
-      icon: ShoppingCart, 
-      current: expensesByCategory.essential, 
-      limit: limits.essential,
-      color: "text-[#00A8A0]",
-      bgColor: "bg-[#00A8A0]/10"
-    },
-    { 
-      title: "Supérfluos", 
-      icon: Sparkles, 
-      current: expensesByCategory.superfluous, 
-      limit: limits.superfluous,
-      color: "text-amber-500",
-      bgColor: "bg-amber-50"
-    },
-    { 
-      title: "Investimentos", 
-      icon: TrendingUp, 
-      current: expensesByCategory.investment, 
-      limit: limits.investment,
-      color: "text-violet-500",
-      bgColor: "bg-violet-50"
-    }
-  ];
+  const profileInfo = getProfileInfo();
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -205,104 +176,186 @@ export default function Dashboard() {
     }).format(value);
   };
 
+  // Show profile selector overlay
+  if (showProfileSelector) {
+    return <ProfileSelector onSelect={handleProfileSelect} />;
+  }
+
   return (
     <div className="space-y-6 pb-8">
-      {/* Header */}
+      {/* Profile Badge */}
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col lg:flex-row lg:items-center justify-between gap-4"
       >
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">
-            Olá! 👋
-          </h1>
-          <p className="text-slate-500 mt-1">
-            Aqui está o resumo das suas finanças de {new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
-          </p>
+        <button
+          onClick={() => setShowProfileSelector(true)}
+          className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${profileInfo.color} text-white text-sm font-medium shadow-lg hover:shadow-xl transition-all`}
+        >
+          <span className="text-lg">{profileInfo.emoji}</span>
+          <span>Perfil {profileInfo.name}</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </motion.div>
+
+      {/* Main Balance Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-br from-[#00A8A0] to-[#008F88] rounded-3xl p-8 text-white shadow-xl"
+      >
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <p className="text-white/80 text-sm mb-2">Saldo do Mês</p>
+            <h2 className="text-5xl font-bold">{formatCurrency(availableBalance)}</h2>
+          </div>
+          <div className="p-3 bg-white/10 rounded-2xl">
+            <Wallet className="w-8 h-8" />
+          </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200">
-            <Calendar className="w-4 h-4 text-slate-400" />
-            <span className="text-sm font-medium text-slate-600">
-              {new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}
-            </span>
+        
+        <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/20">
+          <div>
+            <p className="text-white/70 text-xs mb-1">Renda</p>
+            <p className="text-xl font-semibold">{formatCurrency(totalIncome)}</p>
+          </div>
+          <div>
+            <p className="text-white/70 text-xs mb-1">Gastos</p>
+            <p className="text-xl font-semibold">{formatCurrency(totalSpent)}</p>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="mt-6">
+          <div className="flex justify-between text-xs text-white/70 mb-2">
+            <span>Você gastou {spentPercentage.toFixed(0)}% da sua renda</span>
+          </div>
+          <div className="h-2 bg-white/20 rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${Math.min(spentPercentage, 100)}%` }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className={`h-full ${spentPercentage > 100 ? 'bg-red-400' : 'bg-white'}`}
+            />
           </div>
         </div>
       </motion.div>
 
-      {/* Quick Stats */}
-      <QuickStats stats={stats} />
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 gap-4">
+        <Link to={createPageUrl("Expenses")}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2.5 bg-rose-50 rounded-xl">
+                <Plus className="w-5 h-5 text-rose-500" />
+              </div>
+              <h3 className="font-semibold text-slate-800">Novo Gasto</h3>
+            </div>
+            <p className="text-sm text-slate-500">Registrar uma despesa</p>
+          </motion.div>
+        </Link>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Categories */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Category Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {categoryCards.map((card, index) => (
-              <CategoryCard key={index} {...card} />
-            ))}
-          </div>
+        <Link to={createPageUrl("Incomes")}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2.5 bg-emerald-50 rounded-xl">
+                <Plus className="w-5 h-5 text-emerald-500" />
+              </div>
+              <h3 className="font-semibold text-slate-800">Nova Renda</h3>
+            </div>
+            <p className="text-sm text-slate-500">Adicionar fonte de renda</p>
+          </motion.div>
+        </Link>
+      </div>
 
-          {/* Distribution Charts */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <DistributionChart data={suggestedDistribution} type="suggested" />
-            <DistributionChart data={expensesByCategory} type="current" />
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Health Score */}
-          <HealthIndicator 
-            score={healthScore} 
-            label="Saúde Financeira" 
-            status={getHealthStatus()} 
-          />
-
-          {/* Alerts */}
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Alertas</h3>
-            <AlertCard alerts={generateAlerts()} />
-          </div>
-
-          {/* Emergency Fund */}
-          <EmergencyFundProgress 
-            current={currentSettings.current_emergency_fund}
-            goal={expensesByCategory.fixed * currentSettings.emergency_fund_goal_months}
-            monthlyFixed={expensesByCategory.fixed || limits.fixed}
-          />
-
-          {/* Quick Actions */}
-          <div className="bg-gradient-to-br from-[#00A8A0] to-[#008F88] rounded-2xl p-5 text-white">
-            <h3 className="text-lg font-semibold mb-3">Ações Rápidas</h3>
-            <div className="space-y-2">
-              <Link 
-                to={createPageUrl("Expenses")}
-                className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
-              >
-                <span className="text-sm">Adicionar gasto</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link 
-                to={createPageUrl("Goals")}
-                className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
-              >
-                <span className="text-sm">Ver metas</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link 
-                to={createPageUrl("Simulation")}
-                className="flex items-center justify-between p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
-              >
-                <span className="text-sm">Simular cenários</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+      {/* Emergency Fund */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-emerald-50 rounded-xl">
+              <Shield className="w-5 h-5 text-emerald-500" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-800">Reserva de Emergência</h3>
+              <p className="text-sm text-slate-500">
+                {formatCurrency(currentSettings.current_emergency_fund)} de {formatCurrency(emergencyGoal)}
+              </p>
             </div>
           </div>
+          <span className="text-2xl font-bold text-emerald-600">
+            {emergencyProgress.toFixed(0)}%
+          </span>
         </div>
-      </div>
+        <Progress value={emergencyProgress} className="h-2" />
+      </motion.div>
+
+      {/* Goals Preview */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-purple-50 rounded-xl">
+              <Target className="w-5 h-5 text-purple-500" />
+            </div>
+            <h3 className="font-semibold text-slate-800">Suas Metas</h3>
+          </div>
+          <Link to={createPageUrl("Goals")}>
+            <Button variant="ghost" size="sm" className="text-[#00A8A0]">
+              Ver todas
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Button>
+          </Link>
+        </div>
+        <p className="text-sm text-slate-500">
+          {goals.length === 0 
+            ? "Você ainda não tem metas. Crie sua primeira meta!"
+            : `${goals.length} ${goals.length === 1 ? 'meta ativa' : 'metas ativas'}`
+          }
+        </p>
+      </motion.div>
+
+      {/* Info Banner */}
+      {totalIncome === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-blue-50 border border-blue-200 rounded-2xl p-5"
+        >
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+            <div>
+              <h4 className="font-medium text-blue-800 mb-1">Comece cadastrando sua renda</h4>
+              <p className="text-sm text-blue-600">
+                Para aproveitar todos os recursos do Rendy, cadastre suas fontes de renda primeiro.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 }
