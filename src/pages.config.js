@@ -4,6 +4,7 @@ import Expenses from './pages/Expenses';
 import Goals from './pages/Goals';
 import Settings from './pages/Settings';
 import Simulation from './pages/Simulation';
+import Welcome from './pages/Welcome';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +15,7 @@ export const PAGES = {
     "Goals": Goals,
     "Settings": Settings,
     "Simulation": Simulation,
+    "Welcome": Welcome,
 }
 
 export const pagesConfig = {
