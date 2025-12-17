@@ -107,10 +107,6 @@ export default function Dashboard() {
     investment: expenses.filter(e => e.category === 'investment').reduce((s, e) => s + (e.amount || 0), 0)
   };
 
-  // Calculate total contributed to emergency fund from expenses
-  const emergencyFundContributions = expensesByCategory.emergency;
-  const totalEmergencyFund = (currentSettings.current_emergency_fund || 0) + emergencyFundContributions;
-
   // Default percentages
   const defaultSettings = {
     fixed_percentage: 50,
@@ -123,6 +119,10 @@ export default function Dashboard() {
   };
 
   const currentSettings = settings || defaultSettings;
+
+  // Calculate total contributed to emergency fund from expenses
+  const emergencyFundContributions = expensesByCategory.emergency;
+  const totalEmergencyFund = (currentSettings.current_emergency_fund || 0) + emergencyFundContributions;
 
   const handleProfileSelect = async (profileId) => {
     localStorage.setItem("rendy_profile_selected", profileId);
