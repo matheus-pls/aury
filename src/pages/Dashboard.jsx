@@ -107,6 +107,10 @@ export default function Dashboard() {
     investment: expenses.filter(e => e.category === 'investment').reduce((s, e) => s + (e.amount || 0), 0)
   };
 
+  // Calculate total contributed to emergency fund from expenses
+  const emergencyFundContributions = expensesByCategory.emergency;
+  const totalEmergencyFund = (currentSettings.current_emergency_fund || 0) + emergencyFundContributions;
+
   // Default percentages
   const defaultSettings = {
     fixed_percentage: 50,
@@ -154,7 +158,7 @@ export default function Dashboard() {
   // Emergency fund progress
   const emergencyGoal = expensesByCategory.fixed * currentSettings.emergency_fund_goal_months;
   const emergencyProgress = emergencyGoal > 0 
-    ? Math.min((currentSettings.current_emergency_fund / emergencyGoal) * 100, 100) 
+    ? Math.min((totalEmergencyFund / emergencyGoal) * 100, 100) 
     : 0;
 
   // Get profile info
@@ -220,11 +224,11 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/20">
           <div>
             <p className="text-white/70 text-xs mb-1">Renda</p>
-            <p className="text-xl font-semibold">{formatCurrency(totalIncome)}</p>
+            <p className="text-xl font-semibold tabular-nums">{formatCurrency(totalIncome)}</p>
           </div>
           <div>
             <p className="text-white/70 text-xs mb-1">Gastos</p>
-            <p className="text-xl font-semibold">{formatCurrency(totalSpent)}</p>
+            <p className="text-xl font-semibold tabular-nums">{formatCurrency(totalSpent)}</p>
           </div>
         </div>
 
@@ -300,7 +304,7 @@ export default function Dashboard() {
             <div>
               <h3 className="font-semibold text-slate-800">Reserva de Emergência</h3>
               <p className="text-sm text-slate-500">
-                {formatCurrency(currentSettings.current_emergency_fund)} de {formatCurrency(emergencyGoal)}
+                {formatCurrency(totalEmergencyFund)} de {formatCurrency(emergencyGoal)}
               </p>
             </div>
           </div>

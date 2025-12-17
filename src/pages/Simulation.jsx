@@ -411,22 +411,22 @@ export default function Simulation() {
                   </ResponsiveContainer>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 mt-6 pt-6 border-t">
                   <div className="text-center">
-                    <p className="text-sm text-slate-500 mb-1">Em 6 meses</p>
-                    <p className="text-lg font-bold text-slate-800">
+                    <p className="text-sm text-slate-500 mb-3">Em 6 meses</p>
+                    <p className="text-lg font-bold text-slate-800 tabular-nums">
                       {formatCurrency((simulatedDistribution.emergency + simulatedDistribution.investment + savings) * 6)}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-slate-500 mb-1">Em 1 ano</p>
-                    <p className="text-lg font-bold text-[#00A8A0]">
+                    <p className="text-sm text-slate-500 mb-3">Em 1 ano</p>
+                    <p className="text-lg font-bold text-[#00A8A0] tabular-nums">
                       {formatCurrency((simulatedDistribution.emergency + simulatedDistribution.investment + savings) * 12)}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-sm text-slate-500 mb-1">Em 2 anos</p>
-                    <p className="text-lg font-bold text-slate-800">
+                    <p className="text-sm text-slate-500 mb-3">Em 2 anos</p>
+                    <p className="text-lg font-bold text-slate-800 tabular-nums">
                       {formatCurrency((simulatedDistribution.emergency + simulatedDistribution.investment + savings) * 24)}
                     </p>
                   </div>
