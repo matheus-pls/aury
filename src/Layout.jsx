@@ -10,7 +10,8 @@ import {
   Settings,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  Calendar
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -20,6 +21,7 @@ export default function Layout({ children, currentPageName }) {
 
   const navigation = [
     { name: "Dashboard", page: "Dashboard", icon: LayoutDashboard },
+    { name: "Dia a Dia", page: "DailyMode", icon: Calendar },
     { name: "Rendas", page: "Incomes", icon: Wallet },
     { name: "Gastos", page: "Expenses", icon: Receipt },
     { name: "Metas", page: "Goals", icon: Target },
