@@ -6,6 +6,7 @@ import Settings from './pages/Settings';
 import Simulation from './pages/Simulation';
 import Welcome from './pages/Welcome';
 import DailyMode from './pages/DailyMode';
+import AutoPlanning from './pages/AutoPlanning';
 import __Layout from './Layout.jsx';
 
 
@@ -18,6 +19,7 @@ export const PAGES = {
     "Simulation": Simulation,
     "Welcome": Welcome,
     "DailyMode": DailyMode,
+    "AutoPlanning": AutoPlanning,
 }
 
 export const pagesConfig = {
