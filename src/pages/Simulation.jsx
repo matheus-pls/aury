@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Calculator, 
   TrendingUp, 
@@ -11,20 +11,85 @@ import {
   Sparkles,
   Target,
   PiggyBank,
-  LineChart
+  Calendar,
+  Zap,
+  Clock,
+  Briefcase,
+  PartyPopper,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const SCENARIOS = [
+  {
+    id: "reduce_spending",
+    title: "E se eu economizar...",
+    emoji: "💰",
+    icon: PiggyBank,
+    color: "from-emerald-500 to-green-500",
+    description: "Quanto tempo ganho cortando gastos?"
+  },
+  {
+    id: "change_job",
+    title: "E se eu mudar de emprego...",
+    emoji: "💼",
+    icon: Briefcase,
+    color: "from-blue-500 to-indigo-500",
+    description: "Como isso afeta minhas metas?"
+  },
+  {
+    id: "zero_superfluous",
+    title: "E se eu cortar supérfluos...",
+    emoji: "⚡",
+    icon: Zap,
+    color: "from-amber-500 to-orange-500",
+    description: "Veja o impacto de 30 dias sem supérfluos"
+  },
+  {
+    id: "goal_time",
+    title: "Quando alcanço meu objetivo?",
+    emoji: "🎯",
+    icon: Target,
+    color: "from-purple-500 to-pink-500",
+    description: "Calcule quando suas metas viram realidade"
+  }
+];
 
 export default function Simulation() {
+  const [selectedScenario, setSelectedScenario] = useState(null);
+  const [scenarioData, setScenarioData] = useState({
+    reductionAmount: 200,
+    newIncome: 0,
+    challengeDays: 30,
+    selectedGoal: null
+  });
+
   const { data: incomes = [] } = useQuery({
     queryKey: ['incomes'],
     queryFn: () => base44.entities.Income.filter({ is_active: true })
+  });
+
+  const { data: expenses = [] } = useQuery({
+    queryKey: ['expenses'],
+    queryFn: () => {
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      return base44.entities.Expense.filter({ month_year: currentMonth });
+    }
+  });
+
+  const { data: goals = [] } = useQuery({
+    queryKey: ['goals'],
+    queryFn: () => base44.entities.FinancialGoal.filter({ is_completed: false })
   });
 
   const { data: settings } = useQuery({
@@ -36,406 +101,518 @@ export default function Simulation() {
   });
 
   const currentIncome = incomes.reduce((sum, i) => sum + (i.amount || 0), 0);
-
-  const [simulation, setSimulation] = useState({
-    newIncome: currentIncome,
-    fixedReduction: 0,
-    superfluousReduction: 0,
-    savingsMonths: 12
-  });
+  const superfluousSpending = expenses
+    .filter(e => e.category === 'superfluous')
+    .reduce((sum, e) => sum + (e.amount || 0), 0);
 
   useEffect(() => {
-    if (currentIncome > 0) {
-      setSimulation(prev => ({ ...prev, newIncome: currentIncome }));
-    }
+    setScenarioData(prev => ({ ...prev, newIncome: currentIncome }));
   }, [currentIncome]);
 
-  const defaultSettings = {
-    fixed_percentage: 50,
-    essential_percentage: 15,
-    superfluous_percentage: 10,
+  const activeSettings = settings || {
     emergency_percentage: 15,
     investment_percentage: 10
   };
 
-  const activeSettings = settings || defaultSettings;
-
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL'
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(value);
   };
 
-  // Calculate current distribution
-  const calculateDistribution = (income) => {
-    return {
-      fixed: income * (activeSettings.fixed_percentage / 100),
-      essential: income * (activeSettings.essential_percentage / 100),
-      superfluous: income * (activeSettings.superfluous_percentage / 100),
-      emergency: income * (activeSettings.emergency_percentage / 100),
-      investment: income * (activeSettings.investment_percentage / 100)
-    };
+  const monthlySavings = currentIncome * ((activeSettings.emergency_percentage + activeSettings.investment_percentage) / 100);
+
+  // Scenario calculations
+  const calculateScenarioImpact = () => {
+    if (!selectedScenario) return null;
+
+    const selectedGoalData = goals.find(g => g.id === scenarioData.selectedGoal);
+    
+    switch(selectedScenario.id) {
+      case "reduce_spending": {
+        const newMonthlySavings = monthlySavings + scenarioData.reductionAmount;
+        const monthsToGoal = selectedGoalData 
+          ? Math.ceil((selectedGoalData.target_amount - (selectedGoalData.current_amount || 0)) / newMonthlySavings)
+          : null;
+        const currentMonthsToGoal = selectedGoalData && monthlySavings > 0
+          ? Math.ceil((selectedGoalData.target_amount - (selectedGoalData.current_amount || 0)) / monthlySavings)
+          : null;
+        const timeSaved = currentMonthsToGoal && monthsToGoal ? currentMonthsToGoal - monthsToGoal : null;
+        
+        return {
+          monthlySavings: newMonthlySavings,
+          yearSavings: newMonthlySavings * 12,
+          extraPerMonth: scenarioData.reductionAmount,
+          monthsToGoal,
+          timeSaved,
+          goalName: selectedGoalData?.title
+        };
+      }
+      
+      case "change_job": {
+        const newIncome = scenarioData.newIncome;
+        const newMonthlySavings = newIncome * ((activeSettings.emergency_percentage + activeSettings.investment_percentage) / 100);
+        const incomeDiff = newIncome - currentIncome;
+        const monthsToGoal = selectedGoalData 
+          ? Math.ceil((selectedGoalData.target_amount - (selectedGoalData.current_amount || 0)) / newMonthlySavings)
+          : null;
+        const currentMonthsToGoal = selectedGoalData && monthlySavings > 0
+          ? Math.ceil((selectedGoalData.target_amount - (selectedGoalData.current_amount || 0)) / monthlySavings)
+          : null;
+        const timeSaved = currentMonthsToGoal && monthsToGoal ? currentMonthsToGoal - monthsToGoal : null;
+        
+        return {
+          newIncome,
+          incomeDiff,
+          monthlySavings: newMonthlySavings,
+          yearSavings: newMonthlySavings * 12,
+          monthsToGoal,
+          timeSaved,
+          goalName: selectedGoalData?.title
+        };
+      }
+      
+      case "zero_superfluous": {
+        const savings30Days = superfluousSpending;
+        const extraYearly = savings30Days * 12;
+        const newMonthlySavings = monthlySavings + savings30Days;
+        const monthsToGoal = selectedGoalData 
+          ? Math.ceil((selectedGoalData.target_amount - (selectedGoalData.current_amount || 0)) / newMonthlySavings)
+          : null;
+        const currentMonthsToGoal = selectedGoalData && monthlySavings > 0
+          ? Math.ceil((selectedGoalData.target_amount - (selectedGoalData.current_amount || 0)) / monthlySavings)
+          : null;
+        const timeSaved = currentMonthsToGoal && monthsToGoal ? currentMonthsToGoal - monthsToGoal : null;
+        
+        return {
+          savings30Days,
+          extraYearly,
+          currentSuperfluous: superfluousSpending,
+          monthsToGoal,
+          timeSaved,
+          goalName: selectedGoalData?.title
+        };
+      }
+      
+      case "goal_time": {
+        if (!selectedGoalData) return null;
+        
+        const remaining = selectedGoalData.target_amount - (selectedGoalData.current_amount || 0);
+        const monthsNeeded = monthlySavings > 0 ? Math.ceil(remaining / monthlySavings) : null;
+        const targetDate = monthsNeeded ? new Date(Date.now() + monthsNeeded * 30 * 24 * 60 * 60 * 1000) : null;
+        
+        return {
+          goalName: selectedGoalData.title,
+          targetAmount: selectedGoalData.target_amount,
+          currentAmount: selectedGoalData.current_amount || 0,
+          remaining,
+          monthsNeeded,
+          targetDate,
+          monthlySavings
+        };
+      }
+      
+      default:
+        return null;
+    }
   };
 
-  const currentDistribution = calculateDistribution(currentIncome);
-  const simulatedDistribution = calculateDistribution(simulation.newIncome);
-
-  // Calculate with reductions
-  const adjustedFixed = simulatedDistribution.fixed * (1 - simulation.fixedReduction / 100);
-  const adjustedSuperfluous = simulatedDistribution.superfluous * (1 - simulation.superfluousReduction / 100);
-  const savings = (simulatedDistribution.fixed - adjustedFixed) + (simulatedDistribution.superfluous - adjustedSuperfluous);
-
-  // Project savings over time
-  const projectedSavings = [];
-  let accumulated = 0;
-  for (let i = 1; i <= simulation.savingsMonths; i++) {
-    accumulated += (simulatedDistribution.emergency + simulatedDistribution.investment + savings);
-    projectedSavings.push({
-      month: `Mês ${i}`,
-      value: accumulated,
-      emergency: simulatedDistribution.emergency * i,
-      investment: (simulatedDistribution.investment + savings) * i
-    });
-  }
-
-  const incomeDiff = simulation.newIncome - currentIncome;
-  const incomeDiffPercentage = currentIncome > 0 ? ((incomeDiff / currentIncome) * 100) : 0;
+  const impact = calculateScenarioImpact();
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Simulação</h1>
-        <p className="text-slate-500 mt-1">Simule cenários e planeje seu futuro financeiro</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Simulador de Cenários</h1>
+        <p className="text-slate-500 mt-1">Descubra o impacto emocional das suas decisões financeiras</p>
       </motion.div>
 
-      <Tabs defaultValue="income" className="space-y-6">
-        <TabsList className="grid grid-cols-3 w-full max-w-md">
-          <TabsTrigger value="income">Renda</TabsTrigger>
-          <TabsTrigger value="reduction">Economia</TabsTrigger>
-          <TabsTrigger value="projection">Projeção</TabsTrigger>
-        </TabsList>
-
-        {/* Income Simulation */}
-        <TabsContent value="income" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="w-5 h-5 text-[#00A8A0]" />
-                    Simular Nova Renda
-                  </CardTitle>
-                  <CardDescription>
-                    Veja como ficaria sua distribuição com uma renda diferente
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-2">
-                    <Label>Renda Atual</Label>
-                    <div className="p-3 bg-slate-100 rounded-lg">
-                      <p className="text-2xl font-bold text-slate-800">{formatCurrency(currentIncome)}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="newIncome">Nova Renda</Label>
-                    <Input
-                      id="newIncome"
-                      type="number"
-                      value={simulation.newIncome}
-                      onChange={(e) => setSimulation({ ...simulation, newIncome: parseFloat(e.target.value) || 0 })}
-                    />
-                  </div>
-
-                  {incomeDiff !== 0 && (
-                    <div className={`flex items-center gap-2 p-3 rounded-lg ${
-                      incomeDiff > 0 ? 'bg-emerald-50' : 'bg-red-50'
-                    }`}>
-                      {incomeDiff > 0 ? (
-                        <TrendingUp className="w-5 h-5 text-emerald-600" />
-                      ) : (
-                        <TrendingDown className="w-5 h-5 text-red-600" />
-                      )}
-                      <div>
-                        <p className={`font-semibold ${incomeDiff > 0 ? 'text-emerald-700' : 'text-red-700'}`}>
-                          {incomeDiff > 0 ? '+' : ''}{formatCurrency(incomeDiff)}
-                        </p>
-                        <p className={`text-xs ${incomeDiff > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {incomeDiffPercentage > 0 ? '+' : ''}{incomeDiffPercentage.toFixed(1)}% de variação
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setSimulation({ ...simulation, newIncome: currentIncome })}
-                    className="w-full"
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Resetar para Renda Atual
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle>Comparativo de Distribuição</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {[
-                      { label: "Gastos Fixos", key: "fixed", color: "bg-[#0A1A3A]" },
-                      { label: "Essenciais", key: "essential", color: "bg-[#00A8A0]" },
-                      { label: "Supérfluos", key: "superfluous", color: "bg-amber-500" },
-                      { label: "Reserva", key: "emergency", color: "bg-green-500" },
-                      { label: "Investimentos", key: "investment", color: "bg-violet-500" }
-                    ].map(item => (
-                      <div key={item.key} className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                            <span className="text-sm text-slate-600">{item.label}</span>
-                          </div>
-                          <div className="flex items-center gap-2 text-sm">
-                            <span className="text-slate-500">{formatCurrency(currentDistribution[item.key])}</span>
-                            <ArrowRight className="w-3 h-3 text-slate-400" />
-                            <span className={`font-semibold ${
-                              simulatedDistribution[item.key] > currentDistribution[item.key] 
-                                ? 'text-emerald-600' 
-                                : simulatedDistribution[item.key] < currentDistribution[item.key]
-                                  ? 'text-red-600'
-                                  : 'text-slate-700'
-                            }`}>
-                              {formatCurrency(simulatedDistribution[item.key])}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </TabsContent>
-
-        {/* Reduction Simulation */}
-        <TabsContent value="reduction" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[#00A8A0]" />
-                    Simular Redução de Gastos
-                  </CardTitle>
-                  <CardDescription>
-                    Veja quanto você pode economizar reduzindo gastos
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <Label>Reduzir Gastos Fixos</Label>
-                        <span className="text-sm font-semibold text-slate-700">{simulation.fixedReduction}%</span>
-                      </div>
-                      <Slider
-                        value={[simulation.fixedReduction]}
-                        onValueChange={([value]) => setSimulation({ ...simulation, fixedReduction: value })}
-                        max={50}
-                        step={1}
-                      />
-                      <p className="text-xs text-slate-500">
-                        Economia: {formatCurrency(simulatedDistribution.fixed * simulation.fixedReduction / 100)}
-                      </p>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <Label>Reduzir Supérfluos</Label>
-                        <span className="text-sm font-semibold text-slate-700">{simulation.superfluousReduction}%</span>
-                      </div>
-                      <Slider
-                        value={[simulation.superfluousReduction]}
-                        onValueChange={([value]) => setSimulation({ ...simulation, superfluousReduction: value })}
-                        max={100}
-                        step={1}
-                      />
-                      <p className="text-xs text-slate-500">
-                        Economia: {formatCurrency(simulatedDistribution.superfluous * simulation.superfluousReduction / 100)}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-emerald-800">
-                    <PiggyBank className="w-5 h-5" />
-                    Potencial de Economia
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-6">
-                    <p className="text-sm text-emerald-600 mb-2">Economia Mensal Extra</p>
-                    <p className="text-4xl font-bold text-emerald-700">{formatCurrency(savings)}</p>
-                    <p className="text-sm text-emerald-600 mt-4">
-                      Em 12 meses: <span className="font-semibold">{formatCurrency(savings * 12)}</span>
-                    </p>
-                  </div>
-
-                  <div className="border-t border-emerald-200 pt-4 mt-4">
-                    <h4 className="font-medium text-emerald-800 mb-3">Nova Distribuição</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-emerald-700">Gastos Fixos</span>
-                        <span className="font-medium">{formatCurrency(adjustedFixed)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-emerald-700">Supérfluos</span>
-                        <span className="font-medium">{formatCurrency(adjustedSuperfluous)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-emerald-700">Disponível p/ Investir</span>
-                        <span className="font-bold text-emerald-800">
-                          {formatCurrency(simulatedDistribution.emergency + simulatedDistribution.investment + savings)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </TabsContent>
-
-        {/* Projection */}
-        <TabsContent value="projection" className="space-y-6">
+      <AnimatePresence mode="wait">
+        {!selectedScenario ? (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            key="scenarios"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
+            {SCENARIOS.map((scenario, index) => {
+              const Icon = scenario.icon;
+              return (
+                <motion.button
+                  key={scenario.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => setSelectedScenario(scenario)}
+                  className="group"
+                >
+                  <Card className="h-full hover:shadow-lg transition-all border-2 hover:border-[#00A8A0]">
+                    <CardContent className="p-6">
+                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${scenario.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                        <Icon className="w-8 h-8 text-white" />
+                      </div>
+                      <h3 className="text-lg font-bold text-slate-800 mb-2">
+                        {scenario.title}
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        {scenario.description}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.button>
+              );
+            })}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="simulation"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
+            <Button
+              variant="ghost"
+              onClick={() => setSelectedScenario(null)}
+              className="mb-4"
+            >
+              <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
+              Voltar aos cenários
+            </Button>
+
+            {/* Input Card */}
             <Card>
               <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <CardTitle className="flex items-center gap-3">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedScenario.color} flex items-center justify-center`}>
+                    {React.createElement(selectedScenario.icon, { className: "w-6 h-6 text-white" })}
+                  </div>
                   <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <LineChart className="w-5 h-5 text-[#00A8A0]" />
-                      Projeção de Economia
-                    </CardTitle>
-                    <CardDescription>
-                      Veja como seu patrimônio pode crescer ao longo do tempo
-                    </CardDescription>
+                    <p className="text-xl">{selectedScenario.title}</p>
+                    <p className="text-sm font-normal text-slate-500">{selectedScenario.description}</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Label className="text-sm">Período:</Label>
-                    <select
-                      value={simulation.savingsMonths}
-                      onChange={(e) => setSimulation({ ...simulation, savingsMonths: parseInt(e.target.value) })}
-                      className="border rounded-lg px-3 py-1.5 text-sm"
-                    >
-                      <option value={6}>6 meses</option>
-                      <option value={12}>12 meses</option>
-                      <option value={24}>24 meses</option>
-                      <option value={36}>36 meses</option>
-                    </select>
-                  </div>
-                </div>
+                </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={projectedSavings}>
-                      <defs>
-                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#00A8A0" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#00A8A0" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                      <XAxis 
-                        dataKey="month" 
-                        tick={{ fontSize: 12 }}
-                        tickLine={false}
+              <CardContent className="space-y-6">
+                {selectedScenario.id === "reduce_spending" && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Quanto você quer economizar por mês?</Label>
+                      <Input
+                        type="number"
+                        value={scenarioData.reductionAmount}
+                        onChange={(e) => setScenarioData({ ...scenarioData, reductionAmount: parseFloat(e.target.value) || 0 })}
+                        placeholder="Ex: 200"
                       />
-                      <YAxis 
-                        tick={{ fontSize: 12 }}
-                        tickLine={false}
-                        tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
-                      />
-                      <Tooltip
-                        formatter={(value) => formatCurrency(value)}
-                        labelStyle={{ color: '#64748B' }}
-                        contentStyle={{ 
-                          borderRadius: '12px', 
-                          border: '1px solid #E2E8F0',
-                          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
-                        }}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="value"
-                        stroke="#00A8A0"
-                        strokeWidth={2}
-                        fillOpacity={1}
-                        fill="url(#colorValue)"
-                        name="Total Acumulado"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
-                </div>
+                      <p className="text-xs text-slate-500">Sua economia mensal atual: {formatCurrency(monthlySavings)}</p>
+                    </div>
+                    
+                    {goals.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Conectar com meta</Label>
+                        <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma meta" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {goals.map(goal => (
+                              <SelectItem key={goal.id} value={goal.id}>
+                                {goal.title} - {formatCurrency(goal.target_amount)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+                )}
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 mt-6 pt-6 border-t">
-                  <div className="text-center">
-                    <p className="text-sm text-slate-500 mb-3">Em 6 meses</p>
-                    <p className="text-lg font-bold text-slate-800 tabular-nums">
-                      {formatCurrency((simulatedDistribution.emergency + simulatedDistribution.investment + savings) * 6)}
-                    </p>
+                {selectedScenario.id === "change_job" && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Qual seria sua nova renda?</Label>
+                      <Input
+                        type="number"
+                        value={scenarioData.newIncome}
+                        onChange={(e) => setScenarioData({ ...scenarioData, newIncome: parseFloat(e.target.value) || 0 })}
+                        placeholder="Nova renda mensal"
+                      />
+                      <p className="text-xs text-slate-500">Sua renda atual: {formatCurrency(currentIncome)}</p>
+                    </div>
+                    
+                    {goals.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Conectar com meta</Label>
+                        <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma meta" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {goals.map(goal => (
+                              <SelectItem key={goal.id} value={goal.id}>
+                                {goal.title} - {formatCurrency(goal.target_amount)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-center">
-                    <p className="text-sm text-slate-500 mb-3">Em 1 ano</p>
-                    <p className="text-lg font-bold text-[#00A8A0] tabular-nums">
-                      {formatCurrency((simulatedDistribution.emergency + simulatedDistribution.investment + savings) * 12)}
-                    </p>
+                )}
+
+                {selectedScenario.id === "zero_superfluous" && (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
+                      <p className="text-sm text-amber-800 mb-2">Seus gastos supérfluos este mês</p>
+                      <p className="text-3xl font-bold text-amber-900">{formatCurrency(superfluousSpending)}</p>
+                    </div>
+                    
+                    {goals.length > 0 && (
+                      <div className="space-y-2">
+                        <Label>Conectar com meta</Label>
+                        <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma meta" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {goals.map(goal => (
+                              <SelectItem key={goal.id} value={goal.id}>
+                                {goal.title} - {formatCurrency(goal.target_amount)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-center">
-                    <p className="text-sm text-slate-500 mb-3">Em 2 anos</p>
-                    <p className="text-lg font-bold text-slate-800 tabular-nums">
-                      {formatCurrency((simulatedDistribution.emergency + simulatedDistribution.investment + savings) * 24)}
-                    </p>
+                )}
+
+                {selectedScenario.id === "goal_time" && (
+                  <div className="space-y-4">
+                    {goals.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-slate-500 mb-4">Você ainda não tem metas cadastradas</p>
+                        <Button variant="outline">Criar minha primeira meta</Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <Label>Escolha sua meta</Label>
+                        <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione uma meta" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {goals.map(goal => (
+                              <SelectItem key={goal.id} value={goal.id}>
+                                {goal.title} - {formatCurrency(goal.target_amount)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
+
+            {/* Results Card */}
+            {impact && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Card className={`border-2 bg-gradient-to-br ${selectedScenario.color} bg-opacity-5`}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Heart className="w-5 h-5 text-[#00A8A0]" />
+                      Impacto Emocional
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {selectedScenario.id === "reduce_spending" && (
+                      <>
+                        <div className="text-center py-6">
+                          <p className="text-6xl mb-4">{scenarioData.reductionAmount >= 500 ? "🚀" : scenarioData.reductionAmount >= 200 ? "💪" : "🌱"}</p>
+                          <p className="text-3xl font-bold text-slate-800 mb-2">
+                            +{formatCurrency(impact.extraPerMonth)}/mês
+                          </p>
+                          <p className="text-slate-600">
+                            Economia extra todo mês
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-white rounded-xl p-4 text-center">
+                            <Calendar className="w-6 h-6 text-[#00A8A0] mx-auto mb-2" />
+                            <p className="text-2xl font-bold text-slate-800">{formatCurrency(impact.yearSavings)}</p>
+                            <p className="text-xs text-slate-500">Em 1 ano</p>
+                          </div>
+                          {impact.timeSaved && impact.timeSaved > 0 && (
+                            <div className="bg-white rounded-xl p-4 text-center">
+                              <Clock className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                              <p className="text-2xl font-bold text-purple-600">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
+                              <p className="text-xs text-slate-500">Antecipa sua meta</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {impact.goalName && impact.monthsToGoal && (
+                          <div className="bg-white rounded-xl p-5">
+                            <div className="flex items-center gap-3 mb-3">
+                              <Target className="w-5 h-5 text-[#00A8A0]" />
+                              <p className="font-semibold text-slate-800">Meta: {impact.goalName}</p>
+                            </div>
+                            <p className="text-4xl font-bold text-[#00A8A0] mb-2">
+                              {impact.monthsToGoal} {impact.monthsToGoal === 1 ? 'mês' : 'meses'}
+                            </p>
+                            <p className="text-sm text-slate-600">
+                              Você alcança em {new Date(Date.now() + impact.monthsToGoal * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {selectedScenario.id === "change_job" && (
+                      <>
+                        <div className="text-center py-6">
+                          <p className="text-6xl mb-4">
+                            {impact.incomeDiff > 0 ? "📈" : impact.incomeDiff < 0 ? "📉" : "➡️"}
+                          </p>
+                          <p className={`text-3xl font-bold mb-2 ${impact.incomeDiff > 0 ? 'text-emerald-600' : impact.incomeDiff < 0 ? 'text-red-600' : 'text-slate-600'}`}>
+                            {impact.incomeDiff > 0 ? '+' : ''}{formatCurrency(impact.incomeDiff)}
+                          </p>
+                          <p className="text-slate-600">Diferença mensal</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-white rounded-xl p-4 text-center">
+                            <PiggyBank className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
+                            <p className="text-2xl font-bold text-slate-800">{formatCurrency(impact.monthlySavings)}</p>
+                            <p className="text-xs text-slate-500">Nova economia/mês</p>
+                          </div>
+                          {impact.timeSaved && impact.timeSaved > 0 && (
+                            <div className="bg-white rounded-xl p-4 text-center">
+                              <Clock className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                              <p className="text-2xl font-bold text-purple-600">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
+                              <p className="text-xs text-slate-500">Antecipa sua meta</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {impact.goalName && impact.monthsToGoal && (
+                          <div className="bg-white rounded-xl p-5">
+                            <div className="flex items-center gap-3 mb-3">
+                              <Target className="w-5 h-5 text-[#00A8A0]" />
+                              <p className="font-semibold text-slate-800">Meta: {impact.goalName}</p>
+                            </div>
+                            <p className="text-4xl font-bold text-[#00A8A0] mb-2">
+                              {impact.monthsToGoal} {impact.monthsToGoal === 1 ? 'mês' : 'meses'}
+                            </p>
+                            <p className="text-sm text-slate-600">
+                              Com a nova renda, você alcança em {new Date(Date.now() + impact.monthsToGoal * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {selectedScenario.id === "zero_superfluous" && (
+                      <>
+                        <div className="text-center py-6">
+                          <p className="text-6xl mb-4">⚡</p>
+                          <p className="text-3xl font-bold text-amber-600 mb-2">
+                            {formatCurrency(impact.savings30Days)}
+                          </p>
+                          <p className="text-slate-600">Economia em 30 dias sem supérfluos</p>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-white rounded-xl p-4 text-center">
+                            <Sparkles className="w-6 h-6 text-amber-500 mx-auto mb-2" />
+                            <p className="text-2xl font-bold text-slate-800">{formatCurrency(impact.extraYearly)}</p>
+                            <p className="text-xs text-slate-500">Em 12 meses</p>
+                          </div>
+                          {impact.timeSaved && impact.timeSaved > 0 && (
+                            <div className="bg-white rounded-xl p-4 text-center">
+                              <Clock className="w-6 h-6 text-purple-500 mx-auto mb-2" />
+                              <p className="text-2xl font-bold text-purple-600">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
+                              <p className="text-xs text-slate-500">Antecipa sua meta</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {impact.goalName && impact.monthsToGoal && (
+                          <div className="bg-white rounded-xl p-5">
+                            <div className="flex items-center gap-3 mb-3">
+                              <Target className="w-5 h-5 text-[#00A8A0]" />
+                              <p className="font-semibold text-slate-800">Meta: {impact.goalName}</p>
+                            </div>
+                            <p className="text-4xl font-bold text-[#00A8A0] mb-2">
+                              {impact.monthsToGoal} {impact.monthsToGoal === 1 ? 'mês' : 'meses'}
+                            </p>
+                            <p className="text-sm text-slate-600">
+                              Cortando supérfluos, você alcança em {new Date(Date.now() + impact.monthsToGoal * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    )}
+
+                    {selectedScenario.id === "goal_time" && impact.monthsNeeded && (
+                      <>
+                        <div className="text-center py-6">
+                          <p className="text-6xl mb-4">🎯</p>
+                          <p className="text-3xl font-bold text-purple-600 mb-2">
+                            {impact.monthsNeeded} {impact.monthsNeeded === 1 ? 'mês' : 'meses'}
+                          </p>
+                          <p className="text-slate-600">Para alcançar: {impact.goalName}</p>
+                        </div>
+
+                        <div className="bg-white rounded-xl p-5 space-y-3">
+                          <div className="flex justify-between">
+                            <span className="text-slate-600">Meta</span>
+                            <span className="font-bold text-slate-800">{formatCurrency(impact.targetAmount)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-600">Já conquistado</span>
+                            <span className="font-semibold text-emerald-600">{formatCurrency(impact.currentAmount)}</span>
+                          </div>
+                          <div className="flex justify-between border-t pt-3">
+                            <span className="text-slate-600">Falta</span>
+                            <span className="font-bold text-[#00A8A0]">{formatCurrency(impact.remaining)}</span>
+                          </div>
+                        </div>
+
+                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-200">
+                          <div className="flex items-center gap-3 mb-3">
+                            <PartyPopper className="w-6 h-6 text-purple-600" />
+                            <p className="font-semibold text-purple-800">Previsão de Conquista</p>
+                          </div>
+                          <p className="text-3xl font-bold text-purple-600 mb-1">
+                            {impact.targetDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+                          </p>
+                          <p className="text-sm text-purple-600">
+                            Economizando {formatCurrency(impact.monthlySavings)} por mês
+                          </p>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                </Card>
+              </motion.div>
+            )}
           </motion.div>
-        </TabsContent>
-      </Tabs>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
