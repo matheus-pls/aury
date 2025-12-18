@@ -147,6 +147,15 @@ export default function BehaviorAnalysis() {
     investment: "Investimentos"
   };
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
   // Generate insights
   const generateInsights = () => {
     if (!analysis) return [];
@@ -234,15 +243,6 @@ export default function BehaviorAnalysis() {
   };
 
   const insights = generateInsights();
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
 
   const nextInsight = () => {
     if (currentInsightIndex < insights.length - 1) {
