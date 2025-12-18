@@ -8,6 +8,7 @@ import Welcome from './pages/Welcome';
 import DailyMode from './pages/DailyMode';
 import AutoPlanning from './pages/AutoPlanning';
 import EmergencyFund from './pages/EmergencyFund';
+import BehaviorAnalysis from './pages/BehaviorAnalysis';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +23,7 @@ export const PAGES = {
     "DailyMode": DailyMode,
     "AutoPlanning": AutoPlanning,
     "EmergencyFund": EmergencyFund,
+    "BehaviorAnalysis": BehaviorAnalysis,
 }
 
 export const pagesConfig = {

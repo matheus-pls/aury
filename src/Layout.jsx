@@ -26,6 +26,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Planejamento", page: "AutoPlanning", icon: Sparkles },
     { name: "Dia a Dia", page: "DailyMode", icon: Calendar },
     { name: "Reserva", page: "EmergencyFund", icon: Shield },
+    { name: "Análise", page: "BehaviorAnalysis", icon: TrendingUp },
     { name: "Rendas", page: "Incomes", icon: Wallet },
     { name: "Gastos", page: "Expenses", icon: Receipt },
     { name: "Metas", page: "Goals", icon: Target },
