@@ -12,7 +12,8 @@ import {
   X,
   ChevronRight,
   Calendar,
-  Sparkles
+  Sparkles,
+  Shield
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -24,6 +25,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Dashboard", page: "Dashboard", icon: LayoutDashboard },
     { name: "Planejamento", page: "AutoPlanning", icon: Sparkles },
     { name: "Dia a Dia", page: "DailyMode", icon: Calendar },
+    { name: "Reserva", page: "EmergencyFund", icon: Shield },
     { name: "Rendas", page: "Incomes", icon: Wallet },
     { name: "Gastos", page: "Expenses", icon: Receipt },
     { name: "Metas", page: "Goals", icon: Target },
