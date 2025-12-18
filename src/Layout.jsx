@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Calendar,
   Sparkles,
-  Shield
+  Shield,
+  TrendingUp
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
