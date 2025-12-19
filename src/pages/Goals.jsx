@@ -70,7 +70,12 @@ export default function Goals() {
     current_amount: "0",
     deadline: "",
     category: "other",
-    priority: "medium"
+    priority: "medium",
+    travel_budget: "",
+    travel_currency: "BRL",
+    travel_start_date: "",
+    travel_end_date: "",
+    travel_active: false
   });
 
   const queryClient = useQueryClient();
@@ -113,7 +118,12 @@ export default function Goals() {
         current_amount: goal.current_amount?.toString() || "0",
         deadline: goal.deadline || "",
         category: goal.category,
-        priority: goal.priority || "medium"
+        priority: goal.priority || "medium",
+        travel_budget: goal.travel_budget?.toString() || "",
+        travel_currency: goal.travel_currency || "BRL",
+        travel_start_date: goal.travel_start_date || "",
+        travel_end_date: goal.travel_end_date || "",
+        travel_active: goal.travel_active || false
       });
     } else {
       setEditingGoal(null);
@@ -123,7 +133,12 @@ export default function Goals() {
         current_amount: "0",
         deadline: "",
         category: "other",
-        priority: "medium"
+        priority: "medium",
+        travel_budget: "",
+        travel_currency: "BRL",
+        travel_start_date: "",
+        travel_end_date: "",
+        travel_active: false
       });
     }
     setIsDialogOpen(true);
@@ -143,11 +158,22 @@ export default function Goals() {
       is_completed: parseFloat(formData.current_amount) >= parseFloat(formData.target_amount)
     };
 
+    if (formData.category === 'travel' && formData.travel_budget) {
+      data.travel_budget = parseFloat(formData.travel_budget);
+    }
+
     if (editingGoal) {
       updateMutation.mutate({ id: editingGoal.id, data });
     } else {
       createMutation.mutate(data);
     }
+  };
+
+  const toggleTravelMode = (goal) => {
+    updateMutation.mutate({
+      id: goal.id,
+      data: { ...goal, travel_active: !goal.travel_active }
+    });
   };
 
   const handleAddMoney = (goal) => {
@@ -313,7 +339,15 @@ export default function Goals() {
                           <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-800">{goal.title}</h3>
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-slate-800">{goal.title}</h3>
+                            {goal.category === 'travel' && goal.travel_active && (
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 flex items-center gap-1">
+                                <Plane className="w-3 h-3" />
+                                Ativa
+                              </span>
+                            )}
+                          </div>
                           <span className={`text-xs px-2 py-0.5 rounded-full ${PRIORITIES[goal.priority]?.color || 'bg-slate-100 text-slate-600'}`}>
                             Prioridade {PRIORITIES[goal.priority]?.label || 'Média'}
                           </span>
@@ -326,6 +360,12 @@ export default function Goals() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          {goal.category === 'travel' && (
+                            <DropdownMenuItem onClick={() => toggleTravelMode(goal)}>
+                              <Plane className="w-4 h-4 mr-2" />
+                              {goal.travel_active ? 'Desativar' : 'Ativar'} Modo Viagem
+                            </DropdownMenuItem>
+                          )}
                           <DropdownMenuItem onClick={() => {
                             setSelectedGoalForMoney(goal);
                             setIsAddingMoney(true);
@@ -529,6 +569,69 @@ export default function Goals() {
                 </Select>
               </div>
             </div>
+
+            {formData.category === 'travel' && (
+              <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h4 className="font-medium text-blue-800 flex items-center gap-2">
+                  <Plane className="w-4 h-4" />
+                  Configurações da Viagem
+                </h4>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="travel_budget">Orçamento da Viagem</Label>
+                    <Input
+                      id="travel_budget"
+                      type="number"
+                      step="0.01"
+                      placeholder="0,00"
+                      value={formData.travel_budget}
+                      onChange={(e) => setFormData({ ...formData, travel_budget: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Moeda Principal</Label>
+                    <Select
+                      value={formData.travel_currency}
+                      onValueChange={(value) => setFormData({ ...formData, travel_currency: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="BRL">🇧🇷 BRL</SelectItem>
+                        <SelectItem value="USD">🇺🇸 USD</SelectItem>
+                        <SelectItem value="EUR">🇪🇺 EUR</SelectItem>
+                        <SelectItem value="GBP">🇬🇧 GBP</SelectItem>
+                        <SelectItem value="ARS">🇦🇷 ARS</SelectItem>
+                        <SelectItem value="CLP">🇨🇱 CLP</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="travel_start_date">Início da Viagem</Label>
+                    <Input
+                      id="travel_start_date"
+                      type="date"
+                      value={formData.travel_start_date}
+                      onChange={(e) => setFormData({ ...formData, travel_start_date: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="travel_end_date">Fim da Viagem</Label>
+                    <Input
+                      id="travel_end_date"
+                      type="date"
+                      value={formData.travel_end_date}
+                      onChange={(e) => setFormData({ ...formData, travel_end_date: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-3 pt-4">
               <Button 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { 
   LayoutDashboard, 
   Wallet, 
@@ -14,7 +16,8 @@ import {
   Calendar,
   Sparkles,
   Shield,
-  TrendingUp
+  TrendingUp,
+  Plane
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -22,7 +25,7 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  const navigation = [
+  const [navigation, setNavigation] = useState([
     { name: "Dashboard", page: "Dashboard", icon: LayoutDashboard },
     { name: "Planejamento", page: "AutoPlanning", icon: Sparkles },
     { name: "Dia a Dia", page: "DailyMode", icon: Calendar },
@@ -33,7 +36,40 @@ export default function Layout({ children, currentPageName }) {
     { name: "Metas", page: "Goals", icon: Target },
     { name: "Simulação", page: "Simulation", icon: Calculator },
     { name: "Configurações", page: "Settings", icon: Settings },
-  ];
+  ]);
+
+  const { data: goals = [] } = useQuery({
+    queryKey: ['goals'],
+    queryFn: () => base44.entities.FinancialGoal.filter({ 
+      category: 'travel', 
+      is_completed: false,
+      travel_active: true
+    })
+  });
+
+  useEffect(() => {
+    const baseNav = [
+      { name: "Dashboard", page: "Dashboard", icon: LayoutDashboard },
+      { name: "Planejamento", page: "AutoPlanning", icon: Sparkles },
+      { name: "Dia a Dia", page: "DailyMode", icon: Calendar },
+      { name: "Reserva", page: "EmergencyFund", icon: Shield },
+      { name: "Análise", page: "BehaviorAnalysis", icon: TrendingUp },
+    ];
+
+    if (goals.length > 0) {
+      baseNav.push({ name: "Modo Viagem", page: "TravelMode", icon: Plane });
+    }
+
+    baseNav.push(
+      { name: "Rendas", page: "Incomes", icon: Wallet },
+      { name: "Gastos", page: "Expenses", icon: Receipt },
+      { name: "Metas", page: "Goals", icon: Target },
+      { name: "Simulação", page: "Simulation", icon: Calculator },
+      { name: "Configurações", page: "Settings", icon: Settings }
+    );
+
+    setNavigation(baseNav);
+  }, [goals]);
 
   useEffect(() => {
     setSidebarOpen(false);
