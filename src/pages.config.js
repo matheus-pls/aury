@@ -1,29 +1,33 @@
+import AutoPlanning from './pages/AutoPlanning';
+import BehaviorAnalysis from './pages/BehaviorAnalysis';
+import DailyMode from './pages/DailyMode';
 import Dashboard from './pages/Dashboard';
-import Incomes from './pages/Incomes';
+import EmergencyFund from './pages/EmergencyFund';
 import Expenses from './pages/Expenses';
 import Goals from './pages/Goals';
+import Home from './pages/Home';
+import Incomes from './pages/Incomes';
 import Settings from './pages/Settings';
 import Simulation from './pages/Simulation';
 import Welcome from './pages/Welcome';
-import DailyMode from './pages/DailyMode';
-import AutoPlanning from './pages/AutoPlanning';
-import EmergencyFund from './pages/EmergencyFund';
-import BehaviorAnalysis from './pages/BehaviorAnalysis';
+import TravelMode from './pages/TravelMode';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AutoPlanning": AutoPlanning,
+    "BehaviorAnalysis": BehaviorAnalysis,
+    "DailyMode": DailyMode,
     "Dashboard": Dashboard,
-    "Incomes": Incomes,
+    "EmergencyFund": EmergencyFund,
     "Expenses": Expenses,
     "Goals": Goals,
+    "Home": Home,
+    "Incomes": Incomes,
     "Settings": Settings,
     "Simulation": Simulation,
     "Welcome": Welcome,
-    "DailyMode": DailyMode,
-    "AutoPlanning": AutoPlanning,
-    "EmergencyFund": EmergencyFund,
-    "BehaviorAnalysis": BehaviorAnalysis,
+    "TravelMode": TravelMode,
 }
 
 export const pagesConfig = {
