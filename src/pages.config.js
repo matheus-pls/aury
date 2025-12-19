@@ -11,6 +11,7 @@ import Settings from './pages/Settings';
 import Simulation from './pages/Simulation';
 import Welcome from './pages/Welcome';
 import TravelMode from './pages/TravelMode';
+import FamilyMode from './pages/FamilyMode';
 import __Layout from './Layout.jsx';
 
 
@@ -28,6 +29,7 @@ export const PAGES = {
     "Simulation": Simulation,
     "Welcome": Welcome,
     "TravelMode": TravelMode,
+    "FamilyMode": FamilyMode,
 }
 
 export const pagesConfig = {

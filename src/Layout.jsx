@@ -17,7 +17,8 @@ import {
   Sparkles,
   Shield,
   TrendingUp,
-  Plane
+  Plane,
+  Heart
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -38,13 +39,30 @@ export default function Layout({ children, currentPageName }) {
     { name: "Configurações", page: "Settings", icon: Settings },
   ]);
 
-  const { data: goals = [] } = useQuery({
-    queryKey: ['goals'],
+  const { data: user } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => base44.auth.me()
+  });
+
+  const { data: travelGoals = [] } = useQuery({
+    queryKey: ['travel-goals'],
     queryFn: () => base44.entities.FinancialGoal.filter({ 
       category: 'travel', 
       is_completed: false,
       travel_active: true
     })
+  });
+
+  const { data: familyGroups = [] } = useQuery({
+    queryKey: ['user-family-groups', user?.email],
+    queryFn: async () => {
+      if (!user) return [];
+      const allGroups = await base44.entities.FamilyGroup.list();
+      return allGroups.filter(g => 
+        g.admin_email === user.email || g.members?.includes(user.email)
+      );
+    },
+    enabled: !!user
   });
 
   useEffect(() => {
@@ -56,8 +74,12 @@ export default function Layout({ children, currentPageName }) {
       { name: "Análise", page: "BehaviorAnalysis", icon: TrendingUp },
     ];
 
-    if (goals.length > 0) {
+    if (travelGoals.length > 0) {
       baseNav.push({ name: "Modo Viagem", page: "TravelMode", icon: Plane });
+    }
+
+    if (familyGroups.length > 0) {
+      baseNav.push({ name: "Modo Família", page: "FamilyMode", icon: Heart });
     }
 
     baseNav.push(
@@ -69,7 +91,7 @@ export default function Layout({ children, currentPageName }) {
     );
 
     setNavigation(baseNav);
-  }, [goals]);
+  }, [travelGoals, familyGroups]);
 
   useEffect(() => {
     setSidebarOpen(false);
