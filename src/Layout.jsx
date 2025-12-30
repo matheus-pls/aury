@@ -6,51 +6,32 @@ import { useQuery } from "@tanstack/react-query";
 import { 
   LayoutDashboard, 
   Wallet, 
-  Receipt, 
   Target, 
-  Calculator, 
   Settings,
   Menu,
   X,
   ChevronRight,
-  Calendar,
   Sparkles,
-  Shield,
   TrendingUp,
-  Plane,
   Heart
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
-
   const [navigation, setNavigation] = useState([
-    { name: "Dashboard", page: "Dashboard", icon: LayoutDashboard },
-    { name: "Planejamento", page: "AutoPlanning", icon: Sparkles },
-    { name: "Dia a Dia", page: "DailyMode", icon: Calendar },
-    { name: "Reserva", page: "EmergencyFund", icon: Shield },
-    { name: "Análise", page: "BehaviorAnalysis", icon: TrendingUp },
-    { name: "Rendas", page: "Incomes", icon: Wallet },
-    { name: "Gastos", page: "Expenses", icon: Receipt },
-    { name: "Metas", page: "Goals", icon: Target },
-    { name: "Simulação", page: "Simulation", icon: Calculator },
+    { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
+    { name: "Planejamento", page: "Planning", icon: Sparkles },
+    { name: "Movimentações", page: "Movements", icon: Wallet },
+    { name: "Metas", page: "GoalsHub", icon: Target },
+    { name: "Análises", page: "Analysis", icon: TrendingUp },
     { name: "Configurações", page: "Settings", icon: Settings },
   ]);
+  const location = useLocation();
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
     queryFn: () => base44.auth.me()
-  });
-
-  const { data: travelGoals = [] } = useQuery({
-    queryKey: ['travel-goals'],
-    queryFn: () => base44.entities.FinancialGoal.filter({ 
-      category: 'travel', 
-      is_completed: false,
-      travel_active: true
-    })
   });
 
   const { data: familyGroups = [] } = useQuery({
@@ -67,31 +48,21 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     const baseNav = [
-      { name: "Dashboard", page: "Dashboard", icon: LayoutDashboard },
-      { name: "Planejamento", page: "AutoPlanning", icon: Sparkles },
-      { name: "Dia a Dia", page: "DailyMode", icon: Calendar },
-      { name: "Reserva", page: "EmergencyFund", icon: Shield },
-      { name: "Análise", page: "BehaviorAnalysis", icon: TrendingUp },
+      { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
+      { name: "Planejamento", page: "Planning", icon: Sparkles },
+      { name: "Movimentações", page: "Movements", icon: Wallet },
+      { name: "Metas", page: "GoalsHub", icon: Target },
+      { name: "Análises", page: "Analysis", icon: TrendingUp },
     ];
 
-    if (travelGoals.length > 0) {
-      baseNav.push({ name: "Modo Viagem", page: "TravelMode", icon: Plane });
-    }
-
     if (familyGroups.length > 0) {
-      baseNav.push({ name: "Modo Família", page: "FamilyMode", icon: Heart });
+      baseNav.push({ name: "Família", page: "FamilyMode", icon: Heart });
     }
 
-    baseNav.push(
-      { name: "Rendas", page: "Incomes", icon: Wallet },
-      { name: "Gastos", page: "Expenses", icon: Receipt },
-      { name: "Metas", page: "Goals", icon: Target },
-      { name: "Simulação", page: "Simulation", icon: Calculator },
-      { name: "Configurações", page: "Settings", icon: Settings }
-    );
+    baseNav.push({ name: "Configurações", page: "Settings", icon: Settings });
 
     setNavigation(baseNav);
-  }, [travelGoals, familyGroups]);
+  }, [familyGroups]);
 
   useEffect(() => {
     setSidebarOpen(false);
