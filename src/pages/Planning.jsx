@@ -1,0 +1,98 @@
+import React from "react";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
+import { 
+  Sparkles,
+  Calendar,
+  Shield,
+  Calculator,
+  TrendingUp,
+  ChevronRight
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+
+const PLANNING_MODULES = [
+  {
+    id: "auto",
+    title: "Planejamento Automático",
+    description: "Seu plano financeiro mensal completo e automatizado",
+    icon: Sparkles,
+    color: "from-purple-500 to-purple-600",
+    page: "AutoPlanning"
+  },
+  {
+    id: "daily",
+    title: "Dia a Dia",
+    description: "Quanto você pode gastar hoje sem comprometer o mês",
+    icon: Calendar,
+    color: "from-blue-500 to-blue-600",
+    page: "DailyMode"
+  },
+  {
+    id: "emergency",
+    title: "Reserva de Emergência",
+    description: "Construa e acompanhe sua segurança financeira",
+    icon: Shield,
+    color: "from-emerald-500 to-emerald-600",
+    page: "EmergencyFund"
+  },
+  {
+    id: "simulation",
+    title: "Simulações",
+    description: "Simule cenários e veja o impacto nas suas metas",
+    icon: Calculator,
+    color: "from-amber-500 to-orange-500",
+    page: "Simulation"
+  }
+];
+
+export default function Planning() {
+  return (
+    <div className="space-y-6 pb-8">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Planejamento</h1>
+        <p className="text-slate-500 mt-1">Organize suas finanças de forma inteligente</p>
+      </motion.div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {PLANNING_MODULES.map((module, index) => {
+          const Icon = module.icon;
+          return (
+            <Link key={module.id} to={createPageUrl(module.page)}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-[#00A8A0] group">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${module.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                        <Icon className="w-8 h-8 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-bold text-slate-800 mb-1">
+                          {module.title}
+                        </h3>
+                        <p className="text-sm text-slate-600">
+                          {module.description}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-[#00A8A0] group-hover:translate-x-1 transition-all" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}

@@ -4,14 +4,18 @@ import DailyMode from './pages/DailyMode';
 import Dashboard from './pages/Dashboard';
 import EmergencyFund from './pages/EmergencyFund';
 import Expenses from './pages/Expenses';
-import Goals from './pages/Goals';
 import Home from './pages/Home';
 import Incomes from './pages/Incomes';
 import Settings from './pages/Settings';
 import Simulation from './pages/Simulation';
-import Welcome from './pages/Welcome';
 import TravelMode from './pages/TravelMode';
-import FamilyMode from './pages/FamilyMode';
+import Welcome from './pages/Welcome';
+import Goals from './pages/Goals';
+import Overview from './pages/Overview';
+import Planning from './pages/Planning';
+import Movements from './pages/Movements';
+import GoalsHub from './pages/GoalsHub';
+import Analysis from './pages/Analysis';
 import __Layout from './Layout.jsx';
 
 
@@ -22,14 +26,18 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "EmergencyFund": EmergencyFund,
     "Expenses": Expenses,
-    "Goals": Goals,
     "Home": Home,
     "Incomes": Incomes,
     "Settings": Settings,
     "Simulation": Simulation,
-    "Welcome": Welcome,
     "TravelMode": TravelMode,
-    "FamilyMode": FamilyMode,
+    "Welcome": Welcome,
+    "Goals": Goals,
+    "Overview": Overview,
+    "Planning": Planning,
+    "Movements": Movements,
+    "GoalsHub": GoalsHub,
+    "Analysis": Analysis,
 }
 
 export const pagesConfig = {
