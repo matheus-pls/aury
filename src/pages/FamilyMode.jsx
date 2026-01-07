@@ -76,10 +76,21 @@ export default function FamilyMode() {
 
   const queryClient = useQueryClient();
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ['user'],
     queryFn: () => base44.auth.me()
   });
+
+  if (userLoading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#00A8A0] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-500">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   const { data: groups = [] } = useQuery({
     queryKey: ['family-groups', user?.email],
