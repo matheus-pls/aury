@@ -81,17 +81,6 @@ export default function FamilyMode() {
     queryFn: () => base44.auth.me()
   });
 
-  if (userLoading) {
-    return (
-      <div className="min-h-[70vh] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#00A8A0] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-500">Carregando...</p>
-        </div>
-      </div>
-    );
-  }
-
   const { data: groups = [] } = useQuery({
     queryKey: ['family-groups', user?.email],
     queryFn: async () => {
@@ -226,6 +215,17 @@ export default function FamilyMode() {
       currency: 'BRL'
     }).format(value);
   };
+
+  if (userLoading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#00A8A0] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-500">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!activeGroup) {
     return (
