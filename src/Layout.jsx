@@ -72,19 +72,20 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen bg-slate-50">
       <style>{`
         :root {
-          --rendy-primary: #00A8A0;
-          --rendy-primary-dark: #008F88;
-          --rendy-secondary: #0A1A3A;
-          --rendy-secondary-light: #1A2A4A;
+          --aury-teal: #5FBDBD;
+          --aury-teal-dark: #4FA9A5;
+          --aury-navy: #1B3A52;
+          --aury-navy-light: #2A4A62;
+          --aury-navy-deep: #0A2540;
         }
-        .bg-rendy-primary { background-color: var(--rendy-primary); }
-        .bg-rendy-secondary { background-color: var(--rendy-secondary); }
-        .text-rendy-primary { color: var(--rendy-primary); }
-        .text-rendy-secondary { color: var(--rendy-secondary); }
-        .border-rendy-primary { border-color: var(--rendy-primary); }
-        .hover\\:bg-rendy-primary:hover { background-color: var(--rendy-primary); }
-        .from-rendy-primary { --tw-gradient-from: var(--rendy-primary); }
-        .to-rendy-secondary { --tw-gradient-to: var(--rendy-secondary); }
+        .bg-aury-teal { background-color: var(--aury-teal); }
+        .bg-aury-navy { background-color: var(--aury-navy); }
+        .text-aury-teal { color: var(--aury-teal); }
+        .text-aury-navy { color: var(--aury-navy); }
+        .border-aury-teal { border-color: var(--aury-teal); }
+        .hover\\:bg-aury-teal:hover { background-color: var(--aury-teal); }
+        .from-aury-teal { --tw-gradient-from: var(--aury-teal); }
+        .to-aury-navy { --tw-gradient-to: var(--aury-navy); }
       `}</style>
 
       {/* Mobile Header */}
@@ -97,8 +98,8 @@ export default function Layout({ children, currentPageName }) {
         </button>
         <div className="flex items-center gap-2">
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_69359712539a91a68b73062c/fe2ff4d83_ChatGPTImage7dedezde202512_49_24.png" 
-            alt="Rendy" 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
+            alt="Aury" 
             className="h-8"
           />
         </div>
@@ -129,8 +130,8 @@ export default function Layout({ children, currentPageName }) {
           {/* Logo */}
           <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100">
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/user_69359712539a91a68b73062c/fe2ff4d83_ChatGPTImage7dedezde202512_49_24.png" 
-              alt="Rendy" 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
+              alt="Aury" 
               className="h-10"
             />
             <button
@@ -153,8 +154,8 @@ export default function Layout({ children, currentPageName }) {
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
                     ${isActive 
-                      ? 'bg-gradient-to-r from-[#00A8A0] to-[#008F88] text-white shadow-lg shadow-[#00A8A0]/20' 
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-rendy-secondary'
+                      ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20' 
+                      : 'text-slate-600 hover:bg-slate-50 hover:text-[#1B3A52]'
                     }
                   `}
                 >
@@ -169,8 +170,8 @@ export default function Layout({ children, currentPageName }) {
           {/* Footer */}
           <div className="p-4 border-t border-slate-100">
             <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4">
-              <p className="text-xs text-slate-500 mb-1">Organize suas finanças</p>
-              <p className="text-sm font-semibold text-rendy-secondary">de forma simples e segura</p>
+              <p className="text-xs text-slate-500 mb-1">Controle. Clareza. Confiança.</p>
+              <p className="text-sm font-semibold text-[#1B3A52]">Seu aliado financeiro</p>
             </div>
           </div>
         </div>
