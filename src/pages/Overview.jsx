@@ -139,6 +139,9 @@ export default function Overview() {
         <p className="text-slate-500 mt-1">Seu panorama financeiro de hoje</p>
       </motion.div>
 
+      {/* Aury Flow - Entrada Rápida Inteligente */}
+      <AuryFlow />
+
       {/* Índice de Tranquilidade Financeira */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
