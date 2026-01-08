@@ -17,7 +17,10 @@ import {
   Shield,
   TrendingUp as TrendingUpIcon,
   Settings,
-  Mail
+  Mail,
+  Edit3,
+  Check,
+  DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +59,9 @@ export default function FamilyMode() {
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [isGoalDetailsOpen, setIsGoalDetailsOpen] = useState(false);
+  const [selectedGoal, setSelectedGoal] = useState(null);
+  const [contributionAmount, setContributionAmount] = useState("");
   const [groupName, setGroupName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
   
@@ -71,7 +77,8 @@ export default function FamilyMode() {
     target_amount: "",
     current_amount: "0",
     deadline: "",
-    category: "other"
+    category: "other",
+    responsibilities: {}
   });
 
   const queryClient = useQueryClient();
@@ -160,8 +167,19 @@ export default function FamilyMode() {
         target_amount: "",
         current_amount: "0",
         deadline: "",
-        category: "other"
+        category: "other",
+        responsibilities: {}
       });
+    }
+  });
+
+  const updateGoalMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.SharedGoal.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['shared-goals']);
+      setIsGoalDetailsOpen(false);
+      setSelectedGoal(null);
+      setContributionAmount("");
     }
   });
 
@@ -201,12 +219,43 @@ export default function FamilyMode() {
 
   const handleAddGoal = (e) => {
     e.preventDefault();
+    const responsibilities = {};
+    activeGroup.members?.forEach(email => {
+      responsibilities[email] = goalForm.responsibilities[email] || 0;
+    });
+    
     createGoalMutation.mutate({
       family_group_id: activeGroup.id,
       ...goalForm,
       target_amount: parseFloat(goalForm.target_amount),
-      current_amount: parseFloat(goalForm.current_amount) || 0
+      current_amount: parseFloat(goalForm.current_amount) || 0,
+      contributions: {},
+      responsibilities
     });
+  };
+
+  const handleContribute = () => {
+    if (!selectedGoal || !contributionAmount) return;
+    
+    const contributions = selectedGoal.contributions || {};
+    contributions[user.email] = (contributions[user.email] || 0) + parseFloat(contributionAmount);
+    
+    const newCurrentAmount = (selectedGoal.current_amount || 0) + parseFloat(contributionAmount);
+    
+    updateGoalMutation.mutate({
+      id: selectedGoal.id,
+      data: {
+        ...selectedGoal,
+        contributions,
+        current_amount: newCurrentAmount,
+        is_completed: newCurrentAmount >= selectedGoal.target_amount
+      }
+    });
+  };
+
+  const openGoalDetails = (goal) => {
+    setSelectedGoal(goal);
+    setIsGoalDetailsOpen(true);
   };
 
   const formatCurrency = (value) => {
@@ -398,24 +447,33 @@ export default function FamilyMode() {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-[#00A8A0] mb-4">
+            <p className="text-3xl font-bold text-[#5FBDBD] mb-4">
               {sharedGoals.length}
             </p>
-            {sharedGoals.length > 0 && (
-              <div className="space-y-2">
+            {sharedGoals.length > 0 ? (
+              <div className="space-y-3">
                 {sharedGoals.slice(0, 2).map(goal => {
                   const progress = (goal.current_amount / goal.target_amount) * 100;
                   return (
-                    <div key={goal.id} className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-600">{goal.title}</span>
-                        <span className="font-semibold text-slate-800">{progress.toFixed(0)}%</span>
+                    <button
+                      key={goal.id}
+                      onClick={() => openGoalDetails(goal)}
+                      className="w-full text-left space-y-2 p-3 rounded-lg hover:bg-slate-50 transition-colors"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium text-slate-700">{goal.title}</span>
+                        <span className="text-xs font-semibold text-[#5FBDBD]">{progress.toFixed(0)}%</span>
                       </div>
-                      <Progress value={progress} className="h-1" />
-                    </div>
+                      <Progress value={progress} className="h-2" />
+                      <p className="text-xs text-slate-500">
+                        {formatCurrency(goal.current_amount)} de {formatCurrency(goal.target_amount)}
+                      </p>
+                    </button>
                   );
                 })}
               </div>
+            ) : (
+              <p className="text-sm text-slate-500">Crie sua primeira meta compartilhada</p>
             )}
           </CardContent>
         </Card>
@@ -617,7 +675,7 @@ export default function FamilyMode() {
 
       {/* Add Goal Dialog */}
       <Dialog open={isAddGoalOpen} onOpenChange={setIsAddGoalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nova Meta Compartilhada</DialogTitle>
           </DialogHeader>
@@ -635,7 +693,7 @@ export default function FamilyMode() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="targetAmount">Meta</Label>
+                <Label htmlFor="targetAmount">Valor da Meta</Label>
                 <Input
                   id="targetAmount"
                   type="number"
@@ -647,7 +705,7 @@ export default function FamilyMode() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="currentAmount">Já tem</Label>
+                <Label htmlFor="currentAmount">Já economizado</Label>
                 <Input
                   id="currentAmount"
                   type="number"
@@ -669,6 +727,39 @@ export default function FamilyMode() {
               />
             </div>
 
+            <div className="space-y-3 p-4 bg-slate-50 rounded-lg">
+              <Label className="flex items-center gap-2">
+                <Users className="w-4 h-4" />
+                Responsabilidades (% de contribuição)
+              </Label>
+              <p className="text-xs text-slate-500 mb-2">
+                Defina quanto cada membro deve contribuir para essa meta
+              </p>
+              {activeGroup.members?.map(email => (
+                <div key={email} className="flex items-center gap-3">
+                  <span className="text-sm text-slate-600 flex-1">{email.split('@')[0]}</span>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      placeholder="0"
+                      value={goalForm.responsibilities[email] || ''}
+                      onChange={(e) => setGoalForm({
+                        ...goalForm,
+                        responsibilities: {
+                          ...goalForm.responsibilities,
+                          [email]: parseFloat(e.target.value) || 0
+                        }
+                      })}
+                      className="w-20"
+                    />
+                    <span className="text-sm text-slate-500">%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
             <div className="flex gap-3">
               <Button
                 type="button"
@@ -680,13 +771,119 @@ export default function FamilyMode() {
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-[#00A8A0] hover:bg-[#008F88]"
+                className="flex-1 bg-[#5FBDBD] hover:bg-[#4FA9A5]"
                 disabled={createGoalMutation.isPending}
               >
                 Criar Meta
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Goal Details Dialog */}
+      <Dialog open={isGoalDetailsOpen} onOpenChange={setIsGoalDetailsOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{selectedGoal?.title}</DialogTitle>
+          </DialogHeader>
+          {selectedGoal && (
+            <div className="space-y-6 mt-4">
+              {/* Progress Overview */}
+              <div className="space-y-3">
+                <div className="flex justify-between items-end">
+                  <div>
+                    <p className="text-xs text-slate-500">Economizado</p>
+                    <p className="text-2xl font-bold text-[#5FBDBD]">
+                      {formatCurrency(selectedGoal.current_amount || 0)}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-slate-500">Meta</p>
+                    <p className="text-lg font-semibold text-slate-600">
+                      {formatCurrency(selectedGoal.target_amount)}
+                    </p>
+                  </div>
+                </div>
+                <Progress 
+                  value={(selectedGoal.current_amount / selectedGoal.target_amount) * 100} 
+                  className="h-3"
+                />
+                <p className="text-xs text-slate-500 text-center">
+                  Faltam {formatCurrency(selectedGoal.target_amount - (selectedGoal.current_amount || 0))}
+                </p>
+              </div>
+
+              {/* Contributions by Member */}
+              <div className="space-y-3">
+                <Label className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Contribuições dos Membros
+                </Label>
+                <div className="space-y-2">
+                  {activeGroup.members?.map(email => {
+                    const contribution = selectedGoal.contributions?.[email] || 0;
+                    const responsibility = selectedGoal.responsibilities?.[email] || 0;
+                    const expectedAmount = (selectedGoal.target_amount * responsibility) / 100;
+                    const contributionProgress = expectedAmount > 0 ? (contribution / expectedAmount) * 100 : 0;
+                    
+                    return (
+                      <div key={email} className="p-3 bg-slate-50 rounded-lg space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium text-slate-700">{email.split('@')[0]}</span>
+                          <div className="text-right">
+                            <p className="text-sm font-bold text-slate-800">{formatCurrency(contribution)}</p>
+                            {responsibility > 0 && (
+                              <p className="text-xs text-slate-500">
+                                de {formatCurrency(expectedAmount)} ({responsibility}%)
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        {responsibility > 0 && (
+                          <Progress value={Math.min(contributionProgress, 100)} className="h-1.5" />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Add Contribution */}
+              <div className="space-y-3 p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-lg border border-[#5FBDBD]/20">
+                <Label htmlFor="contribution" className="flex items-center gap-2">
+                  <Coins className="w-4 h-4" />
+                  Adicionar Contribuição
+                </Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="contribution"
+                    type="number"
+                    step="0.01"
+                    placeholder="0,00"
+                    value={contributionAmount}
+                    onChange={(e) => setContributionAmount(e.target.value)}
+                  />
+                  <Button
+                    onClick={handleContribute}
+                    disabled={!contributionAmount || updateGoalMutation.isPending}
+                    className="bg-[#5FBDBD] hover:bg-[#4FA9A5]"
+                  >
+                    <Plus className="w-4 h-4 mr-1" />
+                    Contribuir
+                  </Button>
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setIsGoalDetailsOpen(false)}
+              >
+                Fechar
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
