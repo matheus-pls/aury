@@ -54,7 +54,7 @@ export default function Planning() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Planejamento</h1>
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Planejamento</h1>
         <p className="text-slate-500 mt-1">Organize suas finanças de forma inteligente</p>
       </motion.div>
 
@@ -70,7 +70,7 @@ export default function Planning() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Card className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-[#00A8A0] group">
+                <Card className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-[#5FBDBD] group">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
                       <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${module.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
@@ -84,7 +84,7 @@ export default function Planning() {
                           {module.description}
                         </p>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-[#00A8A0] group-hover:translate-x-1 transition-all" />
+                      <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-[#5FBDBD] group-hover:translate-x-1 transition-all" />
                     </div>
                   </CardContent>
                 </Card>
