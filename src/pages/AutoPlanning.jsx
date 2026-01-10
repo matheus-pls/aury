@@ -90,6 +90,22 @@ export default function AutoPlanning() {
   const projectedSpending = (totalSpent / currentDay) * daysInMonth;
   const projectedExcess = projectedSpending - availableForSpending;
 
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  const formatCurrencyDetailed = (value) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(value);
+  };
+
   const getRiskLevel = () => {
     if (spentPercentage < 60) return { level: "Seguro", color: "emerald", icon: CheckCircle2, message: "Você está no caminho certo!" };
     if (spentPercentage < 85) return { level: "Atenção", color: "amber", icon: AlertTriangle, message: "Fique atento aos gastos" };
@@ -122,22 +138,6 @@ export default function AutoPlanning() {
 
   // Projected end of month
   const projectedBalance = totalIncome - projectedSpending;
-
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
-
-  const formatCurrencyDetailed = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
 
   return (
     <div className="space-y-6 pb-8">
