@@ -171,14 +171,14 @@ export default function Dashboard() {
     return profiles[currentSettings.risk_profile] || profiles.balanced;
   };
 
-  const profileInfo = getProfileInfo();
-
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
     }).format(value);
   };
+
+  const profileInfo = getProfileInfo();
 
   // Show profile selector overlay
   if (showProfileSelector) {
