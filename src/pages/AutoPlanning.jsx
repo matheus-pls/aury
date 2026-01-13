@@ -151,69 +151,68 @@ export default function AutoPlanning() {
         <BackButton to={createPageUrl("Planning")} className="mb-4" />
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-6 h-6 text-[#5FBDBD]" />
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Planejamento Automático</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Plano do Mês</h1>
         </div>
-        <p className="text-slate-500">Seu plano financeiro personalizado do mês</p>
+        <p className="text-slate-500">Quanto sobra e para onde vai</p>
       </motion.div>
 
-      {/* Main Cards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Card 1: Can Spend Today */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-[#00A8A0] to-[#008F88] rounded-2xl p-6 text-white shadow-lg"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <Calendar className="w-5 h-5" />
-            <span className="text-sm text-white/80">Hoje</span>
-          </div>
-          <h3 className="text-4xl font-bold mb-2 tabular-nums">{formatCurrency(canSpendToday)}</h3>
-          <p className="text-white/80 text-sm">Você pode gastar hoje</p>
-          <div className="mt-4 pt-4 border-t border-white/20">
-            <p className="text-xs text-white/60 mb-1">Limite diário ideal</p>
-            <p className="text-lg font-semibold tabular-nums">{formatCurrency(dailySpendingLimit)}</p>
-          </div>
-        </motion.div>
+      {/* Sobra Diária Segura - Destaque Principal */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1 }}
+        className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury"
+      >
+        <div className="absolute -right-12 -top-12 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
+        <div className="relative text-center">
+          <p className="text-white/70 text-sm mb-2">Sobra diária segura</p>
+          <h2 className="text-6xl font-bold mb-3 tabular-nums">{formatCurrency(canSpendToday)}</h2>
+          <p className="text-white/80 text-base">
+            Você pode gastar isso hoje sem comprometer o mês
+          </p>
+        </div>
+      </motion.div>
 
-        {/* Card 2: Savings */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-white shadow-lg"
-        >
-          <div className="flex items-center gap-2 mb-4">
-            <PiggyBank className="w-5 h-5" />
-            <span className="text-sm text-white/80">Economia</span>
-          </div>
-          <h3 className="text-4xl font-bold mb-2 tabular-nums">{formatCurrency(monthlySavings)}</h3>
-          <p className="text-white/80 text-sm">Você está economizando</p>
-          <div className="mt-4 pt-4 border-t border-white/20">
-            <p className="text-xs text-white/60 mb-1">Por semana</p>
-            <p className="text-lg font-semibold tabular-nums">{formatCurrency(weeklySavings)}</p>
-          </div>
-        </motion.div>
-
-        {/* Card 3: Risk */}
+      {/* Resumo Rápido */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className={`bg-gradient-to-br from-${risk.color}-500 to-${risk.color}-600 rounded-2xl p-6 text-white shadow-lg`}
+          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
         >
-          <div className="flex items-center gap-2 mb-4">
-            <RiskIcon className="w-5 h-5" />
-            <span className="text-sm text-white/80">Status</span>
-          </div>
-          <h3 className="text-4xl font-bold mb-2">{risk.level}</h3>
-          <p className="text-white/80 text-sm">{risk.message}</p>
-          <div className="mt-4 pt-4 border-t border-white/20">
-            <p className="text-xs text-white/60 mb-2">Gastos do mês</p>
-            <Progress value={Math.min(spentPercentage, 100)} className="h-2 bg-white/20" />
-            <p className="text-xs text-white/60 mt-1">{spentPercentage.toFixed(0)}% do orçamento</p>
-          </div>
+          <p className="text-xs text-slate-500 mb-1">Renda</p>
+          <p className="text-xl font-bold text-[#1B3A52] tabular-nums">{formatCurrency(totalIncome)}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+        >
+          <p className="text-xs text-slate-500 mb-1">Já Gasto</p>
+          <p className="text-xl font-bold text-rose-600 tabular-nums">{formatCurrency(totalSpent)}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+        >
+          <p className="text-xs text-slate-500 mb-1">Economia</p>
+          <p className="text-xl font-bold text-emerald-600 tabular-nums">{formatCurrency(monthlySavings)}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+        >
+          <p className="text-xs text-slate-500 mb-1">Dias Restantes</p>
+          <p className="text-xl font-bold text-[#1B3A52]">{daysRemaining}</p>
         </motion.div>
       </div>
 
@@ -261,7 +260,7 @@ export default function AutoPlanning() {
           onClick={() => setShowDetails(!showDetails)}
           className="w-full p-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
         >
-          <span className="font-semibold text-slate-800">Ver plano completo</span>
+          <span className="font-semibold text-slate-800">Para onde vai meu dinheiro</span>
           {showDetails ? (
             <ChevronUp className="w-5 h-5 text-slate-400" />
           ) : (

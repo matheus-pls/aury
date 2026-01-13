@@ -13,9 +13,7 @@ import Movements from './pages/Movements';
 import Overview from './pages/Overview';
 import Planning from './pages/Planning';
 import Settings from './pages/Settings';
-import Simulation from './pages/Simulation';
 import TightMonth from './pages/TightMonth';
-import TravelMode from './pages/TravelMode';
 import Welcome from './pages/Welcome';
 import DailyCheckIn from './pages/DailyCheckIn';
 import __Layout from './Layout.jsx';
@@ -37,9 +35,7 @@ export const PAGES = {
     "Overview": Overview,
     "Planning": Planning,
     "Settings": Settings,
-    "Simulation": Simulation,
     "TightMonth": TightMonth,
-    "TravelMode": TravelMode,
     "Welcome": Welcome,
     "DailyCheckIn": DailyCheckIn,
 }

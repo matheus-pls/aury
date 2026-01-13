@@ -1,18 +1,20 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
-import { Wallet, Receipt, History } from "lucide-react";
+import { Wallet, Receipt, Zap } from "lucide-react";
 import BackButton from "@/components/BackButton";
+import AuryFlow from "@/components/overview/AuryFlow";
 import Incomes from "./Incomes";
 import Expenses from "./Expenses";
 
 const TABS = [
-  { id: "incomes", label: "Rendas", icon: Wallet },
-  { id: "expenses", label: "Gastos", icon: Receipt }
+  { id: "quick", label: "Registrar", icon: Zap },
+  { id: "expenses", label: "Gastos", icon: Receipt },
+  { id: "incomes", label: "Rendas", icon: Wallet }
 ];
 
 export default function Movements() {
-  const [activeTab, setActiveTab] = useState("expenses");
+  const [activeTab, setActiveTab] = useState("quick");
 
   return (
     <div className="space-y-6 pb-8">
@@ -22,7 +24,7 @@ export default function Movements() {
       >
         <BackButton to={createPageUrl("Overview")} className="mb-4" />
         <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Movimentações</h1>
-        <p className="text-slate-500 mt-1">Gerencie suas entradas e saídas</p>
+        <p className="text-slate-500 mt-1">Registre rapidamente com Aury Flow</p>
       </motion.div>
 
       {/* Tabs */}
@@ -55,6 +57,17 @@ export default function Movements() {
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.2 }}
         >
+          {activeTab === "quick" && (
+            <div className="space-y-4">
+              <AuryFlow />
+              <div className="bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-2xl p-5 border border-[#5FBDBD]/20">
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  <strong className="text-[#1B3A52]">Dica:</strong> Fale naturalmente com a Aury. 
+                  "Gastei 50 no Uber", "Recebi 300 do freela" - ela entende você.
+                </p>
+              </div>
+            </div>
+          )}
           {activeTab === "incomes" && <Incomes />}
           {activeTab === "expenses" && <Expenses />}
         </motion.div>
