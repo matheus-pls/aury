@@ -6,6 +6,7 @@ import { createPageUrl } from "@/utils";
 import { 
   Shield,
   TrendingUp,
+  TrendingDown,
   Calendar,
   AlertTriangle,
   CheckCircle2,
