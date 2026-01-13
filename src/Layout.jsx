@@ -74,9 +74,12 @@ export default function Layout({ children, currentPageName }) {
         :root {
           --aury-teal: #5FBDBD;
           --aury-teal-dark: #4FA9A5;
+          --aury-teal-light: #7FCFCF;
           --aury-navy: #1B3A52;
           --aury-navy-light: #2A4A62;
           --aury-navy-deep: #0A2540;
+          --aury-gradient-start: #5FBDBD;
+          --aury-gradient-end: #1B3A52;
         }
         .bg-aury-teal { background-color: var(--aury-teal); }
         .bg-aury-navy { background-color: var(--aury-navy); }
@@ -86,15 +89,17 @@ export default function Layout({ children, currentPageName }) {
         .hover\\:bg-aury-teal:hover { background-color: var(--aury-teal); }
         .from-aury-teal { --tw-gradient-from: var(--aury-teal); }
         .to-aury-navy { --tw-gradient-to: var(--aury-navy); }
+        .shadow-aury { box-shadow: 0 10px 30px -10px rgba(95, 189, 189, 0.3); }
+        .shadow-aury-lg { box-shadow: 0 20px 50px -15px rgba(95, 189, 189, 0.4); }
       `}</style>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 z-40 flex items-center justify-between px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-slate-200 z-40 flex items-center justify-between px-4 shadow-sm">
         <button
           onClick={() => setSidebarOpen(true)}
           className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
         >
-          <Menu className="w-6 h-6 text-rendy-secondary" />
+          <Menu className="w-6 h-6 text-[#1B3A52]" />
         </button>
         <div className="flex items-center gap-2">
           <img 

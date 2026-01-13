@@ -1,4 +1,3 @@
-import Analysis from './pages/Analysis';
 import AutoPlanning from './pages/AutoPlanning';
 import BehaviorAnalysis from './pages/BehaviorAnalysis';
 import DailyMode from './pages/DailyMode';
@@ -7,7 +6,6 @@ import EmergencyFund from './pages/EmergencyFund';
 import Expenses from './pages/Expenses';
 import FamilyMode from './pages/FamilyMode';
 import Goals from './pages/Goals';
-import GoalsHub from './pages/GoalsHub';
 import Home from './pages/Home';
 import Incomes from './pages/Incomes';
 import Movements from './pages/Movements';
@@ -21,7 +19,6 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Analysis": Analysis,
     "AutoPlanning": AutoPlanning,
     "BehaviorAnalysis": BehaviorAnalysis,
     "DailyMode": DailyMode,
@@ -30,7 +27,6 @@ export const PAGES = {
     "Expenses": Expenses,
     "FamilyMode": FamilyMode,
     "Goals": Goals,
-    "GoalsHub": GoalsHub,
     "Home": Home,
     "Incomes": Incomes,
     "Movements": Movements,

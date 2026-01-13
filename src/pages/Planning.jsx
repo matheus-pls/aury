@@ -18,7 +18,7 @@ const PLANNING_MODULES = [
     title: "Planejamento Automático",
     description: "Seu plano financeiro mensal completo e automatizado",
     icon: Sparkles,
-    color: "from-purple-500 to-purple-600",
+    color: "from-[#5FBDBD] to-[#4FA9A5]",
     page: "AutoPlanning"
   },
   {
@@ -26,7 +26,7 @@ const PLANNING_MODULES = [
     title: "Dia a Dia",
     description: "Quanto você pode gastar hoje sem comprometer o mês",
     icon: Calendar,
-    color: "from-blue-500 to-blue-600",
+    color: "from-[#1B3A52] to-[#0A2540]",
     page: "DailyMode"
   },
   {
@@ -34,7 +34,7 @@ const PLANNING_MODULES = [
     title: "Reserva de Emergência",
     description: "Construa e acompanhe sua segurança financeira",
     icon: Shield,
-    color: "from-emerald-500 to-emerald-600",
+    color: "from-[#2A4A62] to-[#1B3A52]",
     page: "EmergencyFund"
   },
   {
@@ -42,7 +42,7 @@ const PLANNING_MODULES = [
     title: "Simulações",
     description: "Simule cenários e veja o impacto nas suas metas",
     icon: Calculator,
-    color: "from-amber-500 to-orange-500",
+    color: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]",
     page: "Simulation"
   }
 ];
@@ -70,14 +70,14 @@ export default function Planning() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Card className="cursor-pointer hover:shadow-lg transition-all border-2 hover:border-[#5FBDBD] group">
+                <Card className="cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD] group bg-white">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${module.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${module.color} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md`}>
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-lg font-bold text-slate-800 mb-1">
+                        <h3 className="text-lg font-bold text-[#1B3A52] mb-1">
                           {module.title}
                         </h3>
                         <p className="text-sm text-slate-600">

@@ -99,10 +99,10 @@ export default function Overview() {
   const tranquilityStatus = getTranquilityStatus();
 
   const quickActions = [
-    { label: "Planejamento", icon: Sparkles, page: "Planning", color: "from-purple-500 to-purple-600" },
-    { label: "Movimentações", icon: Wallet, page: "Movements", color: "from-blue-500 to-blue-600" },
-    { label: "Metas", icon: Target, page: "GoalsHub", color: "from-pink-500 to-pink-600" },
-    { label: "Análises", icon: TrendingUp, page: "Analysis", color: "from-emerald-500 to-emerald-600" }
+    { label: "Planejamento", icon: Sparkles, page: "Planning", color: "from-[#5FBDBD] to-[#4FA9A5]" },
+    { label: "Movimentações", icon: Wallet, page: "Movements", color: "from-[#1B3A52] to-[#0A2540]" },
+    { label: "Metas", icon: Target, page: "Goals", color: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]" },
+    { label: "Análises", icon: TrendingUp, page: "BehaviorAnalysis", color: "from-[#2A4A62] to-[#1B3A52]" }
   ];
 
   const alerts = [];
@@ -142,38 +142,35 @@ export default function Overview() {
       {/* Aury Flow - Entrada Rápida Inteligente */}
       <AuryFlow />
 
-      {/* Índice de Tranquilidade Financeira */}
+      {/* Índice de Tranquilidade Financeira - Compacto e Premium */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className={`relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br ${tranquilityStatus.color} text-white shadow-2xl`}
+        className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury"
       >
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-4">
-            <Heart className="w-6 h-6" />
-            <p className="text-white/90 text-sm font-medium">Tranquilidade Financeira</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Heart className="w-4 h-4 text-white/90" />
+              <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
+              <span className="text-lg font-light text-white/80">/100</span>
+              <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">
+                {tranquilityStatus.label}
+              </span>
+            </div>
           </div>
-          
-          <div className="flex items-end gap-4 mb-6">
-            <h2 className="text-6xl font-bold">{tranquilityIndex}</h2>
-            <span className="text-3xl font-light mb-2 opacity-90">/100</span>
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+            <div className="text-2xl">
+              {tranquilityIndex >= 70 ? "😌" : tranquilityIndex >= 40 ? "🤔" : "😰"}
+            </div>
           </div>
-
-          <div className={`inline-block px-4 py-2 rounded-full ${tranquilityStatus.bgColor} ${tranquilityStatus.textColor} font-semibold`}>
-            {tranquilityStatus.label}
-          </div>
-
-          <p className="mt-4 text-white/80 text-sm max-w-md">
-            {tranquilityIndex >= 70 && "Você está no caminho certo. Continue assim!"}
-            {tranquilityIndex >= 40 && tranquilityIndex < 70 && "Fique atento aos seus gastos e fortaleça sua reserva."}
-            {tranquilityIndex < 40 && "É hora de revisar suas finanças. Pequenas mudanças fazem diferença."}
-          </p>
         </div>
-
-        {/* Decorative circle */}
-        <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
-        <div className="absolute -right-20 -top-20 w-60 h-60 bg-white/5 rounded-full blur-3xl" />
+        {/* Decorative gradient */}
+        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
       </motion.div>
 
       {/* Main Balance */}
@@ -334,12 +331,12 @@ export default function Overview() {
                   whileTap={{ scale: 0.97 }}
                   className="group"
                 >
-                  <Card className="cursor-pointer hover:shadow-xl transition-all border-2 border-transparent hover:border-[#5FBDBD]/20">
+                  <Card className="cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/50 bg-white">
                     <CardContent className="p-6 text-center">
-                      <div className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-lg`}>
+                      <div className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-md`}>
                         <Icon className="w-7 h-7 text-white" />
                       </div>
-                      <p className="font-medium text-[#1B3A52]">{action.label}</p>
+                      <p className="font-semibold text-[#1B3A52] text-sm">{action.label}</p>
                     </CardContent>
                   </Card>
                 </motion.div>
