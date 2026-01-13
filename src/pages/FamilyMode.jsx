@@ -17,11 +17,9 @@ import {
   Sparkles,
   Shield,
   TrendingUp as TrendingUpIcon,
-  Settings,
   Mail,
-  Edit3,
-  Check,
-  DollarSign
+  DollarSign,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,11 +47,11 @@ import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
 
 const EXPENSE_CATEGORIES = {
-  fixed: { label: "Gastos Fixos", icon: Home, color: "bg-[#0A1A3A]" },
-  essential: { label: "Essenciais", icon: ShoppingCart, color: "bg-[#00A8A0]" },
-  superfluous: { label: "Supérfluos", icon: Sparkles, color: "bg-amber-500" },
-  emergency: { label: "Reserva", icon: Shield, color: "bg-green-500" },
-  investment: { label: "Investimentos", icon: TrendingUpIcon, color: "bg-violet-500" }
+  fixed: { label: "Gastos Fixos", icon: Home, color: "from-[#1B3A52] to-[#0A2540]" },
+  essential: { label: "Essenciais", icon: ShoppingCart, color: "from-[#5FBDBD] to-[#4FA9A5]" },
+  superfluous: { label: "Supérfluos", icon: Sparkles, color: "from-[#4FA9A5] to-[#2A4A62]" },
+  emergency: { label: "Reserva", icon: Shield, color: "from-[#2A4A62] to-[#1B3A52]" },
+  investment: { label: "Investimentos", icon: TrendingUpIcon, color: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]" }
 };
 
 export default function FamilyMode() {
@@ -267,11 +265,20 @@ export default function FamilyMode() {
     }).format(value);
   };
 
+  const getMemberInitials = (email) => {
+    const name = email.split('@')[0];
+    return name.substring(0, 2).toUpperCase();
+  };
+
+  const getMemberName = (email) => {
+    return email.split('@')[0];
+  };
+
   if (userLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-[#00A8A0] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-4 border-[#5FBDBD] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-slate-500">Carregando...</p>
         </div>
       </div>
@@ -281,19 +288,19 @@ export default function FamilyMode() {
   if (!activeGroup) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-gradient-to-br from-pink-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Heart className="w-10 h-10 text-pink-500" />
+        <div className="text-center max-w-md px-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-aury">
+            <Heart className="w-10 h-10 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">
-            Modo Família
+          <h2 className="text-2xl font-bold text-[#1B3A52] mb-2">
+            Família
           </h2>
-          <p className="text-slate-500 mb-6">
-            Compartilhe finanças com seu casal ou família. Juntos, vocês podem gerenciar gastos e metas compartilhadas.
+          <p className="text-slate-500 mb-6 leading-relaxed">
+            Finanças compartilhadas com clareza e equilíbrio
           </p>
           <Button
             onClick={() => setIsCreateGroupOpen(true)}
-            className="bg-[#00A8A0] hover:bg-[#008F88]"
+            className="bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] shadow-md"
           >
             <Users className="w-4 h-4 mr-2" />
             Criar Grupo Familiar
@@ -302,28 +309,29 @@ export default function FamilyMode() {
           <Dialog open={isCreateGroupOpen} onOpenChange={setIsCreateGroupOpen}>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Criar Grupo Familiar</DialogTitle>
+                <DialogTitle className="text-[#1B3A52]">Criar Grupo Familiar</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="groupName">Nome do Grupo</Label>
+                  <Label htmlFor="groupName" className="text-[#1B3A52]">Nome do Grupo</Label>
                   <Input
                     id="groupName"
-                    placeholder="Ex: Família Silva, Casal João e Maria"
+                    placeholder="Ex: Família Silva"
                     value={groupName}
                     onChange={(e) => setGroupName(e.target.value)}
+                    className="border-slate-200 focus:border-[#5FBDBD]"
                   />
                 </div>
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
-                    className="flex-1"
+                    className="flex-1 border-slate-200"
                     onClick={() => setIsCreateGroupOpen(false)}
                   >
                     Cancelar
                   </Button>
                   <Button
-                    className="flex-1 bg-[#00A8A0] hover:bg-[#008F88]"
+                    className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
                     onClick={handleCreateGroup}
                     disabled={!groupName || createGroupMutation.isPending}
                   >
@@ -351,7 +359,7 @@ export default function FamilyMode() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* Header */}
+      {/* Premium Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -359,28 +367,27 @@ export default function FamilyMode() {
       >
         <BackButton to={createPageUrl("Overview")} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center">
-                <Heart className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-[#1B3A52]">{activeGroup.name}</h1>
-                <p className="text-sm text-slate-500">{activeGroup.members?.length || 0} membros</p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="w-14 h-14 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-2xl flex items-center justify-center shadow-aury">
+              <Heart className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-[#1B3A52]">{activeGroup.name}</h1>
+              <p className="text-sm text-slate-500">Finanças compartilhadas com clareza</p>
             </div>
           </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
               onClick={() => setIsAddMemberOpen(true)}
+              className="border-slate-200 hover:border-[#5FBDBD]/30 hover:bg-[#5FBDBD]/5"
             >
               <UserPlus className="w-4 h-4 mr-2" />
               Convidar
             </Button>
             <Button
               onClick={() => setIsAddExpenseOpen(true)}
-              className="bg-[#5FBDBD] hover:bg-[#4FA9A5]"
+              className="bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] shadow-md"
             >
               <Plus className="w-4 h-4 mr-2" />
               Novo Gasto
@@ -389,65 +396,44 @@ export default function FamilyMode() {
         </div>
       </motion.div>
 
-      {/* Members */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Users className="w-4 h-4" />
-            Membros do Grupo
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {activeGroup.members?.map((email, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-2 px-3 py-2 bg-slate-100 rounded-lg"
-              >
-                <Mail className="w-4 h-4 text-slate-500" />
-                <span className="text-sm text-slate-700">{email}</span>
-                {email === activeGroup.admin_email && (
-                  <span className="text-xs px-2 py-0.5 bg-[#00A8A0] text-white rounded-full">
-                    Admin
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Summary */}
+      {/* Visão Geral Familiar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Gastos do Mês</CardTitle>
+        <Card className="border-slate-200 shadow-sm hover:shadow-aury transition-shadow">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-[#5FBDBD]" />
+              Gastos do Mês
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-rose-500 mb-4">
+            <p className="text-3xl font-bold text-[#1B3A52] mb-4">
               {formatCurrency(totalSharedExpenses)}
             </p>
             <div className="space-y-2">
-              {Object.entries(expensesByMember).map(([email, amount]) => (
-                <div key={email} className="flex justify-between text-sm">
-                  <span className="text-slate-600">{email.split('@')[0]}</span>
-                  <span className="font-semibold text-slate-800">{formatCurrency(amount)}</span>
+              {Object.entries(expensesByMember).slice(0, 3).map(([email, amount]) => (
+                <div key={email} className="flex justify-between text-sm items-center">
+                  <span className="text-slate-600">{getMemberName(email)}</span>
+                  <span className="font-semibold text-[#1B3A52]">{formatCurrency(amount)}</span>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="border-slate-200 shadow-sm hover:shadow-aury transition-shadow">
+          <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Metas Compartilhadas</CardTitle>
+              <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
+                <Target className="w-4 h-4 text-[#5FBDBD]" />
+                Metas Compartilhadas
+              </CardTitle>
               <Button
                 size="sm"
-                variant="outline"
+                variant="ghost"
                 onClick={() => setIsAddGoalOpen(true)}
+                className="h-8 w-8 p-0 hover:bg-[#5FBDBD]/10"
               >
-                <Plus className="w-3 h-3" />
+                <Plus className="w-4 h-4 text-[#5FBDBD]" />
               </Button>
             </div>
           </CardHeader>
@@ -463,10 +449,10 @@ export default function FamilyMode() {
                     <button
                       key={goal.id}
                       onClick={() => openGoalDetails(goal)}
-                      className="w-full text-left space-y-2 p-3 rounded-lg hover:bg-slate-50 transition-colors"
+                      className="w-full text-left space-y-2 p-3 rounded-xl hover:bg-[#5FBDBD]/5 transition-colors group"
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-slate-700">{goal.title}</span>
+                        <span className="text-sm font-medium text-[#1B3A52] group-hover:text-[#5FBDBD] transition-colors">{goal.title}</span>
                         <span className="text-xs font-semibold text-[#5FBDBD]">{progress.toFixed(0)}%</span>
                       </div>
                       <Progress value={progress} className="h-2" />
@@ -484,31 +470,67 @@ export default function FamilyMode() {
         </Card>
       </div>
 
-      {/* Categories */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {Object.entries(EXPENSE_CATEGORIES).map(([key, config]) => {
-          const Icon = config.icon;
-          return (
-            <Card key={key}>
-              <CardContent className="p-4 text-center">
-                <div className={`w-10 h-10 ${config.color} rounded-lg flex items-center justify-center mx-auto mb-2`}>
-                  <Icon className="w-5 h-5 text-white" />
+      {/* Membros com Fotos de Perfil */}
+      <Card className="border-slate-200 shadow-sm">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
+            <Users className="w-4 h-4 text-[#5FBDBD]" />
+            Membros do Grupo
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-3">
+            {activeGroup.members?.map((email, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 hover:border-[#5FBDBD]/30 transition-colors"
+              >
+                {/* Avatar com Iniciais */}
+                <div className="w-10 h-10 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-white">
+                  {getMemberInitials(email)}
                 </div>
-                <p className="text-xs text-slate-500 mb-1">{config.label}</p>
-                <p className="text-sm font-bold text-slate-800">
-                  {formatCurrency(expensesByCategory[key])}
-                </p>
-              </CardContent>
-            </Card>
-          );
-        })}
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-[#1B3A52]">{getMemberName(email)}</p>
+                  {email === activeGroup.admin_email && (
+                    <span className="text-xs px-2 py-0.5 bg-[#5FBDBD] text-white rounded-full">
+                      Admin
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Gastos por Categoria */}
+      <div>
+        <h3 className="font-semibold text-[#1B3A52] mb-3 text-lg">Gastos por Categoria</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {Object.entries(EXPENSE_CATEGORIES).map(([key, config]) => {
+            const Icon = config.icon;
+            return (
+              <Card key={key} className="border-slate-200 hover:shadow-aury transition-shadow">
+                <CardContent className="p-4 text-center">
+                  <div className={`w-12 h-12 bg-gradient-to-br ${config.color} rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md`}>
+                    <Icon className="w-6 h-6 text-white" />
+                  </div>
+                  <p className="text-xs text-slate-500 mb-1">{config.label}</p>
+                  <p className="text-sm font-bold text-[#1B3A52]">
+                    {formatCurrency(expensesByCategory[key])}
+                  </p>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
-      {/* Recent Expenses */}
+      {/* Gastos Recentes */}
       <div className="space-y-3">
-        <h3 className="font-semibold text-slate-800">Gastos Recentes</h3>
+        <h3 className="font-semibold text-[#1B3A52] text-lg">Gastos Recentes</h3>
         {sharedExpenses.length === 0 ? (
-          <Card>
+          <Card className="border-slate-200">
             <CardContent className="p-8 text-center">
               <TrendingDown className="w-12 h-12 text-slate-300 mx-auto mb-3" />
               <p className="text-slate-500">Nenhum gasto compartilhado ainda</p>
@@ -520,22 +542,22 @@ export default function FamilyMode() {
               const categoryConfig = EXPENSE_CATEGORIES[expense.category];
               const Icon = categoryConfig.icon;
               return (
-                <Card key={expense.id}>
+                <Card key={expense.id} className="border-slate-200 hover:border-[#5FBDBD]/30 hover:shadow-sm transition-all">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${categoryConfig.color}`}>
-                          <Icon className="w-4 h-4 text-white" />
+                      <div className="flex items-center gap-3 flex-1">
+                        <div className={`p-2.5 rounded-xl bg-gradient-to-br ${categoryConfig.color} shadow-md`}>
+                          <Icon className="w-5 h-5 text-white" />
                         </div>
-                        <div>
-                          <h4 className="font-medium text-slate-800">{expense.description}</h4>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-[#1B3A52] text-sm">{expense.description}</h4>
                           <p className="text-xs text-slate-500">
-                            {new Date(expense.date).toLocaleDateString('pt-BR')} • Pago por {expense.paid_by.split('@')[0]}
+                            {new Date(expense.date).toLocaleDateString('pt-BR')} • {getMemberName(expense.paid_by)}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <p className="font-bold text-slate-800">
+                        <p className="font-bold text-[#1B3A52] text-sm">
                           {formatCurrency(expense.amount)}
                         </p>
                         {user?.email === expense.paid_by && (
@@ -543,8 +565,9 @@ export default function FamilyMode() {
                             variant="ghost"
                             size="icon"
                             onClick={() => deleteExpenseMutation.mutate(expense.id)}
+                            className="h-8 w-8 hover:bg-rose-50"
                           >
-                            <Trash2 className="w-4 h-4 text-slate-400" />
+                            <Trash2 className="w-4 h-4 text-slate-400 hover:text-rose-500" />
                           </Button>
                         )}
                       </div>
@@ -561,32 +584,33 @@ export default function FamilyMode() {
       <Dialog open={isAddMemberOpen} onOpenChange={setIsAddMemberOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Convidar Membro</DialogTitle>
+            <DialogTitle className="text-[#1B3A52]">Convidar Membro</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <p className="text-sm text-slate-600">
               Adicione o email de quem você quer convidar para o grupo
             </p>
             <div className="space-y-2">
-              <Label htmlFor="memberEmail">Email</Label>
+              <Label htmlFor="memberEmail" className="text-[#1B3A52]">Email</Label>
               <Input
                 id="memberEmail"
                 type="email"
                 placeholder="email@exemplo.com"
                 value={newMemberEmail}
                 onChange={(e) => setNewMemberEmail(e.target.value)}
+                className="border-slate-200 focus:border-[#5FBDBD]"
               />
             </div>
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                className="flex-1"
+                className="flex-1 border-slate-200"
                 onClick={() => setIsAddMemberOpen(false)}
               >
                 Cancelar
               </Button>
               <Button
-                className="flex-1 bg-[#00A8A0] hover:bg-[#008F88]"
+                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
                 onClick={handleAddMember}
                 disabled={!newMemberEmail || addMemberMutation.isPending}
               >
@@ -601,23 +625,24 @@ export default function FamilyMode() {
       <Dialog open={isAddExpenseOpen} onOpenChange={setIsAddExpenseOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Novo Gasto Compartilhado</DialogTitle>
+            <DialogTitle className="text-[#1B3A52]">Novo Gasto Compartilhado</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleAddExpense} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="description">Descrição</Label>
+              <Label htmlFor="description" className="text-[#1B3A52]">Descrição</Label>
               <Input
                 id="description"
                 placeholder="Ex: Supermercado"
                 value={expenseForm.description}
                 onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
                 required
+                className="border-slate-200 focus:border-[#5FBDBD]"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="amount">Valor</Label>
+                <Label htmlFor="amount" className="text-[#1B3A52]">Valor</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -626,27 +651,29 @@ export default function FamilyMode() {
                   value={expenseForm.amount}
                   onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
                   required
+                  className="border-slate-200 focus:border-[#5FBDBD]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="date">Data</Label>
+                <Label htmlFor="date" className="text-[#1B3A52]">Data</Label>
                 <Input
                   id="date"
                   type="date"
                   value={expenseForm.date}
                   onChange={(e) => setExpenseForm({ ...expenseForm, date: e.target.value })}
                   required
+                  className="border-slate-200 focus:border-[#5FBDBD]"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Categoria</Label>
+              <Label className="text-[#1B3A52]">Categoria</Label>
               <Select
                 value={expenseForm.category}
                 onValueChange={(value) => setExpenseForm({ ...expenseForm, category: value })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -661,14 +688,14 @@ export default function FamilyMode() {
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1"
+                className="flex-1 border-slate-200"
                 onClick={() => setIsAddExpenseOpen(false)}
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-[#00A8A0] hover:bg-[#008F88]"
+                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
                 disabled={createExpenseMutation.isPending}
               >
                 Adicionar
@@ -682,23 +709,24 @@ export default function FamilyMode() {
       <Dialog open={isAddGoalOpen} onOpenChange={setIsAddGoalOpen}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Nova Meta Compartilhada</DialogTitle>
+            <DialogTitle className="text-[#1B3A52]">Nova Meta Compartilhada</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleAddGoal} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="goalTitle">Título</Label>
+              <Label htmlFor="goalTitle" className="text-[#1B3A52]">Título</Label>
               <Input
                 id="goalTitle"
                 placeholder="Ex: Viagem em família"
                 value={goalForm.title}
                 onChange={(e) => setGoalForm({ ...goalForm, title: e.target.value })}
                 required
+                className="border-slate-200 focus:border-[#5FBDBD]"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="targetAmount">Valor da Meta</Label>
+                <Label htmlFor="targetAmount" className="text-[#1B3A52]">Valor da Meta</Label>
                 <Input
                   id="targetAmount"
                   type="number"
@@ -707,10 +735,11 @@ export default function FamilyMode() {
                   value={goalForm.target_amount}
                   onChange={(e) => setGoalForm({ ...goalForm, target_amount: e.target.value })}
                   required
+                  className="border-slate-200 focus:border-[#5FBDBD]"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="currentAmount">Já economizado</Label>
+                <Label htmlFor="currentAmount" className="text-[#1B3A52]">Já economizado</Label>
                 <Input
                   id="currentAmount"
                   type="number"
@@ -718,22 +747,24 @@ export default function FamilyMode() {
                   placeholder="0,00"
                   value={goalForm.current_amount}
                   onChange={(e) => setGoalForm({ ...goalForm, current_amount: e.target.value })}
+                  className="border-slate-200 focus:border-[#5FBDBD]"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="deadline">Prazo</Label>
+              <Label htmlFor="deadline" className="text-[#1B3A52]">Prazo</Label>
               <Input
                 id="deadline"
                 type="date"
                 value={goalForm.deadline}
                 onChange={(e) => setGoalForm({ ...goalForm, deadline: e.target.value })}
+                className="border-slate-200 focus:border-[#5FBDBD]"
               />
             </div>
 
-            <div className="space-y-3 p-4 bg-slate-50 rounded-lg">
-              <Label className="flex items-center gap-2">
+            <div className="space-y-3 p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
+              <Label className="flex items-center gap-2 text-[#1B3A52]">
                 <Users className="w-4 h-4" />
                 Responsabilidades (% de contribuição)
               </Label>
@@ -742,7 +773,7 @@ export default function FamilyMode() {
               </p>
               {activeGroup.members?.map(email => (
                 <div key={email} className="flex items-center gap-3">
-                  <span className="text-sm text-slate-600 flex-1">{email.split('@')[0]}</span>
+                  <span className="text-sm text-slate-700 flex-1">{getMemberName(email)}</span>
                   <div className="flex items-center gap-2">
                     <Input
                       type="number"
@@ -757,7 +788,7 @@ export default function FamilyMode() {
                           [email]: parseFloat(e.target.value) || 0
                         }
                       })}
-                      className="w-20"
+                      className="w-20 border-slate-200"
                     />
                     <span className="text-sm text-slate-500">%</span>
                   </div>
@@ -769,14 +800,14 @@ export default function FamilyMode() {
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1"
+                className="flex-1 border-slate-200"
                 onClick={() => setIsAddGoalOpen(false)}
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-[#5FBDBD] hover:bg-[#4FA9A5]"
+                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
                 disabled={createGoalMutation.isPending}
               >
                 Criar Meta
@@ -790,7 +821,7 @@ export default function FamilyMode() {
       <Dialog open={isGoalDetailsOpen} onOpenChange={setIsGoalDetailsOpen}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{selectedGoal?.title}</DialogTitle>
+            <DialogTitle className="text-[#1B3A52]">{selectedGoal?.title}</DialogTitle>
           </DialogHeader>
           {selectedGoal && (
             <div className="space-y-6 mt-4">
@@ -821,7 +852,7 @@ export default function FamilyMode() {
 
               {/* Contributions by Member */}
               <div className="space-y-3">
-                <Label className="flex items-center gap-2">
+                <Label className="flex items-center gap-2 text-[#1B3A52]">
                   <Users className="w-4 h-4" />
                   Contribuições dos Membros
                 </Label>
@@ -833,11 +864,16 @@ export default function FamilyMode() {
                     const contributionProgress = expectedAmount > 0 ? (contribution / expectedAmount) * 100 : 0;
                     
                     return (
-                      <div key={email} className="p-3 bg-slate-50 rounded-lg space-y-2">
+                      <div key={email} className="p-3 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 space-y-2">
                         <div className="flex justify-between items-center">
-                          <span className="text-sm font-medium text-slate-700">{email.split('@')[0]}</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-full flex items-center justify-center text-white font-semibold text-xs">
+                              {getMemberInitials(email)}
+                            </div>
+                            <span className="text-sm font-medium text-[#1B3A52]">{getMemberName(email)}</span>
+                          </div>
                           <div className="text-right">
-                            <p className="text-sm font-bold text-slate-800">{formatCurrency(contribution)}</p>
+                            <p className="text-sm font-bold text-[#1B3A52]">{formatCurrency(contribution)}</p>
                             {responsibility > 0 && (
                               <p className="text-xs text-slate-500">
                                 de {formatCurrency(expectedAmount)} ({responsibility}%)
@@ -855,8 +891,8 @@ export default function FamilyMode() {
               </div>
 
               {/* Add Contribution */}
-              <div className="space-y-3 p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-lg border border-[#5FBDBD]/20">
-                <Label htmlFor="contribution" className="flex items-center gap-2">
+              <div className="space-y-3 p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
+                <Label htmlFor="contribution" className="flex items-center gap-2 text-[#1B3A52]">
                   <Coins className="w-4 h-4" />
                   Adicionar Contribuição
                 </Label>
@@ -868,11 +904,12 @@ export default function FamilyMode() {
                     placeholder="0,00"
                     value={contributionAmount}
                     onChange={(e) => setContributionAmount(e.target.value)}
+                    className="border-slate-200 focus:border-[#5FBDBD]"
                   />
                   <Button
                     onClick={handleContribute}
                     disabled={!contributionAmount || updateGoalMutation.isPending}
-                    className="bg-[#5FBDBD] hover:bg-[#4FA9A5]"
+                    className="bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
                   >
                     <Plus className="w-4 h-4 mr-1" />
                     Contribuir
@@ -882,7 +919,7 @@ export default function FamilyMode() {
 
               <Button
                 variant="outline"
-                className="w-full"
+                className="w-full border-slate-200"
                 onClick={() => setIsGoalDetailsOpen(false)}
               >
                 Fechar
