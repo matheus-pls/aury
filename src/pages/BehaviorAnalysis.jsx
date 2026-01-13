@@ -130,90 +130,125 @@ export default function BehaviorAnalysis() {
     investment: 'Investimentos'
   };
 
-  // Generate insights with actions (1 insight = 1 action)
+  // Analyze month-over-month trends for personalization
+  const currentMonthSpending = byMonth[currentMonth] || 0;
+  const lastMonthKey = lastMonths[lastMonths.length - 2];
+  const lastMonthSpending = byMonth[lastMonthKey] || 0;
+  const spendingTrend = lastMonthSpending > 0 ? ((currentMonthSpending - lastMonthSpending) / lastMonthSpending) * 100 : 0;
+
+  // Category growth analysis
+  const categoryGrowth = {};
+  Object.keys(categoryLabels).forEach(cat => {
+    const currentCat = byCategory[currentMonth]?.[cat] || 0;
+    const lastCat = byCategory[lastMonthKey]?.[cat] || 0;
+    if (lastCat > 0) {
+      categoryGrowth[cat] = ((currentCat - lastCat) / lastCat) * 100;
+    }
+  });
+
+  // Find category with highest growth
+  const growingCategory = Object.entries(categoryGrowth).reduce((max, [cat, growth]) =>
+    growth > (max[1] || -Infinity) ? [cat, growth] : max, ['', -Infinity]
+  );
+
+  // Generate highly personalized insights
   const insights = [];
 
-  if (superfluousPercentage > 15) {
-    const dailySavings = (superfluousSpending * 0.3) / 30;
-    const monthlySavings = superfluousSpending * 0.3;
+  // Trend-based insight (personalized to THIS user's behavior)
+  if (spendingTrend > 20 && currentMonthSpending > 0) {
+    const increaseAmount = currentMonthSpending - lastMonthSpending;
     insights.push({
-      type: 'superfluous',
-      title: 'Reduza supérfluos',
-      message: `${superfluousPercentage.toFixed(0)}% da sua renda vai para gastos supérfluos.`,
-      action: `Se você gastar ${formatCurrency(dailySavings)} a menos por dia em lazer, economiza ${formatCurrency(monthlySavings)} por mês.`,
-      impact: `+${Math.ceil(monthlySavings / 100)} pontos de tranquilidade`
+      type: 'warning',
+      title: 'Seus gastos cresceram',
+      message: `Neste mês, você gastou ${spendingTrend.toFixed(0)}% a mais que no anterior (${formatCurrency(increaseAmount)}).`,
+      action: `Reduza ${formatCurrency(increaseAmount * 0.4)} nos próximos 15 dias para voltar ao ritmo anterior.`,
+      impact: `Estabiliza sua tranquilidade financeira`
     });
-  } else if (superfluousPercentage > 0) {
+  } else if (spendingTrend < -15 && lastMonthSpending > 0) {
     insights.push({
-      type: 'superfluous',
-      title: 'Você é disciplinado!',
-      message: `Seus gastos supérfluos estão muito controlados. Apenas ${superfluousPercentage.toFixed(0)}% da renda vai para o não essencial.`,
-      action: `Continue assim e sua tranquilidade financeira permanece alta.`,
-      impact: `Controle mantido`
-    });
-  }
-
-  if (mostExpensiveDay[0] && mostExpensiveDay[1] > 0) {
-    const avgDay = mostExpensiveDay[1] / (lastMonths.length * 4);
-    insights.push({
-      type: 'pattern',
-      title: `${daysOfWeek[mostExpensiveDay[0]]}s são caras`,
-      message: `Você gasta mais nas ${daysOfWeek[mostExpensiveDay[0]]}s.`,
-      action: `Planeje ${formatCurrency(avgDay * 0.7)} para esse dia e evite compras por impulso.`,
-      impact: `Economia de ~${formatCurrency(avgDay * 0.3)} por ${daysOfWeek[mostExpensiveDay[0]]}`
+      type: 'positive',
+      title: 'Você melhorou este mês',
+      message: `Seus gastos caíram ${Math.abs(spendingTrend).toFixed(0)}% comparado ao mês passado.`,
+      action: `Mantenha esse controle e você economizará ${formatCurrency(Math.abs(currentMonthSpending - lastMonthSpending) * 12)} por ano.`,
+      impact: `Tranquilidade em alta`
     });
   }
 
-  if (recurringExpenses.length > 0 && recurringTotal > totalIncome * 0.2) {
-    insights.push({
-      type: 'recurring',
-      title: 'Revise recorrentes',
-      message: `Você tem ${recurringExpenses.length} gasto${recurringExpenses.length > 1 ? 's' : ''} recorrente${recurringExpenses.length > 1 ? 's' : ''} (${formatCurrency(recurringTotal)}/mês).`,
-      action: `Cancele 1 assinatura não essencial e economize ${formatCurrency(recurringTotal * 0.2)} por mês.`,
-      impact: `+${Math.ceil(recurringTotal * 0.2 / 100)} pontos de tranquilidade`
-    });
-  }
-
-  if (largestCategory[0] && largestCategory[1] > totalIncome * 0.4) {
-    const potentialSaving = largestCategory[1] * 0.15;
+  // Category-specific personalized insight
+  if (growingCategory[0] && growingCategory[1] > 30) {
+    const catLabel = categoryLabels[growingCategory[0]];
+    const currentCatAmount = byCategory[currentMonth]?.[growingCategory[0]] || 0;
     insights.push({
       type: 'category',
-      title: `Categoria dominante: ${categoryLabels[largestCategory[0]]}`,
-      message: `${formatCurrency(largestCategory[1])} vão para ${categoryLabels[largestCategory[0]] || largestCategory[0]}.`,
-      action: `Reduza 15% nessa categoria e economize ${formatCurrency(potentialSaving)} ao mês.`,
-      impact: `+${Math.ceil(potentialSaving / 100)} pontos de tranquilidade`
+      title: `${catLabel} disparou`,
+      message: `Neste mês, ${catLabel} cresceu ${growingCategory[1].toFixed(0)}% comparado ao anterior.`,
+      action: `Corte ${formatCurrency(currentCatAmount * 0.25)} de ${catLabel} e recupere o equilíbrio.`,
+      impact: `+${Math.ceil((currentCatAmount * 0.25) / 100)} pontos de tranquilidade`
     });
   }
 
-  if (bestMonth[0] && bestMonth[0] !== '') {
-    const [year, month] = bestMonth[0].split('-');
-    const monthName = new Date(year, parseInt(month) - 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-    const worstMonth = Object.entries(byMonth).reduce((max, [m, val]) =>
-      val > (max[1] || 0) ? [m, val] : max, ['', 0]
-    );
-    const difference = worstMonth[1] - bestMonth[1];
-    
-    if (difference > 0) {
-      insights.push({
-        type: 'trend',
-        title: `Replique ${monthName}`,
-        message: `${monthName} foi seu mês mais econômico: ${formatCurrency(bestMonth[1])}.`,
-        action: `Siga o mesmo padrão daquele mês e economize ${formatCurrency(difference)} neste.`,
-        impact: `Potencial de ${formatCurrency(difference)} de economia`
-      });
-    }
+  // Day-specific personalized insight
+  if (mostExpensiveDay[0] && mostExpensiveDay[1] > totalExpenses * 0.2) {
+    const dayName = daysOfWeek[mostExpensiveDay[0]];
+    const avgDaySpend = mostExpensiveDay[1] / (lastMonths.length * 4);
+    insights.push({
+      type: 'pattern',
+      title: `${dayName}s custam caro pra você`,
+      message: `Você concentra gastos nas ${dayName}s: ${formatCurrency(mostExpensiveDay[1])} nos últimos meses.`,
+      action: `Limite ${dayName} a ${formatCurrency(avgDaySpend * 0.6)} e economize ${formatCurrency(avgDaySpend * 0.4)} por semana.`,
+      impact: `Economia de ${formatCurrency((avgDaySpend * 0.4) * 4)} por mês`
+    });
   }
 
-  // If no insights, add a default positive one
+  // Superfluous analysis (personalized impact)
+  if (superfluousPercentage > 20) {
+    const targetPercentage = 12;
+    const targetAmount = totalIncome * (targetPercentage / 100);
+    const excessAmount = superfluousSpending - targetAmount;
+    insights.push({
+      type: 'superfluous',
+      title: 'Lazer pesando no bolso',
+      message: `${superfluousPercentage.toFixed(0)}% da sua renda foi para supérfluos neste mês.`,
+      action: `Corte ${formatCurrency(excessAmount)} em lazer e atinja ${targetPercentage}% (ideal pra você).`,
+      impact: `+${Math.ceil(excessAmount / 100)} pontos de tranquilidade`
+    });
+  } else if (superfluousPercentage > 0 && superfluousPercentage < 8) {
+    insights.push({
+      type: 'positive',
+      title: 'Controle exemplar',
+      message: `Apenas ${superfluousPercentage.toFixed(0)}% vai para supérfluos. Você está muito disciplinado.`,
+      action: `Mantenha esse padrão e considere alocar parte dessa economia para metas.`,
+      impact: `Tranquilidade máxima mantida`
+    });
+  }
+
+  // Recurring expenses (personalized to user's situation)
+  if (recurringExpenses.length > 3 && recurringTotal > totalIncome * 0.15) {
+    const highestRecurring = recurringExpenses.reduce((max, exp) => 
+      exp.amount > (max?.amount || 0) ? exp : max, null
+    );
+    insights.push({
+      type: 'recurring',
+      title: 'Assinaturas acumulando',
+      message: `${recurringExpenses.length} gastos recorrentes somam ${formatCurrency(recurringTotal)}/mês.`,
+      action: `Cancele ${highestRecurring?.description || 'a assinatura'} mais cara (${formatCurrency(highestRecurring?.amount || 0)}) e economize imediatamente.`,
+      impact: `+${Math.ceil((highestRecurring?.amount || 0) / 100)} pontos de tranquilidade`
+    });
+  }
+
+  // Default positive feedback if no specific insights
   if (insights.length === 0) {
     insights.push({
       type: 'positive',
-      title: 'Você está no caminho certo',
-      message: 'Seus gastos estão equilibrados.',
-      action: 'Continue registrando suas movimentações para manter o controle.',
+      title: 'Você está equilibrado',
+      message: 'Seu comportamento financeiro está consistente e saudável.',
+      action: 'Continue registrando para identificar novas oportunidades de economia.',
       impact: 'Tranquilidade mantida'
     });
   }
+
+  // Limit to 5 most relevant insights
+  insights.splice(5);
 
   const handleNext = () => {
     if (currentInsightIndex < insights.length - 1) {
