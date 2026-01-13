@@ -8,21 +8,18 @@ import {
   TrendingUp, 
   TrendingDown,
   ArrowRight,
-  RefreshCw,
-  Sparkles,
   Target,
   PiggyBank,
   Calendar,
-  Zap,
   Clock,
   Briefcase,
-  PartyPopper,
-  Heart
+  Zap,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 import {
   Select,
@@ -35,35 +32,31 @@ import {
 const SCENARIOS = [
   {
     id: "reduce_spending",
-    title: "E se eu economizar...",
-    emoji: "💰",
+    title: "Redução de Gastos",
     icon: PiggyBank,
-    color: "from-emerald-500 to-green-500",
-    description: "Quanto tempo ganho cortando gastos?"
+    gradient: "from-[#5FBDBD] to-[#4FA9A5]",
+    description: "Simule o impacto de economizar mais mensalmente"
   },
   {
     id: "change_job",
-    title: "E se eu mudar de emprego...",
-    emoji: "💼",
+    title: "Mudança de Renda",
     icon: Briefcase,
-    color: "from-blue-500 to-indigo-500",
-    description: "Como isso afeta minhas metas?"
+    gradient: "from-[#1B3A52] to-[#0A2540]",
+    description: "Veja como uma nova renda afeta seus objetivos"
   },
   {
     id: "zero_superfluous",
-    title: "E se eu cortar supérfluos...",
-    emoji: "⚡",
+    title: "Corte de Supérfluos",
     icon: Zap,
-    color: "from-amber-500 to-orange-500",
-    description: "Veja o impacto de 30 dias sem supérfluos"
+    gradient: "from-[#4FA9A5] to-[#2A4A62]",
+    description: "Descubra o potencial de 30 dias sem supérfluos"
   },
   {
     id: "goal_time",
-    title: "Quando alcanço meu objetivo?",
-    emoji: "🎯",
+    title: "Previsão de Metas",
     icon: Target,
-    color: "from-purple-500 to-pink-500",
-    description: "Calcule quando suas metas viram realidade"
+    gradient: "from-[#2A4A62] to-[#1B3A52]",
+    description: "Calcule quando você alcançará seus objetivos"
   }
 ];
 
@@ -72,7 +65,6 @@ export default function Simulation() {
   const [scenarioData, setScenarioData] = useState({
     reductionAmount: 200,
     newIncome: 0,
-    challengeDays: 30,
     selectedGoal: null
   });
 
@@ -127,7 +119,6 @@ export default function Simulation() {
 
   const monthlySavings = currentIncome * ((activeSettings.emergency_percentage + activeSettings.investment_percentage) / 100);
 
-  // Scenario calculations
   const calculateScenarioImpact = () => {
     if (!selectedScenario) return null;
 
@@ -226,13 +217,22 @@ export default function Simulation() {
 
   return (
     <div className="space-y-6 pb-8">
+      {/* Premium Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
+        className="space-y-4"
       >
-        <BackButton to={createPageUrl("Planning")} className="mb-4" />
-        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Simulador de Cenários</h1>
-        <p className="text-slate-500 mt-1">Descubra o impacto emocional das suas decisões financeiras</p>
+        <BackButton to={createPageUrl("Planning")} />
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-2xl flex items-center justify-center shadow-aury">
+            <Calculator className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Simulações</h1>
+            <p className="text-slate-500 text-sm">Preveja o impacto das suas decisões financeiras</p>
+          </div>
+        </div>
       </motion.div>
 
       <AnimatePresence mode="wait">
@@ -242,7 +242,7 @@ export default function Simulation() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-3"
           >
             {SCENARIOS.map((scenario, index) => {
               const Icon = scenario.icon;
@@ -251,21 +251,26 @@ export default function Simulation() {
                   key={scenario.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.05 }}
                   onClick={() => setSelectedScenario(scenario)}
-                  className="group"
+                  className="group text-left"
                 >
-                  <Card className="h-full hover:shadow-lg transition-all border-2 hover:border-[#00A8A0]">
-                    <CardContent className="p-6">
-                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${scenario.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                        <Icon className="w-8 h-8 text-white" />
+                  <Card className="hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/30 bg-white">
+                    <CardContent className="p-5">
+                      <div className="flex items-center gap-4">
+                        <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${scenario.gradient} flex items-center justify-center shadow-md group-hover:scale-105 transition-transform flex-shrink-0`}>
+                          <Icon className="w-7 h-7 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base font-semibold text-[#1B3A52] mb-1 group-hover:text-[#5FBDBD] transition-colors">
+                            {scenario.title}
+                          </h3>
+                          <p className="text-sm text-slate-500 leading-relaxed">
+                            {scenario.description}
+                          </p>
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-[#5FBDBD] group-hover:translate-x-1 transition-all" />
                       </div>
-                      <h3 className="text-lg font-bold text-slate-800 mb-2">
-                        {scenario.title}
-                      </h3>
-                      <p className="text-sm text-slate-500">
-                        {scenario.description}
-                      </p>
                     </CardContent>
                   </Card>
                 </motion.button>
@@ -280,47 +285,49 @@ export default function Simulation() {
             exit={{ opacity: 0, x: -20 }}
             className="space-y-6"
           >
-            <Button
-              variant="ghost"
-              onClick={() => setSelectedScenario(null)}
-              className="mb-4"
-            >
-              <ArrowRight className="w-4 h-4 mr-2 rotate-180" />
-              Voltar aos cenários
-            </Button>
-
-            {/* Input Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedScenario.color} flex items-center justify-center`}>
-                    {React.createElement(selectedScenario.icon, { className: "w-6 h-6 text-white" })}
+            {/* Input Card - Premium Style */}
+            <Card className="border-slate-200 shadow-sm">
+              <CardHeader className="border-b border-slate-100 pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${selectedScenario.gradient} flex items-center justify-center`}>
+                      {React.createElement(selectedScenario.icon, { className: "w-6 h-6 text-white" })}
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg text-[#1B3A52]">{selectedScenario.title}</CardTitle>
+                      <p className="text-sm text-slate-500">{selectedScenario.description}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-xl">{selectedScenario.title}</p>
-                    <p className="text-sm font-normal text-slate-500">{selectedScenario.description}</p>
-                  </div>
-                </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedScenario(null)}
+                    className="text-slate-500 hover:text-[#1B3A52]"
+                  >
+                    <ArrowRight className="w-4 h-4 rotate-180" />
+                  </Button>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-5 pt-6">
                 {selectedScenario.id === "reduce_spending" && (
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Quanto você quer economizar por mês?</Label>
+                      <Label className="text-sm font-medium text-[#1B3A52]">Quanto você quer economizar por mês?</Label>
                       <Input
                         type="number"
                         value={scenarioData.reductionAmount}
                         onChange={(e) => setScenarioData({ ...scenarioData, reductionAmount: parseFloat(e.target.value) || 0 })}
                         placeholder="Ex: 200"
+                        className="border-slate-200 focus:border-[#5FBDBD]"
                       />
                       <p className="text-xs text-slate-500">Sua economia mensal atual: {formatCurrency(monthlySavings)}</p>
                     </div>
                     
                     {goals.length > 0 && (
                       <div className="space-y-2">
-                        <Label>Conectar com meta</Label>
+                        <Label className="text-sm font-medium text-[#1B3A52]">Conectar com meta</Label>
                         <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
-                          <SelectTrigger>
+                          <SelectTrigger className="border-slate-200">
                             <SelectValue placeholder="Selecione uma meta" />
                           </SelectTrigger>
                           <SelectContent>
@@ -339,21 +346,22 @@ export default function Simulation() {
                 {selectedScenario.id === "change_job" && (
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label>Qual seria sua nova renda?</Label>
+                      <Label className="text-sm font-medium text-[#1B3A52]">Qual seria sua nova renda?</Label>
                       <Input
                         type="number"
                         value={scenarioData.newIncome}
                         onChange={(e) => setScenarioData({ ...scenarioData, newIncome: parseFloat(e.target.value) || 0 })}
                         placeholder="Nova renda mensal"
+                        className="border-slate-200 focus:border-[#5FBDBD]"
                       />
                       <p className="text-xs text-slate-500">Sua renda atual: {formatCurrency(currentIncome)}</p>
                     </div>
                     
                     {goals.length > 0 && (
                       <div className="space-y-2">
-                        <Label>Conectar com meta</Label>
+                        <Label className="text-sm font-medium text-[#1B3A52]">Conectar com meta</Label>
                         <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
-                          <SelectTrigger>
+                          <SelectTrigger className="border-slate-200">
                             <SelectValue placeholder="Selecione uma meta" />
                           </SelectTrigger>
                           <SelectContent>
@@ -371,16 +379,16 @@ export default function Simulation() {
 
                 {selectedScenario.id === "zero_superfluous" && (
                   <div className="space-y-4">
-                    <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
-                      <p className="text-sm text-amber-800 mb-2">Seus gastos supérfluos este mês</p>
-                      <p className="text-3xl font-bold text-amber-900">{formatCurrency(superfluousSpending)}</p>
+                    <div className="p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
+                      <p className="text-sm text-[#1B3A52] mb-2 font-medium">Seus gastos supérfluos este mês</p>
+                      <p className="text-3xl font-bold text-[#1B3A52]">{formatCurrency(superfluousSpending)}</p>
                     </div>
                     
                     {goals.length > 0 && (
                       <div className="space-y-2">
-                        <Label>Conectar com meta</Label>
+                        <Label className="text-sm font-medium text-[#1B3A52]">Conectar com meta</Label>
                         <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
-                          <SelectTrigger>
+                          <SelectTrigger className="border-slate-200">
                             <SelectValue placeholder="Selecione uma meta" />
                           </SelectTrigger>
                           <SelectContent>
@@ -401,13 +409,15 @@ export default function Simulation() {
                     {goals.length === 0 ? (
                       <div className="text-center py-8">
                         <p className="text-slate-500 mb-4">Você ainda não tem metas cadastradas</p>
-                        <Button variant="outline">Criar minha primeira meta</Button>
+                        <Button variant="outline" className="border-[#5FBDBD] text-[#5FBDBD] hover:bg-[#5FBDBD]/5">
+                          Criar minha primeira meta
+                        </Button>
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        <Label>Escolha sua meta</Label>
+                        <Label className="text-sm font-medium text-[#1B3A52]">Escolha sua meta</Label>
                         <Select value={scenarioData.selectedGoal || ""} onValueChange={(val) => setScenarioData({ ...scenarioData, selectedGoal: val })}>
-                          <SelectTrigger>
+                          <SelectTrigger className="border-slate-200">
                             <SelectValue placeholder="Selecione uma meta" />
                           </SelectTrigger>
                           <SelectContent>
@@ -425,55 +435,52 @@ export default function Simulation() {
               </CardContent>
             </Card>
 
-            {/* Results Card */}
+            {/* Results Card - Premium Style */}
             {impact && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
               >
-                <Card className={`border-2 bg-gradient-to-br ${selectedScenario.color} bg-opacity-5`}>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Heart className="w-5 h-5 text-[#00A8A0]" />
-                      Impacto Emocional
+                <Card className="border-[#5FBDBD]/30 shadow-aury bg-gradient-to-br from-[#5FBDBD]/5 to-[#1B3A52]/5">
+                  <CardHeader className="border-b border-[#5FBDBD]/20">
+                    <CardTitle className="flex items-center gap-2 text-[#1B3A52]">
+                      <TrendingUp className="w-5 h-5 text-[#5FBDBD]" />
+                      Resultado da Simulação
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-5 pt-6">
                     {selectedScenario.id === "reduce_spending" && (
                       <>
-                        <div className="text-center py-6">
-                          <p className="text-6xl mb-4">{scenarioData.reductionAmount >= 500 ? "🚀" : scenarioData.reductionAmount >= 200 ? "💪" : "🌱"}</p>
-                          <p className="text-3xl font-bold text-slate-800 mb-2">
-                            +{formatCurrency(impact.extraPerMonth)}/mês
-                          </p>
-                          <p className="text-slate-600">
-                            Economia extra todo mês
+                        <div className="text-center py-4">
+                          <p className="text-sm text-slate-500 mb-2">Economia adicional mensal</p>
+                          <p className="text-4xl font-bold text-[#5FBDBD] mb-1">
+                            +{formatCurrency(impact.extraPerMonth)}
                           </p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-white rounded-xl p-4 text-center">
-                            <Calendar className="w-6 h-6 text-[#00A8A0] mx-auto mb-2" />
-                            <p className="text-2xl font-bold text-slate-800">{formatCurrency(impact.yearSavings)}</p>
-                            <p className="text-xs text-slate-500">Em 1 ano</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-white rounded-xl p-4 text-center shadow-sm">
+                            <Calendar className="w-5 h-5 text-[#5FBDBD] mx-auto mb-2" />
+                            <p className="text-xl font-bold text-[#1B3A52]">{formatCurrency(impact.yearSavings)}</p>
+                            <p className="text-xs text-slate-500 mt-1">Em 1 ano</p>
                           </div>
                           {impact.timeSaved && impact.timeSaved > 0 && (
-                            <div className="bg-white rounded-xl p-4 text-center">
-                              <Clock className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                              <p className="text-2xl font-bold text-purple-600">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
-                              <p className="text-xs text-slate-500">Antecipa sua meta</p>
+                            <div className="bg-white rounded-xl p-4 text-center shadow-sm">
+                              <Clock className="w-5 h-5 text-[#2A4A62] mx-auto mb-2" />
+                              <p className="text-xl font-bold text-[#1B3A52]">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
+                              <p className="text-xs text-slate-500 mt-1">Antecipa sua meta</p>
                             </div>
                           )}
                         </div>
 
                         {impact.goalName && impact.monthsToGoal && (
-                          <div className="bg-white rounded-xl p-5">
-                            <div className="flex items-center gap-3 mb-3">
-                              <Target className="w-5 h-5 text-[#00A8A0]" />
-                              <p className="font-semibold text-slate-800">Meta: {impact.goalName}</p>
+                          <div className="bg-white rounded-xl p-5 shadow-sm">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Target className="w-4 h-4 text-[#5FBDBD]" />
+                              <p className="font-semibold text-[#1B3A52] text-sm">Meta: {impact.goalName}</p>
                             </div>
-                            <p className="text-4xl font-bold text-[#00A8A0] mb-2">
+                            <p className="text-3xl font-bold text-[#5FBDBD] mb-2">
                               {impact.monthsToGoal} {impact.monthsToGoal === 1 ? 'mês' : 'meses'}
                             </p>
                             <p className="text-sm text-slate-600">
@@ -486,38 +493,35 @@ export default function Simulation() {
 
                     {selectedScenario.id === "change_job" && (
                       <>
-                        <div className="text-center py-6">
-                          <p className="text-6xl mb-4">
-                            {impact.incomeDiff > 0 ? "📈" : impact.incomeDiff < 0 ? "📉" : "➡️"}
-                          </p>
-                          <p className={`text-3xl font-bold mb-2 ${impact.incomeDiff > 0 ? 'text-emerald-600' : impact.incomeDiff < 0 ? 'text-red-600' : 'text-slate-600'}`}>
+                        <div className="text-center py-4">
+                          <p className="text-sm text-slate-500 mb-2">Diferença mensal</p>
+                          <p className={`text-4xl font-bold mb-1 ${impact.incomeDiff > 0 ? 'text-[#5FBDBD]' : 'text-rose-500'}`}>
                             {impact.incomeDiff > 0 ? '+' : ''}{formatCurrency(impact.incomeDiff)}
                           </p>
-                          <p className="text-slate-600">Diferença mensal</p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-white rounded-xl p-4 text-center">
-                            <PiggyBank className="w-6 h-6 text-emerald-500 mx-auto mb-2" />
-                            <p className="text-2xl font-bold text-slate-800">{formatCurrency(impact.monthlySavings)}</p>
-                            <p className="text-xs text-slate-500">Nova economia/mês</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-white rounded-xl p-4 text-center shadow-sm">
+                            <PiggyBank className="w-5 h-5 text-[#5FBDBD] mx-auto mb-2" />
+                            <p className="text-xl font-bold text-[#1B3A52]">{formatCurrency(impact.monthlySavings)}</p>
+                            <p className="text-xs text-slate-500 mt-1">Nova economia/mês</p>
                           </div>
                           {impact.timeSaved && impact.timeSaved > 0 && (
-                            <div className="bg-white rounded-xl p-4 text-center">
-                              <Clock className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                              <p className="text-2xl font-bold text-purple-600">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
-                              <p className="text-xs text-slate-500">Antecipa sua meta</p>
+                            <div className="bg-white rounded-xl p-4 text-center shadow-sm">
+                              <Clock className="w-5 h-5 text-[#2A4A62] mx-auto mb-2" />
+                              <p className="text-xl font-bold text-[#1B3A52]">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
+                              <p className="text-xs text-slate-500 mt-1">Antecipa sua meta</p>
                             </div>
                           )}
                         </div>
 
                         {impact.goalName && impact.monthsToGoal && (
-                          <div className="bg-white rounded-xl p-5">
-                            <div className="flex items-center gap-3 mb-3">
-                              <Target className="w-5 h-5 text-[#00A8A0]" />
-                              <p className="font-semibold text-slate-800">Meta: {impact.goalName}</p>
+                          <div className="bg-white rounded-xl p-5 shadow-sm">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Target className="w-4 h-4 text-[#5FBDBD]" />
+                              <p className="font-semibold text-[#1B3A52] text-sm">Meta: {impact.goalName}</p>
                             </div>
-                            <p className="text-4xl font-bold text-[#00A8A0] mb-2">
+                            <p className="text-3xl font-bold text-[#5FBDBD] mb-2">
                               {impact.monthsToGoal} {impact.monthsToGoal === 1 ? 'mês' : 'meses'}
                             </p>
                             <p className="text-sm text-slate-600">
@@ -530,36 +534,35 @@ export default function Simulation() {
 
                     {selectedScenario.id === "zero_superfluous" && (
                       <>
-                        <div className="text-center py-6">
-                          <p className="text-6xl mb-4">⚡</p>
-                          <p className="text-3xl font-bold text-amber-600 mb-2">
+                        <div className="text-center py-4">
+                          <p className="text-sm text-slate-500 mb-2">Economia em 30 dias</p>
+                          <p className="text-4xl font-bold text-[#5FBDBD] mb-1">
                             {formatCurrency(impact.savings30Days)}
                           </p>
-                          <p className="text-slate-600">Economia em 30 dias sem supérfluos</p>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-white rounded-xl p-4 text-center">
-                            <Sparkles className="w-6 h-6 text-amber-500 mx-auto mb-2" />
-                            <p className="text-2xl font-bold text-slate-800">{formatCurrency(impact.extraYearly)}</p>
-                            <p className="text-xs text-slate-500">Em 12 meses</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="bg-white rounded-xl p-4 text-center shadow-sm">
+                            <Calendar className="w-5 h-5 text-[#5FBDBD] mx-auto mb-2" />
+                            <p className="text-xl font-bold text-[#1B3A52]">{formatCurrency(impact.extraYearly)}</p>
+                            <p className="text-xs text-slate-500 mt-1">Em 12 meses</p>
                           </div>
                           {impact.timeSaved && impact.timeSaved > 0 && (
-                            <div className="bg-white rounded-xl p-4 text-center">
-                              <Clock className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                              <p className="text-2xl font-bold text-purple-600">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
-                              <p className="text-xs text-slate-500">Antecipa sua meta</p>
+                            <div className="bg-white rounded-xl p-4 text-center shadow-sm">
+                              <Clock className="w-5 h-5 text-[#2A4A62] mx-auto mb-2" />
+                              <p className="text-xl font-bold text-[#1B3A52]">-{impact.timeSaved} {impact.timeSaved === 1 ? 'mês' : 'meses'}</p>
+                              <p className="text-xs text-slate-500 mt-1">Antecipa sua meta</p>
                             </div>
                           )}
                         </div>
 
                         {impact.goalName && impact.monthsToGoal && (
-                          <div className="bg-white rounded-xl p-5">
-                            <div className="flex items-center gap-3 mb-3">
-                              <Target className="w-5 h-5 text-[#00A8A0]" />
-                              <p className="font-semibold text-slate-800">Meta: {impact.goalName}</p>
+                          <div className="bg-white rounded-xl p-5 shadow-sm">
+                            <div className="flex items-center gap-2 mb-3">
+                              <Target className="w-4 h-4 text-[#5FBDBD]" />
+                              <p className="font-semibold text-[#1B3A52] text-sm">Meta: {impact.goalName}</p>
                             </div>
-                            <p className="text-4xl font-bold text-[#00A8A0] mb-2">
+                            <p className="text-3xl font-bold text-[#5FBDBD] mb-2">
                               {impact.monthsToGoal} {impact.monthsToGoal === 1 ? 'mês' : 'meses'}
                             </p>
                             <p className="text-sm text-slate-600">
@@ -572,38 +575,37 @@ export default function Simulation() {
 
                     {selectedScenario.id === "goal_time" && impact.monthsNeeded && (
                       <>
-                        <div className="text-center py-6">
-                          <p className="text-6xl mb-4">🎯</p>
-                          <p className="text-3xl font-bold text-purple-600 mb-2">
+                        <div className="text-center py-4">
+                          <p className="text-sm text-slate-500 mb-2">Para alcançar: {impact.goalName}</p>
+                          <p className="text-4xl font-bold text-[#5FBDBD] mb-1">
                             {impact.monthsNeeded} {impact.monthsNeeded === 1 ? 'mês' : 'meses'}
                           </p>
-                          <p className="text-slate-600">Para alcançar: {impact.goalName}</p>
                         </div>
 
-                        <div className="bg-white rounded-xl p-5 space-y-3">
-                          <div className="flex justify-between">
+                        <div className="bg-white rounded-xl p-5 space-y-3 shadow-sm">
+                          <div className="flex justify-between text-sm">
                             <span className="text-slate-600">Meta</span>
-                            <span className="font-bold text-slate-800">{formatCurrency(impact.targetAmount)}</span>
+                            <span className="font-bold text-[#1B3A52]">{formatCurrency(impact.targetAmount)}</span>
                           </div>
-                          <div className="flex justify-between">
+                          <div className="flex justify-between text-sm">
                             <span className="text-slate-600">Já conquistado</span>
-                            <span className="font-semibold text-emerald-600">{formatCurrency(impact.currentAmount)}</span>
+                            <span className="font-semibold text-[#5FBDBD]">{formatCurrency(impact.currentAmount)}</span>
                           </div>
-                          <div className="flex justify-between border-t pt-3">
+                          <div className="flex justify-between border-t pt-3 text-sm">
                             <span className="text-slate-600">Falta</span>
-                            <span className="font-bold text-[#00A8A0]">{formatCurrency(impact.remaining)}</span>
+                            <span className="font-bold text-[#1B3A52]">{formatCurrency(impact.remaining)}</span>
                           </div>
                         </div>
 
-                        <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-5 border border-purple-200">
-                          <div className="flex items-center gap-3 mb-3">
-                            <PartyPopper className="w-6 h-6 text-purple-600" />
-                            <p className="font-semibold text-purple-800">Previsão de Conquista</p>
+                        <div className="bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl p-5 border border-[#5FBDBD]/20">
+                          <div className="flex items-center gap-2 mb-3">
+                            <Target className="w-5 h-5 text-[#5FBDBD]" />
+                            <p className="font-semibold text-[#1B3A52]">Previsão de Conquista</p>
                           </div>
-                          <p className="text-3xl font-bold text-purple-600 mb-1">
+                          <p className="text-3xl font-bold text-[#5FBDBD] mb-1">
                             {impact.targetDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
                           </p>
-                          <p className="text-sm text-purple-600">
+                          <p className="text-sm text-slate-600">
                             Economizando {formatCurrency(impact.monthlySavings)} por mês
                           </p>
                         </div>
