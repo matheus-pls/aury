@@ -45,7 +45,7 @@ const EXPENSE_CATEGORIES = {
   fixed: { label: "Gastos Fixos", icon: Home, color: "bg-[#0A1A3A]", textColor: "text-[#0A1A3A]" },
   essential: { label: "Essenciais Variáveis", icon: ShoppingCart, color: "bg-[#00A8A0]", textColor: "text-[#00A8A0]" },
   superfluous: { label: "Supérfluos", icon: Sparkles, color: "bg-amber-500", textColor: "text-amber-500" },
-  emergency: { label: "Reserva Emergência", icon: Shield, color: "bg-green-500", textColor: "text-green-500" },
+  emergency: { label: "Caixinha", icon: Shield, color: "bg-green-500", textColor: "text-green-500" },
   investment: { label: "Investimentos", icon: TrendingUp, color: "bg-violet-500", textColor: "text-violet-500" }
 };
 
@@ -62,7 +62,9 @@ export default function Expenses() {
     category: "essential",
     subcategory: "",
     date: new Date().toISOString().slice(0, 10),
-    is_recurring: false
+    is_recurring: false,
+    recurrence_type: "months",
+    recurrence_interval: 1
   });
 
   const queryClient = useQueryClient();
@@ -107,7 +109,9 @@ export default function Expenses() {
         category: expense.category,
         subcategory: expense.subcategory || "",
         date: expense.date,
-        is_recurring: expense.is_recurring || false
+        is_recurring: expense.is_recurring || false,
+        recurrence_type: expense.recurrence_type || "months",
+        recurrence_interval: expense.recurrence_interval || 1
       });
     } else {
       setEditingExpense(null);
@@ -117,7 +121,9 @@ export default function Expenses() {
         category: "essential",
         subcategory: "",
         date: new Date().toISOString().slice(0, 10),
-        is_recurring: false
+        is_recurring: false,
+        recurrence_type: "months",
+        recurrence_interval: 1
       });
     }
     setIsDialogOpen(true);
@@ -470,6 +476,48 @@ export default function Expenses() {
                 onCheckedChange={(checked) => setFormData({ ...formData, is_recurring: checked })}
               />
             </div>
+
+            {formData.is_recurring && (
+              <div className="space-y-4 p-4 bg-slate-50 rounded-lg">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Repetir a cada</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      placeholder="1"
+                      value={formData.recurrence_interval}
+                      onChange={(e) => setFormData({ ...formData, recurrence_interval: parseInt(e.target.value) || 1 })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Período</Label>
+                    <Select
+                      value={formData.recurrence_type}
+                      onValueChange={(value) => setFormData({ ...formData, recurrence_type: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="days">Dias</SelectItem>
+                        <SelectItem value="weeks">Semanas</SelectItem>
+                        <SelectItem value="months">Meses</SelectItem>
+                        <SelectItem value="years">Anos</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-500">
+                  Este gasto se repetirá a cada {formData.recurrence_interval} {
+                    formData.recurrence_type === "days" ? "dia(s)" :
+                    formData.recurrence_type === "weeks" ? "semana(s)" :
+                    formData.recurrence_type === "months" ? "mês(es)" :
+                    "ano(s)"
+                  }
+                </p>
+              </div>
+            )}
 
             <div className="flex gap-3 pt-4">
               <Button 

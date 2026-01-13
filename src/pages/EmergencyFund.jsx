@@ -31,7 +31,10 @@ import {
 export default function EmergencyFund() {
   const [showDetails, setShowDetails] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [showWithdrawDialog, setShowWithdrawDialog] = useState(false);
+  const [withdrawConfirm, setWithdrawConfirm] = useState(false);
   const [addAmount, setAddAmount] = useState("");
+  const [withdrawAmount, setWithdrawAmount] = useState("");
   const currentMonth = new Date().toISOString().slice(0, 7);
 
   const queryClient = useQueryClient();
@@ -183,6 +186,23 @@ export default function EmergencyFund() {
     }
   };
 
+  const handleWithdraw = () => {
+    if (!withdrawConfirm || !withdrawAmount || parseFloat(withdrawAmount) <= 0) return;
+
+    const newTotal = Math.max(0, currentEmergencyFund - parseFloat(withdrawAmount));
+    const data = {
+      ...currentSettings,
+      current_emergency_fund: newTotal
+    };
+
+    if (settings) {
+      updateSettingsMutation.mutate({ id: settings.id, data });
+      setShowWithdrawDialog(false);
+      setWithdrawAmount("");
+      setWithdrawConfirm(false);
+    }
+  };
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -211,17 +231,28 @@ export default function EmergencyFund() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Shield className="w-6 h-6 text-[#5FBDBD]" />
-              <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Reserva de Emergência</h1>
+              <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Caixinha</h1>
             </div>
-            <p className="text-slate-500">Proteção financeira para imprevistos</p>
+            <p className="text-slate-500">Sua segurança para imprevistos</p>
           </div>
-          <Button
-            onClick={() => setShowAddDialog(true)}
-            className="bg-emerald-500 hover:bg-emerald-600"
-          >
-            <DollarSign className="w-4 h-4 mr-2" />
-            Adicionar
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setShowAddDialog(true)}
+              variant="outline"
+              className="border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Adicionar
+            </Button>
+            <Button
+              onClick={() => setShowWithdrawDialog(true)}
+              variant="outline"
+              className="border-rose-500 text-rose-600 hover:bg-rose-50"
+            >
+              <TrendingDown className="w-4 h-4 mr-2" />
+              Retirar
+            </Button>
+          </div>
         </div>
       </motion.div>
 
@@ -236,7 +267,7 @@ export default function EmergencyFund() {
           <div className="flex items-center gap-3">
             <RiskIcon className="w-8 h-8" />
             <div>
-              <p className="text-white/80 text-sm">Status da Reserva</p>
+              <p className="text-white/80 text-sm">Status da Caixinha</p>
               <p className="text-2xl font-bold">{risk.level}</p>
             </div>
           </div>
@@ -248,7 +279,7 @@ export default function EmergencyFund() {
 
         <div className="space-y-3 mb-6">
           <div className="flex justify-between text-sm">
-            <span className="text-white/80">Reserva atual</span>
+            <span className="text-white/80">Caixinha atual</span>
             <span className="font-semibold">{formatCurrency(currentEmergencyFund)}</span>
           </div>
           <Progress value={progressPercentage} className="h-3 bg-white/20" />
@@ -439,11 +470,11 @@ export default function EmergencyFund() {
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Adicionar à Reserva</DialogTitle>
+            <DialogTitle className="text-[#1B3A52]">Adicionar à Caixinha</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
             <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm text-slate-600 mb-1">Reserva atual</p>
+              <p className="text-sm text-slate-600 mb-1">Caixinha atual</p>
               <p className="text-2xl font-bold text-slate-800 tabular-nums">{formatCurrency(currentEmergencyFund)}</p>
             </div>
             
@@ -462,7 +493,7 @@ export default function EmergencyFund() {
 
             {addAmount && parseFloat(addAmount) > 0 && (
               <div className="bg-emerald-50 rounded-lg p-4">
-                <p className="text-sm text-emerald-600 mb-1">Nova reserva</p>
+                <p className="text-sm text-emerald-600 mb-1">Nova caixinha</p>
                 <p className="text-2xl font-bold text-emerald-700 tabular-nums">
                   {formatCurrency(currentEmergencyFund + parseFloat(addAmount))}
                 </p>
@@ -484,6 +515,97 @@ export default function EmergencyFund() {
                 disabled={!addAmount || parseFloat(addAmount) <= 0 || updateSettingsMutation.isPending}
               >
                 Confirmar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Withdraw Dialog with Confirmation */}
+      <Dialog open={showWithdrawDialog} onOpenChange={(open) => {
+        setShowWithdrawDialog(open);
+        if (!open) {
+          setWithdrawConfirm(false);
+          setWithdrawAmount("");
+        }
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#1B3A52]">Retirar da Caixinha</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-amber-900 mb-1">A caixinha é sua segurança</p>
+                  <p className="text-xs text-amber-700 leading-relaxed">
+                    É sempre bom manter um valor guardado para imprevistos. Tem certeza que deseja retirar agora?
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-slate-50 rounded-lg p-4">
+              <p className="text-sm text-slate-600 mb-1">Caixinha atual</p>
+              <p className="text-2xl font-bold text-slate-800 tabular-nums">{formatCurrency(currentEmergencyFund)}</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="withdrawAmount" className="text-[#1B3A52]">Valor a Retirar</Label>
+              <Input
+                id="withdrawAmount"
+                type="number"
+                placeholder="0,00"
+                step="0.01"
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                autoFocus
+                className="border-slate-200 focus:border-[#5FBDBD]"
+              />
+            </div>
+
+            {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
+              <div className="bg-rose-50 rounded-lg p-4">
+                <p className="text-sm text-rose-600 mb-1">Nova caixinha</p>
+                <p className="text-2xl font-bold text-rose-700 tabular-nums">
+                  {formatCurrency(Math.max(0, currentEmergencyFund - parseFloat(withdrawAmount)))}
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
+              <input
+                type="checkbox"
+                id="withdrawConfirm"
+                checked={withdrawConfirm}
+                onChange={(e) => setWithdrawConfirm(e.target.checked)}
+                className="w-4 h-4 text-[#5FBDBD] rounded focus:ring-[#5FBDBD]"
+              />
+              <Label htmlFor="withdrawConfirm" className="text-sm text-slate-700 cursor-pointer">
+                Confirmo que quero retirar este valor
+              </Label>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="flex-1 border-slate-200"
+                onClick={() => {
+                  setShowWithdrawDialog(false);
+                  setWithdrawConfirm(false);
+                  setWithdrawAmount("");
+                }}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                onClick={handleWithdraw}
+                className="flex-1 bg-rose-500 hover:bg-rose-600"
+                disabled={!withdrawConfirm || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || updateSettingsMutation.isPending}
+              >
+                Retirar
               </Button>
             </div>
           </div>

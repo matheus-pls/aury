@@ -24,8 +24,9 @@ import BackButton from "@/components/BackButton";
 export default function BehaviorAnalysis() {
   const [showFullReport, setShowFullReport] = useState(false);
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
+  const [selectedPeriod, setSelectedPeriod] = useState(3);
 
-  // Get last 3 months
+  // Get last N months
   const getLastMonths = (count) => {
     const months = [];
     for (let i = 0; i < count; i++) {
@@ -36,7 +37,7 @@ export default function BehaviorAnalysis() {
     return months;
   };
 
-  const lastMonths = getLastMonths(3);
+  const lastMonths = getLastMonths(selectedPeriod);
 
   // Fetch expenses
   const { data: expenses = [], isLoading } = useQuery({
@@ -237,10 +238,20 @@ export default function BehaviorAnalysis() {
           <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-2xl flex items-center justify-center shadow-aury">
             <Activity className="w-6 h-6 text-white" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Análise de Comportamento</h1>
-            <p className="text-slate-500 text-sm">Últimos 3 meses de atividade financeira</p>
+            <p className="text-slate-500 text-sm">Últimos {selectedPeriod} meses de atividade financeira</p>
           </div>
+          <Select value={selectedPeriod.toString()} onValueChange={(val) => setSelectedPeriod(parseInt(val))}>
+            <SelectTrigger className="w-40 border-slate-200">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="3">Últimos 3 meses</SelectItem>
+              <SelectItem value="6">Últimos 6 meses</SelectItem>
+              <SelectItem value="12">Último ano</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </motion.div>
 

@@ -16,6 +16,7 @@ import Settings from './pages/Settings';
 import Simulation from './pages/Simulation';
 import TravelMode from './pages/TravelMode';
 import Welcome from './pages/Welcome';
+import TightMonth from './pages/TightMonth';
 import __Layout from './Layout.jsx';
 
 
@@ -38,6 +39,7 @@ export const PAGES = {
     "Simulation": Simulation,
     "TravelMode": TravelMode,
     "Welcome": Welcome,
+    "TightMonth": TightMonth,
 }
 
 export const pagesConfig = {
