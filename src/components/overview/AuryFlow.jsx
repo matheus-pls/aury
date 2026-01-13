@@ -11,7 +11,8 @@ import {
   Sparkles,
   ArrowDownCircle,
   ArrowUpCircle,
-  Edit3
+  Edit3,
+  Heart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -210,6 +211,23 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
       console.error("Error processing text:", error);
       setInputMode("text");
     }
+  };
+
+  // Calculate tranquility impact
+  const calculateTranquilityImpact = () => {
+    if (!parsedData) return 0;
+    
+    if (parsedData.type === "expense") {
+      // Expenses reduce tranquility
+      const percentOfIncome = (parsedData.amount / 3000) * 100; // Assuming avg income ~3k
+      if (parsedData.category === "superfluous") return -Math.ceil(percentOfIncome * 0.5);
+      if (parsedData.category === "essential") return -Math.ceil(percentOfIncome * 0.2);
+      if (parsedData.category === "fixed") return -Math.ceil(percentOfIncome * 0.1);
+    } else {
+      // Income increases tranquility
+      return Math.ceil((parsedData.amount / 1000) * 2);
+    }
+    return 0;
   };
 
   const confirmTransaction = () => {
@@ -456,7 +474,7 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                 </div>
               </div>
 
-              <div className="bg-white/5 rounded-2xl p-4 mb-6">
+              <div className="bg-white/5 rounded-2xl p-4 mb-4">
                 <div className="flex justify-between items-center mb-3">
                   <span className="text-white/60">Valor</span>
                   <span className={`text-2xl font-bold ${
@@ -475,6 +493,39 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                   </span>
                 </div>
               </div>
+
+              {/* Tranquility Impact */}
+              {(() => {
+                const impact = calculateTranquilityImpact();
+                if (impact === 0) return null;
+                return (
+                  <div className={`rounded-xl p-3 mb-6 flex items-center gap-3 ${
+                    impact > 0 
+                      ? "bg-emerald-500/10 border border-emerald-500/20" 
+                      : "bg-rose-500/10 border border-rose-500/20"
+                  }`}>
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      impact > 0 ? "bg-emerald-500/20" : "bg-rose-500/20"
+                    }`}>
+                      <Heart className={`w-4 h-4 ${
+                        impact > 0 ? "text-emerald-400" : "text-rose-400"
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <p className={`text-xs ${
+                        impact > 0 ? "text-emerald-300" : "text-rose-300"
+                      }`}>
+                        Impacto na Tranquilidade
+                      </p>
+                      <p className={`font-semibold ${
+                        impact > 0 ? "text-emerald-400" : "text-rose-400"
+                      }`}>
+                        {impact > 0 ? "+" : ""}{impact} pontos
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="flex gap-3">
                 <Button

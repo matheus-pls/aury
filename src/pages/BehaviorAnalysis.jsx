@@ -130,64 +130,88 @@ export default function BehaviorAnalysis() {
     investment: 'Investimentos'
   };
 
-  // Generate insights
+  // Generate insights with actions (1 insight = 1 action)
   const insights = [];
 
-  if (largestCategory[0]) {
+  if (superfluousPercentage > 15) {
+    const dailySavings = (superfluousSpending * 0.3) / 30;
+    const monthlySavings = superfluousSpending * 0.3;
     insights.push({
-      type: 'category',
-      title: 'Seu maior gasto',
-      message: `Você gastou mais com ${categoryLabels[largestCategory[0]] || largestCategory[0]}. Nos últimos 3 meses, ${formatCurrency(largestCategory[1])} foram para essa categoria.`
+      type: 'superfluous',
+      title: 'Reduza supérfluos',
+      message: `${superfluousPercentage.toFixed(0)}% da sua renda vai para gastos supérfluos.`,
+      action: `Se você gastar ${formatCurrency(dailySavings)} a menos por dia em lazer, economiza ${formatCurrency(monthlySavings)} por mês.`,
+      impact: `+${Math.ceil(monthlySavings / 100)} pontos de tranquilidade`
+    });
+  } else if (superfluousPercentage > 0) {
+    insights.push({
+      type: 'superfluous',
+      title: 'Você é disciplinado!',
+      message: `Seus gastos supérfluos estão muito controlados. Apenas ${superfluousPercentage.toFixed(0)}% da renda vai para o não essencial.`,
+      action: `Continue assim e sua tranquilidade financeira permanece alta.`,
+      impact: `Controle mantido`
     });
   }
 
-  if (superfluousPercentage > 0) {
-    if (superfluousPercentage > 15) {
-      insights.push({
-        type: 'superfluous',
-        title: 'Gastos supérfluos elevados',
-        message: `${superfluousPercentage.toFixed(0)}% da sua renda vai para gastos supérfluos. Reduzir um pouco pode fortalecer sua reserva ou acelerar suas metas.`
-      });
-    } else {
-      insights.push({
-        type: 'superfluous',
-        title: 'Você é disciplinado!',
-        message: `Seus gastos supérfluos estão muito controlados. Apenas ${superfluousPercentage.toFixed(0)}% da renda vai para o não essencial. Parabéns pelo controle!`
-      });
-    }
-  }
-
-  if (mostExpensiveDay[0]) {
+  if (mostExpensiveDay[0] && mostExpensiveDay[1] > 0) {
+    const avgDay = mostExpensiveDay[1] / (lastMonths.length * 4);
     insights.push({
       type: 'pattern',
-      title: 'Seu dia mais caro',
-      message: `Você gasta mais nas ${daysOfWeek[mostExpensiveDay[0]]}s. Fique atento a esse padrão e planeje-se para evitar gastos impulsivos.`
+      title: `${daysOfWeek[mostExpensiveDay[0]]}s são caras`,
+      message: `Você gasta mais nas ${daysOfWeek[mostExpensiveDay[0]]}s.`,
+      action: `Planeje ${formatCurrency(avgDay * 0.7)} para esse dia e evite compras por impulso.`,
+      impact: `Economia de ~${formatCurrency(avgDay * 0.3)} por ${daysOfWeek[mostExpensiveDay[0]]}`
+    });
+  }
+
+  if (recurringExpenses.length > 0 && recurringTotal > totalIncome * 0.2) {
+    insights.push({
+      type: 'recurring',
+      title: 'Revise recorrentes',
+      message: `Você tem ${recurringExpenses.length} gasto${recurringExpenses.length > 1 ? 's' : ''} recorrente${recurringExpenses.length > 1 ? 's' : ''} (${formatCurrency(recurringTotal)}/mês).`,
+      action: `Cancele 1 assinatura não essencial e economize ${formatCurrency(recurringTotal * 0.2)} por mês.`,
+      impact: `+${Math.ceil(recurringTotal * 0.2 / 100)} pontos de tranquilidade`
+    });
+  }
+
+  if (largestCategory[0] && largestCategory[1] > totalIncome * 0.4) {
+    const potentialSaving = largestCategory[1] * 0.15;
+    insights.push({
+      type: 'category',
+      title: `Categoria dominante: ${categoryLabels[largestCategory[0]]}`,
+      message: `${formatCurrency(largestCategory[1])} vão para ${categoryLabels[largestCategory[0]] || largestCategory[0]}.`,
+      action: `Reduza 15% nessa categoria e economize ${formatCurrency(potentialSaving)} ao mês.`,
+      impact: `+${Math.ceil(potentialSaving / 100)} pontos de tranquilidade`
     });
   }
 
   if (bestMonth[0] && bestMonth[0] !== '') {
     const [year, month] = bestMonth[0].split('-');
     const monthName = new Date(year, parseInt(month) - 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-    insights.push({
-      type: 'trend',
-      title: 'Seu melhor mês',
-      message: `${monthName} foi seu mês mais econômico recente, com apenas ${formatCurrency(bestMonth[1])} em gastos.`
-    });
+    const worstMonth = Object.entries(byMonth).reduce((max, [m, val]) =>
+      val > (max[1] || 0) ? [m, val] : max, ['', 0]
+    );
+    const difference = worstMonth[1] - bestMonth[1];
+    
+    if (difference > 0) {
+      insights.push({
+        type: 'trend',
+        title: `Replique ${monthName}`,
+        message: `${monthName} foi seu mês mais econômico: ${formatCurrency(bestMonth[1])}.`,
+        action: `Siga o mesmo padrão daquele mês e economize ${formatCurrency(difference)} neste.`,
+        impact: `Potencial de ${formatCurrency(difference)} de economia`
+      });
+    }
   }
 
-  if (biggestExpense.description) {
+  // If no insights, add a default positive one
+  if (insights.length === 0) {
     insights.push({
-      type: 'highlight',
-      title: 'Seu maior gasto único',
-      message: `Nos últimos 3 meses, "${biggestExpense.description}" foi o maior gasto: ${formatCurrency(biggestExpense.amount)}.`
-    });
-  }
-
-  if (recurringExpenses.length > 0) {
-    insights.push({
-      type: 'recurring',
-      title: 'Gastos recorrentes',
-      message: `Você tem ${recurringExpenses.length} gasto${recurringExpenses.length > 1 ? 's' : ''} recorrente${recurringExpenses.length > 1 ? 's' : ''}, totalizando ${formatCurrency(recurringTotal)} por mês.`
+      type: 'positive',
+      title: 'Você está no caminho certo',
+      message: 'Seus gastos estão equilibrados.',
+      action: 'Continue registrando suas movimentações para manter o controle.',
+      impact: 'Tranquilidade mantida'
     });
   }
 
@@ -279,17 +303,33 @@ export default function BehaviorAnalysis() {
               <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
               
               <div className="relative">
-                <div className="flex items-start gap-4 mb-6">
+                <div className="flex items-start gap-4 mb-4">
                   <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
                     <Activity className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold mb-3">{insights[currentInsightIndex]?.title}</h3>
+                    <h3 className="text-2xl font-bold mb-2">{insights[currentInsightIndex]?.title}</h3>
                     <p className="text-white/90 leading-relaxed text-base">{insights[currentInsightIndex]?.message}</p>
                   </div>
                 </div>
+
+                {/* Action Block */}
+                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Target className="w-4 h-4 text-emerald-300" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-emerald-300 text-xs font-semibold mb-1">Ação Sugerida</p>
+                      <p className="text-white text-sm leading-relaxed">{insights[currentInsightIndex]?.action}</p>
+                      {insights[currentInsightIndex]?.impact && (
+                        <p className="text-white/70 text-xs mt-2">💡 {insights[currentInsightIndex]?.impact}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
                 
-                <div className="flex items-center justify-between pt-6 border-t border-white/20">
+                <div className="flex items-center justify-between pt-4 border-t border-white/20">
                   <p className="text-sm text-white/70">Insight {currentInsightIndex + 1} de {insights.length}</p>
                   <div className="flex gap-1.5">
                     {insights.map((_, i) => (
@@ -361,15 +401,29 @@ export default function BehaviorAnalysis() {
               >
                 <Card className="overflow-hidden border border-slate-200 hover:border-[#5FBDBD]/30 hover:shadow-aury transition-all">
                   <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
+                    <div className="flex items-start gap-4 mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center flex-shrink-0">
                         <Activity className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-base font-semibold text-[#1B3A52] mb-2">{insight.title}</h3>
+                        <h3 className="text-base font-semibold text-[#1B3A52] mb-1">{insight.title}</h3>
                         <p className="text-sm text-slate-600 leading-relaxed">{insight.message}</p>
                       </div>
                     </div>
+                    {insight.action && (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                        <div className="flex items-start gap-2">
+                          <Target className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                          <div>
+                            <p className="text-xs font-semibold text-emerald-900 mb-1">Ação Sugerida</p>
+                            <p className="text-sm text-emerald-800">{insight.action}</p>
+                            {insight.impact && (
+                              <p className="text-xs text-emerald-600 mt-1">💡 {insight.impact}</p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
