@@ -41,13 +41,26 @@ export default function Overview() {
     queryFn: () => base44.entities.FinancialGoal.filter({ is_completed: false })
   });
 
-  const { data: settings } = useQuery({
+  const { data: settings, isLoading: settingsLoading } = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
       const result = await base44.entities.UserSettings.list();
       return result[0] || null;
     }
   });
+
+  // Check if user needs daily check-in
+  React.useEffect(() => {
+    if (!settingsLoading && settings) {
+      const today = new Date().toISOString().split('T')[0];
+      const lastCheckin = settings.last_checkin_date;
+      
+      // Redirect to check-in if not done today
+      if (lastCheckin !== today) {
+        window.location.href = createPageUrl("DailyCheckIn");
+      }
+    }
+  }, [settings, settingsLoading]);
 
   const totalIncome = incomes.reduce((sum, i) => sum + (i.amount || 0), 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
