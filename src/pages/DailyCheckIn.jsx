@@ -183,19 +183,7 @@ export default function DailyCheckIn() {
             {/* Actions */}
             <div className="space-y-3">
               <Button
-                onClick={() => {
-                  if (settings?.id) {
-                    base44.entities.UserSettings.update(settings.id, {
-                      ...settings,
-                      last_checkin_date: new Date().toISOString().split('T')[0]
-                    }).then(() => navigate(createPageUrl("Movements")));
-                  } else {
-                    base44.entities.UserSettings.create({
-                      ...settings,
-                      last_checkin_date: new Date().toISOString().split('T')[0]
-                    }).then(() => navigate(createPageUrl("Movements")));
-                  }
-                }}
+                onClick={handleAuryFlow}
                 className="w-full bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white shadow-md h-12"
               >
                 <Mic className="w-5 h-5 mr-2" />
@@ -206,9 +194,9 @@ export default function DailyCheckIn() {
                 onClick={handleComplete}
                 disabled={isCompleting}
                 variant="outline"
-                className="w-full border-slate-200 hover:bg-slate-50 h-12"
+                className="w-full border-slate-200 hover:bg-slate-50"
               >
-                {isCompleting ? "Carregando..." : "Ir para Visão Geral"}
+                {isCompleting ? "Carregando..." : "Continuar para o app"}
               </Button>
             </div>
           </CardContent>

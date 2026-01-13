@@ -48,9 +48,9 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     const baseNav = [
-      { name: "Início", page: "Overview", icon: LayoutDashboard },
-      { name: "Registrar", page: "Movements", icon: Sparkles },
-      { name: "Planejamento", page: "Planning", icon: Wallet },
+      { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
+      { name: "Planejamento", page: "Planning", icon: Sparkles },
+      { name: "Movimentações", page: "Movements", icon: Wallet },
       { name: "Metas", page: "Goals", icon: Target },
       { name: "Análises", page: "Analysis", icon: TrendingUp },
     ];

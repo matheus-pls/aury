@@ -17,8 +17,8 @@ import BackButton from "@/components/BackButton";
 const PLANNING_MODULES = [
   {
     id: "auto",
-    title: "Plano do Mês",
-    description: "Quanto sobra hoje e para onde vai seu dinheiro",
+    title: "Planejamento Automático",
+    description: "Seu plano financeiro mensal completo e automatizado",
     icon: Sparkles,
     color: "from-[#5FBDBD] to-[#4FA9A5]",
     page: "AutoPlanning"
@@ -26,18 +26,26 @@ const PLANNING_MODULES = [
   {
     id: "tight_month",
     title: "Mês Apertado",
-    description: "Organize-se quando o orçamento está no limite",
+    description: "Plano de sobrevivência financeira com empatia",
     icon: Heart,
-    color: "from-[#4FA9A5] to-[#2A4A62]",
+    color: "from-[#1B3A52] to-[#0A2540]",
     page: "TightMonth"
   },
   {
     id: "emergency",
-    title: "Reserva de Emergência",
-    description: "Construa sua segurança financeira passo a passo",
+    title: "Caixinha",
+    description: "Sua segurança para imprevistos",
     icon: Shield,
     color: "from-[#2A4A62] to-[#1B3A52]",
     page: "EmergencyFund"
+  },
+  {
+    id: "simulation",
+    title: "Simulações",
+    description: "Simule cenários e veja o impacto nas suas metas",
+    icon: Calculator,
+    color: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]",
+    page: "Simulation"
   }
 ];
 

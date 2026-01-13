@@ -112,58 +112,33 @@ export default function Overview() {
   const tranquilityStatus = getTranquilityStatus();
 
   const quickActions = [
-    { label: "Aury Flow", icon: Sparkles, page: "Movements", color: "from-[#5FBDBD] to-[#4FA9A5]" },
-    { label: "Plano do Mês", icon: Calendar, page: "AutoPlanning", color: "from-[#4FA9A5] to-[#2A4A62]" },
-    { label: "Metas", icon: Target, page: "Goals", color: "from-[#2A4A62] to-[#1B3A52]" },
+    { label: "Planejamento", icon: Sparkles, page: "Planning", color: "from-[#5FBDBD] to-[#4FA9A5]" },
+    { label: "Movimentações", icon: Wallet, page: "Movements", color: "from-[#1B3A52] to-[#0A2540]" },
+    { label: "Metas", icon: Target, page: "Goals", color: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]" },
+    { label: "Análises", icon: TrendingUp, page: "BehaviorAnalysis", color: "from-[#2A4A62] to-[#1B3A52]" }
   ];
 
-  const currentDay = new Date().getDate();
-  const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-  const daysRemaining = daysInMonth - currentDay;
-  
   const alerts = [];
-  if (totalIncome === 0) {
-    alerts.push({
-      type: "warning",
-      message: "Cadastre sua renda mensal",
-      action: "Vá em Registrar → Rendas para começar",
-      icon: Info
-    });
-  }
-
-  if (spendingPercentage > 90 && totalIncome > 0) {
-    const dailyRemaining = availableBalance / Math.max(daysRemaining, 1);
+  if (spentPercentage > 90) {
     alerts.push({
       type: "danger",
-      message: "Você já gastou mais de 90% da sua renda",
-      action: `Gaste no máximo ${formatCurrency(dailyRemaining)} por dia até o fim do mês`,
+      message: "Atenção: você está perto do limite do seu orçamento mensal",
       icon: AlertCircle
     });
-  } else if (spendingPercentage > 70 && totalIncome > 0) {
-    alerts.push({
-      type: "warning",
-      message: "70% da renda já foi usada",
-      action: "Priorize apenas gastos essenciais nos próximos dias",
-      icon: TrendingDown
-    });
   }
-
-  if (emergencyProgress < 30 && totalIncome > 0 && alerts.length === 0) {
-    const monthlySuggestion = totalIncome * 0.05;
+  if (emergencyProgress < 30 && totalIncome > 0) {
+    const monthsToSafety = emergencyGoal > 0 ? Math.ceil(emergencyGoal / (totalIncome * 0.15)) : 0;
     alerts.push({
       type: "warning",
-      message: "Sua reserva de emergência está baixa",
-      action: `Economize ${formatCurrency(monthlySuggestion)} por mês para fortalecer sua segurança`,
+      message: `Se algo inesperado acontecer hoje, sua reserva cobre apenas ${(emergencyProgress / 100 * 6).toFixed(1)} meses. ${monthsToSafety > 0 ? `Economizando 15% ao mês, você atinge segurança em ${monthsToSafety} meses.` : ''}`,
       icon: Shield
     });
   }
-
-  if (alerts.length === 0 && totalIncome > 0) {
+  if (totalIncome === 0) {
     alerts.push({
-      type: "success",
-      message: "Suas finanças estão equilibradas",
-      action: "Continue registrando seus gastos com a Aury",
-      icon: Heart
+      type: "info",
+      message: "Cadastre suas fontes de renda para começar a usar o Aury",
+      icon: Info
     });
   }
 
@@ -314,16 +289,9 @@ export default function Overview() {
           {alerts.map((alert, index) => {
             const Icon = alert.icon;
             const colors = {
-              danger: "bg-red-50 border-red-200",
-              warning: "bg-amber-50 border-amber-200",
-              success: "bg-emerald-50 border-emerald-200",
-              info: "bg-blue-50 border-blue-200"
-            };
-            const textColors = {
-              danger: "text-red-900",
-              warning: "text-amber-900",
-              success: "text-emerald-900",
-              info: "text-blue-900"
+              danger: "bg-red-50 border-red-200 text-red-900",
+              warning: "bg-amber-50 border-amber-200 text-amber-900",
+              info: "bg-blue-50 border-blue-200 text-blue-900"
             };
             return (
               <motion.div
@@ -331,19 +299,10 @@ export default function Overview() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
-                className={`p-4 rounded-xl border ${colors[alert.type]} shadow-sm`}
+                className={`flex items-start gap-3 p-5 rounded-2xl border-2 ${colors[alert.type]} shadow-sm`}
               >
-                <div className="flex items-start gap-3">
-                  <Icon className={`w-5 h-5 flex-shrink-0 mt-0.5 ${textColors[alert.type]}`} />
-                  <div className="flex-1">
-                    <p className={`text-sm font-medium mb-1 ${textColors[alert.type]}`}>{alert.message}</p>
-                    {alert.action && (
-                      <p className={`text-xs ${textColors[alert.type]} opacity-75`}>
-                        💡 {alert.action}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                <Icon className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                <p className="text-sm leading-relaxed">{alert.message}</p>
               </motion.div>
             );
           })}
