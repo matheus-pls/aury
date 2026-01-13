@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
   Calendar,
   TrendingUp,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import BackButton from "@/components/BackButton";
 
 export default function DailyMode() {
   const [showDetails, setShowDetails] = useState(false);
@@ -117,7 +119,8 @@ export default function DailyMode() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Modo Dia a Dia</h1>
+        <BackButton to={createPageUrl("Planning")} className="mb-4" />
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Modo Dia a Dia</h1>
         <p className="text-slate-500 mt-1">Quanto você pode gastar hoje?</p>
       </motion.div>
 

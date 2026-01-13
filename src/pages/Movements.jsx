@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { Wallet, Receipt, History } from "lucide-react";
+import BackButton from "@/components/BackButton";
 import Incomes from "./Incomes";
 import Expenses from "./Expenses";
 
@@ -18,7 +20,8 @@ export default function Movements() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Movimentações</h1>
+        <BackButton to={createPageUrl("Overview")} className="mb-4" />
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Movimentações</h1>
         <p className="text-slate-500 mt-1">Gerencie suas entradas e saídas</p>
       </motion.div>
 

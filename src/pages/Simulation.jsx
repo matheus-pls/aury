@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
   Calculator, 
   TrendingUp, 
@@ -22,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import BackButton from "@/components/BackButton";
 import {
   Select,
   SelectContent,
@@ -228,7 +230,8 @@ export default function Simulation() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Simulador de Cenários</h1>
+        <BackButton to={createPageUrl("Planning")} className="mb-4" />
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Simulador de Cenários</h1>
         <p className="text-slate-500 mt-1">Descubra o impacto emocional das suas decisões financeiras</p>
       </motion.div>
 

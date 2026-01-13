@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
   Settings as SettingsIcon, 
   Save, 
@@ -27,6 +28,7 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import BackButton from "@/components/BackButton";
 
 const RISK_PROFILES = {
   essential: {
@@ -167,23 +169,26 @@ export default function Settings() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between"
+        className="space-y-4"
       >
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Configurações</h1>
-          <p className="text-slate-500 mt-1">Personalize suas preferências financeiras</p>
-        </div>
+        <BackButton to={createPageUrl("Overview")} />
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Configurações</h1>
+            <p className="text-slate-500 mt-1">Personalize suas preferências financeiras</p>
+          </div>
         {hasChanges && (
           <Button 
             onClick={handleSave}
-            className="bg-[#00A8A0] hover:bg-[#008F88]"
+            className="bg-[#5FBDBD] hover:bg-[#4FA9A5]"
             disabled={!isValidDistribution || createMutation.isPending || updateMutation.isPending}
           >
             <Save className="w-4 h-4 mr-2" />
             Salvar
           </Button>
         )}
-      </motion.div>
+        </div>
+        </motion.div>
 
       {/* Risk Profile */}
       <motion.div

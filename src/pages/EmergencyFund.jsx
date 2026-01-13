@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
   Shield,
   TrendingUp,
@@ -19,6 +20,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import BackButton from "@/components/BackButton";
 import {
   Dialog,
   DialogContent,
@@ -204,11 +206,12 @@ export default function EmergencyFund() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
+        <BackButton to={createPageUrl("Planning")} className="mb-4" />
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-6 h-6 text-emerald-500" />
-              <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Reserva de Emergência</h1>
+              <Shield className="w-6 h-6 text-[#5FBDBD]" />
+              <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Reserva de Emergência</h1>
             </div>
             <p className="text-slate-500">Proteção financeira para imprevistos</p>
           </div>

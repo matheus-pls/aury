@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import {
   Users,
   Plus,
@@ -45,6 +46,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import BackButton from "@/components/BackButton";
 
 const EXPENSE_CATEGORIES = {
   fixed: { label: "Gastos Fixos", icon: Home, color: "bg-[#0A1A3A]" },
@@ -353,19 +355,21 @@ export default function FamilyMode() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        className="space-y-4"
       >
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-purple-500 rounded-xl flex items-center justify-center">
-              <Heart className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-800">{activeGroup.name}</h1>
-              <p className="text-sm text-slate-500">{activeGroup.members?.length || 0} membros</p>
+        <BackButton to={createPageUrl("Overview")} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center">
+                <Heart className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-[#1B3A52]">{activeGroup.name}</h1>
+                <p className="text-sm text-slate-500">{activeGroup.members?.length || 0} membros</p>
+              </div>
             </div>
           </div>
-        </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
