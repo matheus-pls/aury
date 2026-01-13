@@ -52,7 +52,7 @@ export default function Layout({ children, currentPageName }) {
       { name: "Planejamento", page: "Planning", icon: Sparkles },
       { name: "Movimentações", page: "Movements", icon: Wallet },
       { name: "Metas", page: "Goals", icon: Target },
-      { name: "Análises", page: "BehaviorAnalysis", icon: TrendingUp },
+      { name: "Análises", page: "Analysis", icon: TrendingUp },
     ];
 
     if (familyGroups.length > 0) {

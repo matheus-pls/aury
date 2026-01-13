@@ -4,43 +4,46 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
 import { 
-  Sparkles,
-  TrendingUp,
   TrendingDown,
+  TrendingUp,
   Calendar,
-  ShoppingCart,
+  DollarSign,
+  BarChart3,
   AlertCircle,
-  Award,
-  ThumbsUp,
   ChevronRight,
   ChevronLeft,
-  BarChart3,
-  Zap
+  FileText,
+  Target,
+  Activity
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
 
 export default function BehaviorAnalysis() {
-  const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
   const [showFullReport, setShowFullReport] = useState(false);
-  const currentMonth = new Date().toISOString().slice(0, 7);
+  const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
 
-  // Fetch last 3 months of expenses
-  const months = [];
-  for (let i = 0; i < 3; i++) {
-    const date = new Date();
-    date.setMonth(date.getMonth() - i);
-    months.push(date.toISOString().slice(0, 7));
-  }
+  // Get last 3 months
+  const getLastMonths = (count) => {
+    const months = [];
+    for (let i = 0; i < count; i++) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      months.push(date.toISOString().slice(0, 7));
+    }
+    return months;
+  };
 
-  const { data: allExpenses = [] } = useQuery({
-    queryKey: ['expenses-analysis'],
+  const lastMonths = getLastMonths(3);
+
+  // Fetch expenses
+  const { data: expenses = [], isLoading } = useQuery({
+    queryKey: ['expenses-analysis', lastMonths],
     queryFn: async () => {
-      const promises = months.map(month => 
-        base44.entities.Expense.filter({ month_year: month })
-      );
-      const results = await Promise.all(promises);
-      return results.flat();
+      const allExpenses = await base44.entities.Expense.list();
+      return allExpenses.filter(e => lastMonths.includes(e.month_year));
     }
   });
 
@@ -57,403 +60,305 @@ export default function BehaviorAnalysis() {
     }
   });
 
-  const totalIncome = incomes.reduce((sum, inc) => sum + (inc.amount || 0), 0);
-
   // Analysis calculations
-  const analyzeExpenses = () => {
-    if (allExpenses.length === 0) return null;
+  const totalIncome = incomes.reduce((sum, i) => sum + (i.amount || 0), 0);
+  
+  // By category
+  const byCategory = expenses.reduce((acc, e) => {
+    acc[e.category] = (acc[e.category] || 0) + e.amount;
+    return acc;
+  }, {});
 
-    // Category analysis
-    const byCategory = allExpenses.reduce((acc, exp) => {
-      acc[exp.category] = (acc[exp.category] || 0) + exp.amount;
-      return acc;
-    }, {});
+  const largestCategory = Object.entries(byCategory).reduce((max, [cat, val]) => 
+    val > (max[1] || 0) ? [cat, val] : max, ['', 0]
+  );
 
-    // Biggest category
-    const biggestCategory = Object.entries(byCategory)
-      .sort(([, a], [, b]) => b - a)[0];
+  const superfluousSpending = byCategory.superfluous || 0;
+  const superfluousPercentage = totalIncome > 0 ? (superfluousSpending / totalIncome) * 100 : 0;
 
-    // Superfluous spending
-    const superfluousTotal = byCategory.superfluous || 0;
-    const superfluousPercentage = totalIncome > 0 
-      ? (superfluousTotal / (totalIncome * 3)) * 100 
-      : 0;
+  // By day of week
+  const byDayOfWeek = expenses.reduce((acc, e) => {
+    const day = new Date(e.date).getDay();
+    acc[day] = (acc[day] || 0) + e.amount;
+    return acc;
+  }, {});
 
-    // Daily patterns
-    const byDayOfWeek = allExpenses.reduce((acc, exp) => {
-      const day = new Date(exp.date).getDay();
-      acc[day] = (acc[day] || 0) + exp.amount;
-      return acc;
-    }, {});
+  const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+  const mostExpensiveDay = Object.entries(byDayOfWeek).reduce((max, [day, val]) =>
+    val > (max[1] || 0) ? [day, val] : max, [0, 0]
+  );
 
-    const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-    const mostExpensiveDay = Object.entries(byDayOfWeek)
-      .sort(([, a], [, b]) => b - a)[0];
+  // By month
+  const byMonth = expenses.reduce((acc, e) => {
+    acc[e.month_year] = (acc[e.month_year] || 0) + e.amount;
+    return acc;
+  }, {});
 
-    // Monthly trend
-    const byMonth = allExpenses.reduce((acc, exp) => {
-      acc[exp.month_year] = (acc[exp.month_year] || 0) + exp.amount;
-      return acc;
-    }, {});
+  const bestMonth = Object.entries(byMonth).reduce((min, [month, val]) =>
+    val < (min[1] || Infinity) ? [month, val] : min, ['', Infinity]
+  );
 
-    const monthlyValues = Object.values(byMonth);
-    const avgMonthly = monthlyValues.reduce((a, b) => a + b, 0) / monthlyValues.length;
-    const currentMonthSpending = byMonth[currentMonth] || 0;
-    const trend = currentMonthSpending > avgMonthly ? "up" : "down";
-    const trendPercentage = Math.abs(((currentMonthSpending - avgMonthly) / avgMonthly) * 100);
+  // Biggest expense
+  const biggestExpense = expenses.reduce((max, e) => 
+    e.amount > (max.amount || 0) ? e : max, {}
+  );
 
-    // Biggest single expense
-    const biggestExpense = allExpenses.reduce((max, exp) => 
-      exp.amount > max.amount ? exp : max
-    , allExpenses[0]);
-
-    // Recurring patterns
-    const descriptions = allExpenses.map(e => e.description.toLowerCase());
-    const recurring = descriptions.filter((desc, idx) => 
-      descriptions.indexOf(desc) !== idx
-    ).length;
-
-    // Best month
-    const bestMonth = Object.entries(byMonth)
-      .sort(([, a], [, b]) => a - b)[0];
-
-    return {
-      biggestCategory,
-      superfluousTotal,
-      superfluousPercentage,
-      mostExpensiveDay: mostExpensiveDay ? {
-        day: daysOfWeek[mostExpensiveDay[0]],
-        amount: mostExpensiveDay[1]
-      } : null,
-      trend,
-      trendPercentage,
-      biggestExpense,
-      recurringCount: recurring,
-      totalExpenses: allExpenses.reduce((sum, e) => sum + e.amount, 0),
-      avgMonthly,
-      bestMonth: bestMonth ? {
-        month: bestMonth[0],
-        amount: bestMonth[1]
-      } : null,
-      categoryBreakdown: byCategory
-    };
-  };
-
-  const analysis = analyzeExpenses();
-
-  const categoryLabels = {
-    fixed: "Gastos Fixos",
-    essential: "Essenciais",
-    superfluous: "Supérfluos",
-    emergency: "Reserva",
-    investment: "Investimentos"
-  };
+  // Recurring
+  const recurringExpenses = expenses.filter(e => e.is_recurring);
+  const recurringTotal = recurringExpenses.reduce((sum, e) => sum + e.amount, 0);
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      currency: 'BRL'
     }).format(value);
   };
 
-  // Generate insights
-  const generateInsights = () => {
-    if (!analysis) return [];
-
-    const insights = [];
-
-    // Insight 1: Main pattern
-    if (analysis.biggestCategory) {
-      insights.push({
-        emoji: "📊",
-        title: "Seu maior gasto",
-        message: `Você gastou mais com ${categoryLabels[analysis.biggestCategory[0]] || analysis.biggestCategory[0]}`,
-        detail: `Nos últimos 3 meses, ${formatCurrency(analysis.biggestCategory[1])} foram para essa categoria.`,
-        color: "from-blue-500 to-blue-600"
-      });
-    }
-
-    // Insight 2: Superfluous spending
-    if (analysis.superfluousPercentage > 15) {
-      insights.push({
-        emoji: "💸",
-        title: "Atenção aos supérfluos",
-        message: `${analysis.superfluousPercentage.toFixed(0)}% da sua renda vai para gastos não essenciais`,
-        detail: `Isso representa ${formatCurrency(analysis.superfluousTotal)} nos últimos 3 meses. Pequenos cortes aqui podem fazer diferença!`,
-        color: "from-amber-500 to-orange-500"
-      });
-    } else if (analysis.superfluousPercentage < 8) {
-      insights.push({
-        emoji: "🎯",
-        title: "Você é disciplinado!",
-        message: "Seus gastos supérfluos estão muito controlados",
-        detail: `Apenas ${analysis.superfluousPercentage.toFixed(0)}% da renda vai para o não essencial. Parabéns pelo controle!`,
-        color: "from-emerald-500 to-green-600"
-      });
-    }
-
-    // Insight 3: Day pattern
-    if (analysis.mostExpensiveDay) {
-      insights.push({
-        emoji: "📅",
-        title: "Seu dia de maior gasto",
-        message: `${analysis.mostExpensiveDay.day} é quando você mais gasta`,
-        detail: `Em média, ${formatCurrency(analysis.mostExpensiveDay.amount / 3)} saem da sua conta nesse dia da semana.`,
-        color: "from-purple-500 to-purple-600"
-      });
-    }
-
-    // Insight 4: Trend
-    if (analysis.trendPercentage > 10) {
-      insights.push({
-        emoji: analysis.trend === "up" ? "📈" : "📉",
-        title: analysis.trend === "up" ? "Gastos em alta" : "Gastos em baixa",
-        message: `Este mês você gastou ${analysis.trendPercentage.toFixed(0)}% ${analysis.trend === "up" ? "mais" : "menos"} que a média`,
-        detail: analysis.trend === "up" 
-          ? "Fique atento! Seus gastos estão aumentando." 
-          : "Ótimo trabalho! Você está economizando mais.",
-        color: analysis.trend === "up" ? "from-red-500 to-red-600" : "from-emerald-500 to-emerald-600"
-      });
-    }
-
-    // Insight 5: Best month
-    if (analysis.bestMonth) {
-      const monthName = new Date(analysis.bestMonth.month + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-      insights.push({
-        emoji: "🏆",
-        title: "Seu melhor mês",
-        message: `${monthName} foi seu mês mais econômico`,
-        detail: `Você gastou apenas ${formatCurrency(analysis.bestMonth.amount)}. Tente repetir esse desempenho!`,
-        color: "from-yellow-500 to-amber-500"
-      });
-    }
-
-    // Insight 6: Biggest expense
-    if (analysis.biggestExpense) {
-      insights.push({
-        emoji: "💰",
-        title: "Seu maior gasto",
-        message: `${analysis.biggestExpense.description}`,
-        detail: `${formatCurrency(analysis.biggestExpense.amount)} - isso representa ${((analysis.biggestExpense.amount / analysis.totalExpenses) * 100).toFixed(0)}% dos seus gastos totais.`,
-        color: "from-pink-500 to-rose-600"
-      });
-    }
-
-    return insights.slice(0, 6); // Max 6 insights
+  const categoryLabels = {
+    fixed: 'Gastos Fixos',
+    essential: 'Essenciais',
+    superfluous: 'Supérfluos',
+    emergency: 'Emergência',
+    investment: 'Investimentos'
   };
 
-  const insights = generateInsights();
+  // Generate insights
+  const insights = [];
 
-  const nextInsight = () => {
+  if (largestCategory[0]) {
+    insights.push({
+      type: 'category',
+      title: 'Seu maior gasto',
+      message: `Você gastou mais com ${categoryLabels[largestCategory[0]] || largestCategory[0]}. Nos últimos 3 meses, ${formatCurrency(largestCategory[1])} foram para essa categoria.`
+    });
+  }
+
+  if (superfluousPercentage > 0) {
+    if (superfluousPercentage > 15) {
+      insights.push({
+        type: 'superfluous',
+        title: 'Gastos supérfluos elevados',
+        message: `${superfluousPercentage.toFixed(0)}% da sua renda vai para gastos supérfluos. Reduzir um pouco pode fortalecer sua reserva ou acelerar suas metas.`
+      });
+    } else {
+      insights.push({
+        type: 'superfluous',
+        title: 'Você é disciplinado!',
+        message: `Seus gastos supérfluos estão muito controlados. Apenas ${superfluousPercentage.toFixed(0)}% da renda vai para o não essencial. Parabéns pelo controle!`
+      });
+    }
+  }
+
+  if (mostExpensiveDay[0]) {
+    insights.push({
+      type: 'pattern',
+      title: 'Seu dia mais caro',
+      message: `Você gasta mais nas ${daysOfWeek[mostExpensiveDay[0]]}s. Fique atento a esse padrão e planeje-se para evitar gastos impulsivos.`
+    });
+  }
+
+  if (bestMonth[0] && bestMonth[0] !== '') {
+    const [year, month] = bestMonth[0].split('-');
+    const monthName = new Date(year, parseInt(month) - 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    insights.push({
+      type: 'trend',
+      title: 'Seu melhor mês',
+      message: `${monthName} foi seu mês mais econômico recente, com apenas ${formatCurrency(bestMonth[1])} em gastos.`
+    });
+  }
+
+  if (biggestExpense.description) {
+    insights.push({
+      type: 'highlight',
+      title: 'Seu maior gasto único',
+      message: `Nos últimos 3 meses, "${biggestExpense.description}" foi o maior gasto: ${formatCurrency(biggestExpense.amount)}.`
+    });
+  }
+
+  if (recurringExpenses.length > 0) {
+    insights.push({
+      type: 'recurring',
+      title: 'Gastos recorrentes',
+      message: `Você tem ${recurringExpenses.length} gasto${recurringExpenses.length > 1 ? 's' : ''} recorrente${recurringExpenses.length > 1 ? 's' : ''}, totalizando ${formatCurrency(recurringTotal)} por mês.`
+    });
+  }
+
+  const handleNext = () => {
     if (currentInsightIndex < insights.length - 1) {
       setCurrentInsightIndex(currentInsightIndex + 1);
     }
   };
 
-  const prevInsight = () => {
+  const handlePrevious = () => {
     if (currentInsightIndex > 0) {
       setCurrentInsightIndex(currentInsightIndex - 1);
     }
   };
 
-  if (!analysis || insights.length === 0) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
-          <BarChart3 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-slate-700 mb-2">Sem dados suficientes</h2>
-          <p className="text-slate-500">Registre mais gastos para gerar sua análise de comportamento</p>
+          <div className="w-12 h-12 border-4 border-[#5FBDBD] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-slate-500">Analisando seus dados...</p>
         </div>
       </div>
     );
   }
 
-  if (showFullReport) {
+  if (expenses.length === 0) {
     return (
-      <div className="space-y-6 pb-8">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          <BackButton to={createPageUrl("Overview")} className="mb-4" />
-          <Button
-            variant="ghost"
-            onClick={() => setShowFullReport(false)}
-            className="mb-4"
-          >
-            <ChevronLeft className="w-4 h-4 mr-2" />
-            Voltar aos insights
-          </Button>
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Relatório Completo</h1>
-          <p className="text-slate-500 mt-1">Análise detalhada dos últimos 3 meses</p>
-        </motion.div>
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
-          >
-            <p className="text-sm text-slate-500 mb-1">Total Gasto</p>
-            <p className="text-3xl font-bold text-slate-800 tabular-nums">{formatCurrency(analysis.totalExpenses)}</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
-          >
-            <p className="text-sm text-slate-500 mb-1">Média Mensal</p>
-            <p className="text-3xl font-bold text-slate-800 tabular-nums">{formatCurrency(analysis.avgMonthly)}</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
-          >
-            <p className="text-sm text-slate-500 mb-1">Total de Gastos</p>
-            <p className="text-3xl font-bold text-slate-800">{allExpenses.length}</p>
-          </motion.div>
-        </div>
-
-        {/* All Insights */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {insights.map((insight, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className={`bg-gradient-to-br ${insight.color} rounded-2xl p-6 text-white`}
-            >
-              <div className="text-4xl mb-3">{insight.emoji}</div>
-              <h3 className="text-xl font-bold mb-2">{insight.title}</h3>
-              <p className="text-white/90 text-lg mb-2">{insight.message}</p>
-              <p className="text-white/70 text-sm">{insight.detail}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Category Breakdown */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
-        >
-          <h3 className="font-semibold text-slate-800 mb-4">Gastos por Categoria</h3>
-          <div className="space-y-3">
-            {Object.entries(analysis.categoryBreakdown)
-              .sort(([, a], [, b]) => b - a)
-              .map(([category, amount]) => {
-                const percentage = (amount / analysis.totalExpenses) * 100;
-                return (
-                  <div key={category}>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-sm text-slate-600">{categoryLabels[category] || category}</span>
-                      <span className="text-sm font-semibold text-slate-800">{formatCurrency(amount)}</span>
-                    </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-[#00A8A0]"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <BarChart3 className="w-10 h-10 text-slate-400" />
           </div>
-        </motion.div>
+          <h2 className="text-xl font-semibold text-slate-700 mb-2">
+            Dados insuficientes
+          </h2>
+          <p className="text-slate-500">
+            Registre gastos por pelo menos um mês para ver análises comportamentais.
+          </p>
+        </div>
       </div>
     );
   }
-
-  const currentInsight = insights[currentInsightIndex];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-lg">
-        <BackButton to={createPageUrl("Overview")} className="mb-8 mx-auto text-slate-600" />
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2 mb-8">
-          {insights.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentInsightIndex(index)}
-              className={`h-2 rounded-full transition-all ${
-                index === currentInsightIndex 
-                  ? 'w-8 bg-slate-700' 
-                  : 'w-2 bg-slate-300'
-              }`}
-            />
-          ))}
+    <div className="space-y-6 pb-8">
+      {/* Header Premium */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-4"
+      >
+        <BackButton to={createPageUrl("Analysis")} />
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-2xl flex items-center justify-center shadow-aury">
+            <Activity className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Análise de Comportamento</h1>
+            <p className="text-slate-500 text-sm">Últimos 3 meses de atividade financeira</p>
+          </div>
         </div>
+      </motion.div>
 
-        {/* Insight Card */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentInsightIndex}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -100 }}
-            transition={{ duration: 0.3 }}
-            className={`bg-gradient-to-br ${currentInsight.color} rounded-3xl p-8 text-white shadow-2xl`}
-          >
-            <div className="text-center">
-              <div className="text-7xl mb-6">{currentInsight.emoji}</div>
-              <h2 className="text-2xl font-bold mb-4">{currentInsight.title}</h2>
-              <p className="text-3xl font-bold mb-6">{currentInsight.message}</p>
-              <p className="text-white/80 text-lg">{currentInsight.detail}</p>
-            </div>
-          </motion.div>
-        </AnimatePresence>
+      {/* Navigation or Insights Display */}
+      {!showFullReport ? (
+        <div className="space-y-6">
+          {/* Current Insight Card - Premium Design */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentInsightIndex}
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -100 }}
+              className="rounded-3xl p-8 shadow-aury bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white relative overflow-hidden"
+            >
+              {/* Decorative Elements */}
+              <div className="absolute -right-12 -top-12 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
+              <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
+              
+              <div className="relative">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Activity className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold mb-3">{insights[currentInsightIndex]?.title}</h3>
+                    <p className="text-white/90 leading-relaxed text-base">{insights[currentInsightIndex]?.message}</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between pt-6 border-t border-white/20">
+                  <p className="text-sm text-white/70">Insight {currentInsightIndex + 1} de {insights.length}</p>
+                  <div className="flex gap-1.5">
+                    {insights.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`h-1.5 rounded-full transition-all ${
+                          i === currentInsightIndex ? 'w-8 bg-white' : 'w-1.5 bg-white/30'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
 
-        {/* Navigation */}
-        <div className="flex items-center justify-between mt-8">
-          <Button
-            variant="ghost"
-            onClick={prevInsight}
-            disabled={currentInsightIndex === 0}
-            className="text-slate-600 disabled:opacity-30"
-          >
-            <ChevronLeft className="w-5 h-5 mr-2" />
-            Anterior
-          </Button>
-
-          <Button
-            variant="ghost"
-            onClick={() => setShowFullReport(true)}
-            className="text-slate-600"
-          >
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Ver relatório completo
-          </Button>
-
-          {currentInsightIndex < insights.length - 1 ? (
+          {/* Navigation Buttons - Premium Style */}
+          <div className="flex gap-3">
             <Button
-              variant="ghost"
-              onClick={nextInsight}
-              className="text-slate-600"
+              variant="outline"
+              className="flex-1 border-slate-200 hover:bg-slate-50 hover:border-[#5FBDBD]/30 text-slate-600"
+              onClick={handlePrevious}
+              disabled={currentInsightIndex === 0}
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1 border-[#5FBDBD]/30 hover:bg-[#5FBDBD]/5 text-[#1B3A52]"
+              onClick={() => setShowFullReport(true)}
+            >
+              <FileText className="w-4 h-4 mr-2" />
+              Ver relatório completo
+            </Button>
+            <Button
+              className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] shadow-md"
+              onClick={handleNext}
+              disabled={currentInsightIndex === insights.length - 1}
             >
               Próximo
-              <ChevronRight className="w-5 h-5 ml-2" />
+              <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
-          ) : (
-            <Button
-              variant="ghost"
-              onClick={() => setCurrentInsightIndex(0)}
-              className="text-slate-600"
-            >
-              Recomeçar
-              <Sparkles className="w-4 h-4 ml-2" />
-            </Button>
-          )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Full Report Header - Premium */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-[#1B3A52]">Relatório Completo</h2>
+            <Button 
+              variant="outline"
+              className="border-slate-200 hover:bg-slate-50 hover:border-[#5FBDBD]/30"
+              onClick={() => setShowFullReport(false)}
+            >
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Voltar aos insights
+            </Button>
+          </div>
+
+          {/* All Insights - Elegant Cards */}
+          <div className="grid gap-4">
+            {insights.map((insight, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Card className="overflow-hidden border border-slate-200 hover:border-[#5FBDBD]/30 hover:shadow-aury transition-all">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center flex-shrink-0">
+                        <Activity className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-base font-semibold text-[#1B3A52] mb-2">{insight.title}</h3>
+                        <p className="text-sm text-slate-600 leading-relaxed">{insight.message}</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
