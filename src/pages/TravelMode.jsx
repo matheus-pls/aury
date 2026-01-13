@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import {
   Plane,
   Plus,
@@ -42,6 +43,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
+import BackButton from "@/components/BackButton";
 
 const TRAVEL_CATEGORIES = {
   accommodation: { label: "Hospedagem", icon: Hotel, color: "bg-blue-500" },
@@ -208,26 +210,29 @@ export default function TravelMode() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        className="space-y-4"
       >
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <Plane className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-slate-800">{activeTrip.title}</h1>
-              <p className="text-sm text-slate-500">Modo Viagem Ativo</p>
+        <BackButton to={createPageUrl("Goals")} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center">
+                <Plane className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-[#1B3A52]">{activeTrip.title}</h1>
+                <p className="text-sm text-slate-500">Modo Viagem Ativo</p>
+              </div>
             </div>
           </div>
+          <Button 
+            onClick={() => handleOpenDialog()}
+            className="bg-[#5FBDBD] hover:bg-[#4FA9A5]"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Gasto
+          </Button>
         </div>
-        <Button 
-          onClick={() => handleOpenDialog()}
-          className="bg-[#00A8A0] hover:bg-[#008F88]"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Gasto
-        </Button>
       </motion.div>
 
       {/* Budget Card */}
