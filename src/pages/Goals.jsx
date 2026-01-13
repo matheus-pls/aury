@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
   Plus, 
   Target, 
@@ -41,6 +42,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
+import BackButton from "@/components/BackButton";
 
 const GOAL_CATEGORIES = {
   travel: { label: "Viagem", icon: Plane, color: "bg-blue-500", bgLight: "bg-blue-50" },
@@ -230,19 +232,22 @@ export default function Goals() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        className="space-y-4"
       >
-        <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Metas Financeiras</h1>
-          <p className="text-slate-500 mt-1">Acompanhe e alcance seus objetivos</p>
+        <BackButton to={createPageUrl("Overview")} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Metas Financeiras</h1>
+            <p className="text-slate-500 mt-1">Acompanhe e alcance seus objetivos</p>
+          </div>
+          <Button 
+            onClick={() => handleOpenDialog()}
+            className="bg-[#5FBDBD] hover:bg-[#4FA9A5] text-white"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Nova Meta
+          </Button>
         </div>
-        <Button 
-          onClick={() => handleOpenDialog()}
-          className="bg-[#00A8A0] hover:bg-[#008F88] text-white"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Nova Meta
-        </Button>
       </motion.div>
 
       {/* Summary */}

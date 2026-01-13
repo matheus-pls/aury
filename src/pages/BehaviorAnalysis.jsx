@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
   Sparkles,
   TrendingUp,
@@ -17,6 +18,7 @@ import {
   Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BackButton from "@/components/BackButton";
 
 export default function BehaviorAnalysis() {
   const [currentInsightIndex, setCurrentInsightIndex] = useState(0);
@@ -276,6 +278,7 @@ export default function BehaviorAnalysis() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
         >
+          <BackButton to={createPageUrl("Overview")} className="mb-4" />
           <Button
             variant="ghost"
             onClick={() => setShowFullReport(false)}
@@ -284,7 +287,7 @@ export default function BehaviorAnalysis() {
             <ChevronLeft className="w-4 h-4 mr-2" />
             Voltar aos insights
           </Button>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Relatório Completo</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Relatório Completo</h1>
           <p className="text-slate-500 mt-1">Análise detalhada dos últimos 3 meses</p>
         </motion.div>
 
@@ -374,6 +377,7 @@ export default function BehaviorAnalysis() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
+        <BackButton to={createPageUrl("Overview")} className="mb-8 mx-auto text-slate-600" />
         {/* Progress dots */}
         <div className="flex justify-center gap-2 mb-8">
           {insights.map((_, index) => (
@@ -382,8 +386,8 @@ export default function BehaviorAnalysis() {
               onClick={() => setCurrentInsightIndex(index)}
               className={`h-2 rounded-full transition-all ${
                 index === currentInsightIndex 
-                  ? 'w-8 bg-white' 
-                  : 'w-2 bg-white/30'
+                  ? 'w-8 bg-slate-700' 
+                  : 'w-2 bg-slate-300'
               }`}
             />
           ))}
