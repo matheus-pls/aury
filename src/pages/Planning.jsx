@@ -39,14 +39,7 @@ const PLANNING_MODULES = [
     color: "from-[#2A4A62] to-[#1B3A52]",
     page: "EmergencyFund"
   },
-  {
-    id: "simulation",
-    title: "Simulações",
-    description: "Simule cenários e veja o impacto nas suas metas",
-    icon: Calculator,
-    color: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]",
-    page: "Simulation"
-  }
+
 ];
 
 export default function Planning() {

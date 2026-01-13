@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { useQuery, useMutation, useQueryClient } from "@tantml:react-query";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Shield, AlertTriangle, TrendingUp, Mic } from "lucide-react";
+import { Shield, AlertTriangle, TrendingUp, Mic, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import AuryFlowInline from "@/components/overview/AuryFlowInline";
 
 export default function DailyCheckIn() {
   const navigate = useNavigate();
@@ -120,9 +121,7 @@ export default function DailyCheckIn() {
     }
   };
 
-  const handleAuryFlow = () => {
-    navigate(createPageUrl("Overview"));
-  };
+  const [showAuryFlow, setShowAuryFlow] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -181,24 +180,56 @@ export default function DailyCheckIn() {
             </div>
 
             {/* Actions */}
-            <div className="space-y-3">
-              <Button
-                onClick={handleAuryFlow}
-                className="w-full bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white shadow-md h-12"
-              >
-                <Mic className="w-5 h-5 mr-2" />
-                Registrar com Aury Flow
-              </Button>
-              
-              <Button
-                onClick={handleComplete}
-                disabled={isCompleting}
-                variant="outline"
-                className="w-full border-slate-200 hover:bg-slate-50"
-              >
-                {isCompleting ? "Carregando..." : "Continuar para o app"}
-              </Button>
-            </div>
+            <AnimatePresence mode="wait">
+              {!showAuryFlow ? (
+                <motion.div
+                  key="buttons"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-3"
+                >
+                  <Button
+                    onClick={() => setShowAuryFlow(true)}
+                    className="w-full bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white shadow-md h-12"
+                  >
+                    <Mic className="w-5 h-5 mr-2" />
+                    Registrar com Aury Flow
+                  </Button>
+                  
+                  <Button
+                    onClick={handleComplete}
+                    disabled={isCompleting}
+                    variant="outline"
+                    className="w-full border-slate-200 hover:bg-slate-50"
+                  >
+                    {isCompleting ? "Carregando..." : "Continuar para o app"}
+                  </Button>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="auryflow"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="space-y-3"
+                >
+                  <Button
+                    variant="ghost"
+                    onClick={() => setShowAuryFlow(false)}
+                    className="w-full text-slate-600 hover:text-slate-800 mb-2"
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-2" />
+                    Voltar
+                  </Button>
+                  <AuryFlowInline 
+                    onSuccess={() => {
+                      handleComplete();
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </CardContent>
         </Card>
 

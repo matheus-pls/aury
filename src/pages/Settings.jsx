@@ -358,7 +358,7 @@ export default function Settings() {
         </Card>
       </motion.div>
 
-      {/* Emergency Fund Settings */}
+      {/* Emergency Fund Goal Only */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -368,54 +368,36 @@ export default function Settings() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-[#00A8A0]" />
-              Reserva de Emergência
+              Meta de Reserva
             </CardTitle>
             <CardDescription>
-              Configure sua meta de reserva de emergência
+              Configure quantos meses deseja poupar
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Meta em meses de despesas</Label>
-                <Select
-                  value={settings.emergency_fund_goal_months.toString()}
-                  onValueChange={(value) => {
-                    setSettings(prev => ({ ...prev, emergency_fund_goal_months: parseInt(value) }));
-                    setHasChanges(true);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {[3, 6, 9, 12].map(months => (
-                      <SelectItem key={months} value={months.toString()}>
-                        {months} meses
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-slate-500">
-                  Recomendado: 6 meses de gastos fixos
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Label>Valor atual da reserva</Label>
-                <Input
-                  type="number"
-                  placeholder="0,00"
-                  step="0.01"
-                  value={settings.current_emergency_fund}
-                  onChange={(e) => {
-                    setSettings(prev => ({ ...prev, current_emergency_fund: parseFloat(e.target.value) || 0 }));
-                    setHasChanges(true);
-                  }}
-                />
-                <p className="text-xs text-slate-500">
-                  Quanto você já tem guardado
-                </p>
-              </div>
+            <div className="space-y-2">
+              <Label>Meta em meses de despesas</Label>
+              <Select
+                value={settings.emergency_fund_goal_months.toString()}
+                onValueChange={(value) => {
+                  setSettings(prev => ({ ...prev, emergency_fund_goal_months: parseInt(value) }));
+                  setHasChanges(true);
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[3, 6, 9, 12].map(months => (
+                    <SelectItem key={months} value={months.toString()}>
+                      {months} meses
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-slate-500">
+                Recomendado: 6 meses de gastos fixos
+              </p>
             </div>
           </CardContent>
         </Card>
