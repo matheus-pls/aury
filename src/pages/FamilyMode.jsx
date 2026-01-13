@@ -396,27 +396,54 @@ export default function FamilyMode() {
         </div>
       </motion.div>
 
+      {/* Tranquilidade da Família - Eixo Central */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.1 }}
+        className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury mb-4"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Heart className="w-5 h-5 text-white/90" />
+              <p className="text-white/80 text-sm font-medium">Harmonia Financeira</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-4xl font-bold">
+                {totalSharedExpenses > 0 ? "Equilibrado" : "Iniciando"}
+              </h2>
+            </div>
+            <p className="text-white/70 text-sm mt-2">
+              {sharedGoals.length > 0 
+                ? `${sharedGoals.length} meta${sharedGoals.length > 1 ? 's' : ''} em progresso juntos`
+                : "Organize suas finanças em família"
+              }
+            </p>
+          </div>
+          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+            <div className="text-3xl">💚</div>
+          </div>
+        </div>
+        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
+      </motion.div>
+
       {/* Visão Geral Familiar */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Card className="border-slate-200 shadow-sm hover:shadow-aury transition-shadow">
           <CardHeader className="pb-3">
             <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-[#5FBDBD]" />
-              Gastos do Mês
+              Gastos Coletivos
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-[#1B3A52] mb-4">
+            <p className="text-3xl font-bold text-[#1B3A52] mb-2">
               {formatCurrency(totalSharedExpenses)}
             </p>
-            <div className="space-y-2">
-              {Object.entries(expensesByMember).slice(0, 3).map(([email, amount]) => (
-                <div key={email} className="flex justify-between text-sm items-center">
-                  <span className="text-slate-600">{getMemberName(email)}</span>
-                  <span className="font-semibold text-[#1B3A52]">{formatCurrency(amount)}</span>
-                </div>
-              ))}
-            </div>
+            <p className="text-sm text-slate-500 mb-4">
+              Organização compartilhada, não fiscalização
+            </p>
           </CardContent>
         </Card>
 
@@ -445,6 +472,7 @@ export default function FamilyMode() {
               <div className="space-y-3">
                 {sharedGoals.slice(0, 2).map(goal => {
                   const progress = (goal.current_amount / goal.target_amount) * 100;
+                  const remaining = goal.target_amount - (goal.current_amount || 0);
                   return (
                     <button
                       key={goal.id}
@@ -456,8 +484,8 @@ export default function FamilyMode() {
                         <span className="text-xs font-semibold text-[#5FBDBD]">{progress.toFixed(0)}%</span>
                       </div>
                       <Progress value={progress} className="h-2" />
-                      <p className="text-xs text-slate-500">
-                        {formatCurrency(goal.current_amount)} de {formatCurrency(goal.target_amount)}
+                      <p className="text-xs text-emerald-600 font-medium">
+                        Juntos faltam {formatCurrency(remaining)}
                       </p>
                     </button>
                   );
@@ -470,22 +498,24 @@ export default function FamilyMode() {
         </Card>
       </div>
 
-      {/* Membros com Fotos de Perfil */}
+      {/* Membros - Foco em Colaboração */}
       <Card className="border-slate-200 shadow-sm">
         <CardHeader className="pb-3">
           <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#5FBDBD]" />
-            Membros do Grupo
+            <Heart className="w-4 h-4 text-[#5FBDBD]" />
+            Nossa Equipe
           </CardTitle>
         </CardHeader>
         <CardContent>
+          <p className="text-sm text-slate-500 mb-4">
+            {activeGroup.members?.length || 0} {activeGroup.members?.length === 1 ? 'pessoa' : 'pessoas'} colaborando juntas
+          </p>
           <div className="flex flex-wrap gap-3">
             {activeGroup.members?.map((email, index) => (
               <div
                 key={index}
                 className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 hover:border-[#5FBDBD]/30 transition-colors"
               >
-                {/* Avatar com Iniciais */}
                 <div className="w-10 h-10 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-white">
                   {getMemberInitials(email)}
                 </div>
