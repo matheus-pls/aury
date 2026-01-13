@@ -8,7 +8,8 @@ import {
   Shield,
   Calculator,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  Heart
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import BackButton from "@/components/BackButton";
@@ -23,17 +24,17 @@ const PLANNING_MODULES = [
     page: "AutoPlanning"
   },
   {
-    id: "daily",
-    title: "Dia a Dia",
-    description: "Quanto você pode gastar hoje sem comprometer o mês",
-    icon: Calendar,
+    id: "tight_month",
+    title: "Mês Apertado",
+    description: "Plano de sobrevivência financeira com empatia",
+    icon: Heart,
     color: "from-[#1B3A52] to-[#0A2540]",
-    page: "DailyMode"
+    page: "TightMonth"
   },
   {
     id: "emergency",
-    title: "Reserva de Emergência",
-    description: "Construa e acompanhe sua segurança financeira",
+    title: "Caixinha",
+    description: "Sua segurança para imprevistos",
     icon: Shield,
     color: "from-[#2A4A62] to-[#1B3A52]",
     page: "EmergencyFund"
