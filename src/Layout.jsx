@@ -23,8 +23,8 @@ export default function Layout({ children, currentPageName }) {
     { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
     { name: "Planejamento", page: "Planning", icon: Sparkles },
     { name: "Movimentações", page: "Movements", icon: Wallet },
-    { name: "Metas", page: "GoalsHub", icon: Target },
-    { name: "Análises", page: "Analysis", icon: TrendingUp },
+    { name: "Metas", page: "Goals", icon: Target },
+    { name: "Análises", page: "BehaviorAnalysis", icon: TrendingUp },
     { name: "Configurações", page: "Settings", icon: Settings },
   ]);
   const location = useLocation();

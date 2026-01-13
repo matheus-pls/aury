@@ -11,6 +11,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import BackButton from "@/components/BackButton";
 
 const PLANNING_MODULES = [
   {
@@ -54,6 +55,7 @@ export default function Planning() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
+        <BackButton to={createPageUrl("Overview")} className="mb-4" />
         <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Planejamento</h1>
         <p className="text-slate-500 mt-1">Organize suas finanças de forma inteligente</p>
       </motion.div>

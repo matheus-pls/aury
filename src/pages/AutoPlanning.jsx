@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
   Sparkles,
   TrendingUp,
@@ -17,6 +18,7 @@ import {
   DollarSign
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import BackButton from "@/components/BackButton";
 
 export default function AutoPlanning() {
   const [showDetails, setShowDetails] = useState(false);
@@ -146,9 +148,10 @@ export default function AutoPlanning() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
+        <BackButton to={createPageUrl("Planning")} className="mb-4" />
         <div className="flex items-center gap-2 mb-2">
-          <Sparkles className="w-6 h-6 text-[#00A8A0]" />
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Planejamento Automático</h1>
+          <Sparkles className="w-6 h-6 text-[#5FBDBD]" />
+          <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Planejamento Automático</h1>
         </div>
         <p className="text-slate-500">Seu plano financeiro personalizado do mês</p>
       </motion.div>
