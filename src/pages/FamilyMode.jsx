@@ -370,21 +370,22 @@ export default function FamilyMode() {
               </div>
             </div>
           </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => setIsAddMemberOpen(true)}
-          >
-            <UserPlus className="w-4 h-4 mr-2" />
-            Convidar
-          </Button>
-          <Button
-            onClick={() => setIsAddExpenseOpen(true)}
-            className="bg-[#00A8A0] hover:bg-[#008F88]"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Novo Gasto
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsAddMemberOpen(true)}
+            >
+              <UserPlus className="w-4 h-4 mr-2" />
+              Convidar
+            </Button>
+            <Button
+              onClick={() => setIsAddExpenseOpen(true)}
+              className="bg-[#5FBDBD] hover:bg-[#4FA9A5]"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Novo Gasto
+            </Button>
+          </div>
         </div>
       </motion.div>
 
