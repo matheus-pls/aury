@@ -1,6 +1,6 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -112,11 +112,78 @@ export default function Overview() {
   const tranquilityStatus = getTranquilityStatus();
 
   const quickActions = [
-    { label: "Planejamento", icon: Sparkles, page: "Planning", color: "from-[#5FBDBD] to-[#4FA9A5]" },
-    { label: "Movimentações", icon: Wallet, page: "Movements", color: "from-[#1B3A52] to-[#0A2540]" },
-    { label: "Metas", icon: Target, page: "Goals", color: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]" },
-    { label: "Análises", icon: TrendingUp, page: "BehaviorAnalysis", color: "from-[#2A4A62] to-[#1B3A52]" }
+    { label: "Registrar Gasto", icon: Receipt, action: "expense", color: "from-rose-500 to-red-500" },
+    { label: "Adicionar Renda", icon: TrendingUp, action: "income", color: "from-emerald-500 to-green-500" },
+    { label: "Criar Meta", icon: Target, action: "goal", color: "from-[#5FBDBD] to-[#4FA9A5]" },
+    { label: "Ver Análises", icon: Sparkles, page: "BehaviorAnalysis", color: "from-[#1B3A52] to-[#0A2540]" }
   ];
+
+  const [quickActionDialog, setQuickActionDialog] = React.useState(null);
+  const [quickFormData, setQuickFormData] = React.useState({
+    description: "",
+    amount: "",
+    category: "essential",
+    date: new Date().toISOString().slice(0, 10),
+    type: "salary"
+  });
+
+  const createExpenseMutation = useMutation({
+    mutationFn: (data) => base44.entities.Expense.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['expenses']);
+      setQuickActionDialog(null);
+      setQuickFormData({
+        description: "",
+        amount: "",
+        category: "essential",
+        date: new Date().toISOString().slice(0, 10),
+        type: "salary"
+      });
+    }
+  });
+
+  const createIncomeMutation = useMutation({
+    mutationFn: (data) => base44.entities.Income.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['incomes']);
+      setQuickActionDialog(null);
+      setQuickFormData({
+        description: "",
+        amount: "",
+        category: "essential",
+        date: new Date().toISOString().slice(0, 10),
+        type: "salary"
+      });
+    }
+  });
+
+  const handleQuickAction = (action) => {
+    if (action.page) {
+      window.location.href = createPageUrl(action.page);
+    } else if (action.action === "goal") {
+      window.location.href = createPageUrl("Goals");
+    } else {
+      setQuickActionDialog(action.action);
+    }
+  };
+
+  const handleQuickSubmit = (e) => {
+    e.preventDefault();
+    if (quickActionDialog === "expense") {
+      createExpenseMutation.mutate({
+        ...quickFormData,
+        amount: parseFloat(quickFormData.amount),
+        month_year: quickFormData.date.slice(0, 7)
+      });
+    } else if (quickActionDialog === "income") {
+      createIncomeMutation.mutate({
+        description: quickFormData.description,
+        amount: parseFloat(quickFormData.amount),
+        type: quickFormData.type,
+        is_active: true
+      });
+    }
+  };
 
   const alerts = [];
 
@@ -402,34 +469,159 @@ export default function Overview() {
 
       {/* Quick Actions */}
       <div>
-        <h3 className="font-semibold text-[#1B3A52] text-lg mb-4">Acesso Rápido</h3>
+        <h3 className="font-semibold text-[#1B3A52] text-lg mb-4">Ações Rápidas</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
             return (
-              <Link key={index} to={createPageUrl(action.page)}>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.55 + index * 0.05 }}
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="group"
-                >
-                  <Card className="cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/50 bg-white">
-                    <CardContent className="p-6 text-center">
-                      <div className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-md`}>
-                        <Icon className="w-7 h-7 text-white" />
-                      </div>
-                      <p className="font-semibold text-[#1B3A52] text-sm">{action.label}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              </Link>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.55 + index * 0.05 }}
+                whileHover={{ scale: 1.03, y: -4 }}
+                whileTap={{ scale: 0.97 }}
+                className="group"
+                onClick={() => handleQuickAction(action)}
+              >
+                <Card className="cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/50 bg-white">
+                  <CardContent className="p-6 text-center">
+                    <div className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-md`}>
+                      <Icon className="w-7 h-7 text-white" />
+                    </div>
+                    <p className="font-semibold text-[#1B3A52] text-sm">{action.label}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             );
           })}
         </div>
       </div>
+
+      {/* Quick Expense Dialog */}
+      <Dialog open={quickActionDialog === "expense"} onOpenChange={() => setQuickActionDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#1B3A52]">Registrar Gasto</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleQuickSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Input
+                placeholder="Ex: Almoço"
+                value={quickFormData.description}
+                onChange={(e) => setQuickFormData({ ...quickFormData, description: e.target.value })}
+                required
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Valor</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0,00"
+                  value={quickFormData.amount}
+                  onChange={(e) => setQuickFormData({ ...quickFormData, amount: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Data</Label>
+                <Input
+                  type="date"
+                  value={quickFormData.date}
+                  onChange={(e) => setQuickFormData({ ...quickFormData, date: e.target.value })}
+                  required
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Categoria</Label>
+              <Select
+                value={quickFormData.category}
+                onValueChange={(value) => setQuickFormData({ ...quickFormData, category: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fixed">Gastos Fixos</SelectItem>
+                  <SelectItem value="essential">Essenciais</SelectItem>
+                  <SelectItem value="superfluous">Supérfluos</SelectItem>
+                  <SelectItem value="emergency">Reserva</SelectItem>
+                  <SelectItem value="investment">Investimentos</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-3">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setQuickActionDialog(null)}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="flex-1 bg-gradient-to-r from-rose-500 to-red-500">
+                Registrar
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Quick Income Dialog */}
+      <Dialog open={quickActionDialog === "income"} onOpenChange={() => setQuickActionDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#1B3A52]">Adicionar Renda</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleQuickSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Input
+                placeholder="Ex: Salário, Freelance"
+                value={quickFormData.description}
+                onChange={(e) => setQuickFormData({ ...quickFormData, description: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Valor Mensal</Label>
+              <Input
+                type="number"
+                step="0.01"
+                placeholder="0,00"
+                value={quickFormData.amount}
+                onChange={(e) => setQuickFormData({ ...quickFormData, amount: e.target.value })}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Tipo</Label>
+              <Select
+                value={quickFormData.type}
+                onValueChange={(value) => setQuickFormData({ ...quickFormData, type: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="salary">Salário</SelectItem>
+                  <SelectItem value="freelance">Freelance</SelectItem>
+                  <SelectItem value="investment">Investimento</SelectItem>
+                  <SelectItem value="rental">Aluguel</SelectItem>
+                  <SelectItem value="other">Outros</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-3">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setQuickActionDialog(null)}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="flex-1 bg-gradient-to-r from-emerald-500 to-green-500">
+                Adicionar
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
