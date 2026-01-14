@@ -494,7 +494,36 @@ export default function Goals() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Título da Meta</Label>
+              <Label className="flex items-center gap-2 text-[#1B3A52] font-semibold">
+                <Target className="w-4 h-4 text-[#5FBDBD]" />
+                Categoria *
+              </Label>
+              <Select
+                value={formData.category}
+                onValueChange={(value) => setFormData({ ...formData, category: value })}
+                required
+              >
+                <SelectTrigger className="border-[#5FBDBD]/30 focus:border-[#5FBDBD]">
+                  <SelectValue placeholder="Escolha a categoria da sua meta" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(GOAL_CATEGORIES).map(([key, { label, icon: Icon }]) => (
+                    <SelectItem key={key} value={key}>
+                      <div className="flex items-center gap-2">
+                        <Icon className="w-4 h-4" />
+                        {label}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-slate-500">
+                A categoria ajuda a organizar e priorizar suas metas
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="title">Título da Meta *</Label>
               <Input
                 id="title"
                 placeholder="Ex: Viagem para Europa"
@@ -506,7 +535,7 @@ export default function Goals() {
             
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="target_amount">Valor da Meta</Label>
+                <Label htmlFor="target_amount">Valor da Meta *</Label>
                 <Input
                   id="target_amount"
                   type="number"
@@ -530,32 +559,15 @@ export default function Goals() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="deadline">Data Limite</Label>
-              <Input
-                id="deadline"
-                type="date"
-                value={formData.deadline}
-                onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-              />
-            </div>
-            
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label>Categoria</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(value) => setFormData({ ...formData, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(GOAL_CATEGORIES).map(([key, { label }]) => (
-                      <SelectItem key={key} value={key}>{label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="deadline">Data Limite</Label>
+                <Input
+                  id="deadline"
+                  type="date"
+                  value={formData.deadline}
+                  onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+                />
               </div>
               <div className="space-y-2">
                 <Label>Prioridade</Label>
