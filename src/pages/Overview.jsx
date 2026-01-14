@@ -119,14 +119,27 @@ export default function Overview() {
   ];
 
   const alerts = [];
-  if (spentPercentage > 90) {
+
+  // Sugestão automática do Modo Mês Apertado
+  if ((spentPercentage > 85 || tranquilityIndex < 40) && totalIncome > 0) {
+    alerts.push({
+      type: "action",
+      message: `Seus gastos estão acima do ideal este mês. Ative o Modo Mês Apertado para reorganizar suas finanças rapidamente.`,
+      icon: Shield,
+      action: {
+        label: "Ativar Modo Mês Apertado",
+        page: "TightMonth"
+      }
+    });
+  } else if (spentPercentage > 90) {
     alerts.push({
       type: "danger",
       message: "Atenção: você está perto do limite do seu orçamento mensal",
       icon: AlertCircle
     });
   }
-  if (emergencyProgress < 30 && totalIncome > 0) {
+
+  if (emergencyProgress < 30 && totalIncome > 0 && tranquilityIndex >= 40) {
     const monthsToSafety = emergencyGoal > 0 ? Math.ceil(emergencyGoal / (totalIncome * 0.15)) : 0;
     alerts.push({
       type: "warning",
@@ -289,6 +302,7 @@ export default function Overview() {
           {alerts.map((alert, index) => {
             const Icon = alert.icon;
             const colors = {
+              action: "bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 border-[#5FBDBD] text-[#1B3A52]",
               danger: "bg-red-50 border-red-200 text-red-900",
               warning: "bg-amber-50 border-amber-200 text-amber-900",
               info: "bg-blue-50 border-blue-200 text-blue-900"
@@ -302,7 +316,17 @@ export default function Overview() {
                 className={`flex items-start gap-3 p-5 rounded-2xl border-2 ${colors[alert.type]} shadow-sm`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                <p className="text-sm leading-relaxed">{alert.message}</p>
+                <div className="flex-1">
+                  <p className="text-sm leading-relaxed mb-3">{alert.message}</p>
+                  {alert.action && (
+                    <Link to={createPageUrl(alert.action.page)}>
+                      <Button size="sm" className="bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] shadow-md">
+                        {alert.action.label}
+                        <ChevronRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               </motion.div>
             );
           })}
