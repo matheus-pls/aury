@@ -37,7 +37,7 @@ export default function DistributionChart({ data, type = "suggested" }) {
     return null;
   };
 
-  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+  const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, value }) => {
     if (percent < 0.05) return null;
     const RADIAN = Math.PI / 180;
     const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -45,16 +45,28 @@ export default function DistributionChart({ data, type = "suggested" }) {
     const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
     return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor="middle"
-        dominantBaseline="central"
-        className="text-xs font-medium"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
+      <g>
+        <text
+          x={x}
+          y={y - 8}
+          fill="white"
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="text-xs font-bold"
+        >
+          {`${(percent * 100).toFixed(0)}%`}
+        </text>
+        <text
+          x={x}
+          y={y + 8}
+          fill="white"
+          textAnchor="middle"
+          dominantBaseline="central"
+          className="text-[10px] font-medium"
+        >
+          {formatCurrency(value)}
+        </text>
+      </g>
     );
   };
 
@@ -94,14 +106,23 @@ export default function DistributionChart({ data, type = "suggested" }) {
         </div>
       )}
       
-      <div className="grid grid-cols-2 gap-2 mt-4">
+      <div className="mt-6 space-y-3">
+        <p className="text-sm font-semibold text-slate-700 mb-3">Para onde vai seu dinheiro:</p>
         {chartData.map((item, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: item.color }}
-            />
-            <span className="text-xs text-slate-600 truncate">{item.name}</span>
+          <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <div 
+                className="w-4 h-4 rounded-full flex-shrink-0"
+                style={{ backgroundColor: item.color }}
+              />
+              <span className="text-sm font-medium text-slate-700">{item.name}</span>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold text-slate-900">{formatCurrency(item.value)}</p>
+              <p className="text-xs text-slate-500">
+                {((item.value / chartData.reduce((sum, i) => sum + i.value, 0)) * 100).toFixed(0)}%
+              </p>
+            </div>
           </div>
         ))}
       </div>
