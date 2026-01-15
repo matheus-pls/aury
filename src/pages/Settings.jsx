@@ -12,7 +12,9 @@ import {
   Bell,
   User,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Moon,
+  Sun
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +31,7 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import BackButton from "@/components/BackButton";
+import { useTheme } from "@/components/ThemeProvider";
 
 const RISK_PROFILES = {
   essential: {
@@ -53,6 +56,7 @@ const RISK_PROFILES = {
 
 export default function Settings() {
   const queryClient = useQueryClient();
+  const { theme, setTheme } = useTheme();
   
   const [settings, setSettings] = useState({
     risk_profile: "balanced",
@@ -359,6 +363,64 @@ export default function Settings() {
       </motion.div>
 
 
+
+      {/* Theme Selection */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              {theme === 'dark' ? <Moon className="w-5 h-5 text-[#00A8A0]" /> : <Sun className="w-5 h-5 text-[#00A8A0]" />}
+              Aparência
+            </CardTitle>
+            <CardDescription>
+              Escolha o tema do aplicativo
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setTheme('dark')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  theme === 'dark'
+                    ? 'border-[#4ECDC4] bg-[#4ECDC4]/10'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-12 h-12 bg-[#0D2B3E] rounded-lg flex items-center justify-center border border-[#4ECDC4]/30">
+                    <Moon className="w-5 h-5 text-[#4ECDC4]" />
+                  </div>
+                  <p className={`font-medium ${theme === 'dark' ? 'text-[#4ECDC4]' : 'text-slate-700'}`}>
+                    Escuro
+                  </p>
+                  <p className="text-xs text-slate-500">Padrão</p>
+                </div>
+              </button>
+              <button
+                onClick={() => setTheme('light')}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  theme === 'light'
+                    ? 'border-[#4ECDC4] bg-[#4ECDC4]/10'
+                    : 'border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center border border-slate-300">
+                    <Sun className="w-5 h-5 text-amber-500" />
+                  </div>
+                  <p className={`font-medium ${theme === 'light' ? 'text-[#4ECDC4]' : 'text-slate-700'}`}>
+                    Claro
+                  </p>
+                </div>
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
 
       {/* Notifications */}
       <motion.div

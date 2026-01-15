@@ -16,6 +16,7 @@ import {
   Heart
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -69,7 +70,8 @@ export default function Layout({ children, currentPageName }) {
   }, [location]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <ThemeProvider>
+    <div className="min-h-screen bg-aury">
       <style>{`
         :root {
           --aury-teal: #5FBDBD;
@@ -94,7 +96,7 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-slate-200 z-40 flex items-center justify-between px-4 shadow-sm">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-aury-surface/95 backdrop-blur-sm border-b border-aury z-40 flex items-center justify-between px-4 shadow-sm">
         <button
           onClick={() => setSidebarOpen(true)}
           className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
@@ -126,14 +128,14 @@ export default function Layout({ children, currentPageName }) {
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-50
+        fixed top-0 left-0 h-full bg-aury-surface border-r border-aury z-50
         transition-transform duration-300 ease-out
         w-72 lg:translate-x-0
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100">
+          <div className="h-20 flex items-center justify-between px-6 border-b border-aury">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
               alt="Aury" 
@@ -173,10 +175,10 @@ export default function Layout({ children, currentPageName }) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-100">
-            <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4">
-              <p className="text-xs text-slate-500 mb-1">Controle. Clareza. Confiança.</p>
-              <p className="text-sm font-semibold text-[#1B3A52]">Seu aliado financeiro</p>
+          <div className="p-4 border-t border-aury">
+            <div className="bg-aury-primary/10 rounded-2xl p-4">
+              <p className="text-xs text-aury-muted mb-1">Controle. Clareza. Confiança.</p>
+              <p className="text-sm font-semibold text-aury">Seu aliado financeiro</p>
             </div>
           </div>
         </div>
