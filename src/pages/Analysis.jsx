@@ -24,8 +24,8 @@ const ANALYSIS_SECTIONS = [
   },
   {
     id: "categories",
-    title: "Distribuição por Categoria",
-    description: "Visualize como seu dinheiro está sendo distribuído",
+    title: "Para onde vai meu dinheiro",
+    description: "Veja exatamente quanto você gasta em cada área da sua vida",
     icon: PieChart,
     page: "BehaviorAnalysis",
     gradient: "from-[#1B3A52] to-[#0A2540]"
