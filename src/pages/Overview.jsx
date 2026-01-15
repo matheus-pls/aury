@@ -243,8 +243,8 @@ export default function Overview() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Visão Geral</h1>
-        <p className="text-slate-500 mt-1">Seu panorama financeiro de hoje</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Visão Geral</h1>
+        <p className="text-muted-foreground mt-1">Seu panorama financeiro de hoje</p>
       </motion.div>
 
       {/* Método Aury - Card Fixo e Discreto */}
@@ -253,39 +253,39 @@ export default function Overview() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.05 }}
       >
-        <Card className="border-2 border-[#5FBDBD]/20 bg-gradient-to-br from-[#5FBDBD]/5 to-[#1B3A52]/5">
+        <Card className="border border-border bg-card">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-6 h-6 text-primary-foreground" />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-[#1B3A52] text-base mb-2 flex items-center gap-2">
+                <h3 className="font-bold text-foreground text-base mb-2 flex items-center gap-2">
                   O Método Aury
                 </h3>
-                <p className="text-sm text-slate-600 leading-relaxed mb-3">
+                <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                   Seu caminho para clareza financeira em 3 pilares:
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-slate-200">
+                  <div className="flex items-center gap-2 p-3 bg-card rounded-lg border border-border">
                     <Shield className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-semibold text-slate-700">Segurança</p>
-                      <p className="text-xs text-slate-500">Proteção financeira</p>
+                      <p className="text-xs font-semibold text-foreground">Segurança</p>
+                      <p className="text-xs text-muted-foreground">Proteção financeira</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-slate-200">
-                    <TrendingUp className="w-4 h-4 text-[#5FBDBD] flex-shrink-0" />
+                  <div className="flex items-center gap-2 p-3 bg-card rounded-lg border border-border">
+                    <TrendingUp className="w-4 h-4 text-primary flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-semibold text-slate-700">Clareza</p>
-                      <p className="text-xs text-slate-500">Quanto posso gastar</p>
+                      <p className="text-xs font-semibold text-foreground">Clareza</p>
+                      <p className="text-xs text-muted-foreground">Quanto posso gastar</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-slate-200">
-                    <Target className="w-4 h-4 text-[#1B3A52] flex-shrink-0" />
+                  <div className="flex items-center gap-2 p-3 bg-card rounded-lg border border-border">
+                    <Target className="w-4 h-4 text-foreground flex-shrink-0" />
                     <div>
-                      <p className="text-xs font-semibold text-slate-700">Ação</p>
-                      <p className="text-xs text-slate-500">O que ajustar</p>
+                      <p className="text-xs font-semibold text-foreground">Ação</p>
+                      <p className="text-xs text-muted-foreground">O que ajustar</p>
                     </div>
                   </div>
                 </div>
@@ -303,30 +303,30 @@ export default function Overview() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury"
+        className="relative overflow-hidden rounded-2xl p-6 bg-primary text-primary-foreground"
       >
         <div className="flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Heart className="w-4 h-4 text-white/90" />
-              <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
+              <Heart className="w-4 h-4" />
+              <p className="text-xs font-medium opacity-90">Tranquilidade Financeira</p>
             </div>
             <div className="flex items-baseline gap-2">
               <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
-              <span className="text-lg font-light text-white/80">/100</span>
-              <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">
+              <span className="text-lg font-light opacity-80">/100</span>
+              <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-background/20">
                 {tranquilityStatus.label}
               </span>
             </div>
           </div>
-          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-background/10 backdrop-blur-sm flex items-center justify-center">
             <div className="text-2xl">
               {tranquilityIndex >= 70 ? "😌" : tranquilityIndex >= 40 ? "🤔" : "😰"}
             </div>
           </div>
         </div>
         {/* Decorative gradient */}
-        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
+        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-background/5 rounded-full blur-2xl" />
       </motion.div>
 
       {/* Main Balance */}
@@ -334,45 +334,45 @@ export default function Overview() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-3xl p-8 text-white shadow-xl"
+        className="bg-primary rounded-3xl p-8 text-primary-foreground"
       >
         <div className="flex items-start justify-between mb-6">
           <div>
-            <p className="text-white/90 text-sm mb-2">Disponível este mês</p>
+            <p className="opacity-90 text-sm mb-2">Disponível este mês</p>
             <h2 className="text-5xl font-bold">{formatCurrency(availableBalance)}</h2>
-            <p className="text-white/70 text-xs mt-2">
+            <p className="opacity-70 text-xs mt-2">
               {availableBalance > 0 
                 ? `Você ainda tem ${formatCurrency(availableBalance)} para usar`
                 : "Você ultrapassou seu orçamento mensal"}
             </p>
           </div>
-          <div className="p-3 bg-white/10 rounded-2xl">
+          <div className="p-3 bg-background/10 rounded-2xl">
             <Wallet className="w-8 h-8" />
           </div>
         </div>
         
-        <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/20">
+        <div className="grid grid-cols-2 gap-4 pt-6 border-t border-primary-foreground/20">
           <div>
-            <p className="text-white/70 text-xs mb-1">Renda</p>
+            <p className="opacity-70 text-xs mb-1">Renda</p>
             <p className="text-xl font-semibold tabular-nums">{formatCurrency(totalIncome)}</p>
           </div>
           <div>
-            <p className="text-white/70 text-xs mb-1">Gastos</p>
+            <p className="opacity-70 text-xs mb-1">Gastos</p>
             <p className="text-xl font-semibold tabular-nums">{formatCurrency(totalExpenses)}</p>
           </div>
         </div>
 
         <div className="mt-6">
-          <div className="flex justify-between text-xs text-white/90 mb-2">
+          <div className="flex justify-between text-xs opacity-90 mb-2">
             <span>Utilizado: {spentPercentage.toFixed(0)}%</span>
             <span>{spentPercentage <= 100 ? 'Dentro do controle' : 'Acima do esperado'}</span>
           </div>
-          <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
+          <div className="h-2.5 bg-background/20 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(spentPercentage, 100)}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
-              className={`h-full ${spentPercentage > 100 ? 'bg-red-400' : 'bg-white'} rounded-full`}
+              className={`h-full ${spentPercentage > 100 ? 'bg-destructive' : 'bg-background'} rounded-full`}
             />
           </div>
         </div>
@@ -484,7 +484,7 @@ export default function Overview() {
 
       {/* Quick Actions */}
       <div>
-        <h3 className="font-semibold text-[#1B3A52] text-lg mb-4">Ações Rápidas</h3>
+        <h3 className="font-semibold text-foreground text-lg mb-4">Ações Rápidas</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
@@ -499,12 +499,12 @@ export default function Overview() {
                 className="group"
                 onClick={() => handleQuickAction(action)}
               >
-                <Card className="cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/50 bg-white">
+                <Card className="cursor-pointer hover:shadow-aury transition-all border hover:border-primary/50">
                   <CardContent className="p-6 text-center">
                     <div className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-md`}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
-                    <p className="font-semibold text-[#1B3A52] text-sm">{action.label}</p>
+                    <p className="font-semibold text-foreground text-sm">{action.label}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -517,7 +517,7 @@ export default function Overview() {
       <Dialog open={quickActionDialog === "expense"} onOpenChange={() => setQuickActionDialog(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">Registrar Gasto</DialogTitle>
+            <DialogTitle>Registrar Gasto</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleQuickSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
@@ -585,7 +585,7 @@ export default function Overview() {
       <Dialog open={quickActionDialog === "income"} onOpenChange={() => setQuickActionDialog(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">Adicionar Renda</DialogTitle>
+            <DialogTitle>Adicionar Renda</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleQuickSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
