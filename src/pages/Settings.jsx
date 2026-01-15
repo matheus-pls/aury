@@ -358,50 +358,7 @@ export default function Settings() {
         </Card>
       </motion.div>
 
-      {/* Emergency Fund Goal Only */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-[#00A8A0]" />
-              Meta de Reserva
-            </CardTitle>
-            <CardDescription>
-              Configure quantos meses deseja poupar
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Meta em meses de despesas</Label>
-              <Select
-                value={settings.emergency_fund_goal_months.toString()}
-                onValueChange={(value) => {
-                  setSettings(prev => ({ ...prev, emergency_fund_goal_months: parseInt(value) }));
-                  setHasChanges(true);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {[3, 6, 9, 12].map(months => (
-                    <SelectItem key={months} value={months.toString()}>
-                      {months} meses
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-slate-500">
-                Recomendado: 6 meses de gastos fixos
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+
 
       {/* Notifications */}
       <motion.div
