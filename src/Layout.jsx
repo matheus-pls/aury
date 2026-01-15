@@ -99,9 +99,9 @@ export default function Layout({ children, currentPageName }) {
       <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-aury-surface/95 backdrop-blur-sm border-b border-aury z-40 flex items-center justify-between px-4 shadow-sm">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+          className="p-2 rounded-xl hover:bg-accent transition-colors"
         >
-          <Menu className="w-6 h-6 text-[#1B3A52]" />
+          <Menu className="w-6 h-6 text-aury" />
         </button>
         <div className="flex items-center gap-2">
           <img 
@@ -143,9 +143,9 @@ export default function Layout({ children, currentPageName }) {
             />
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors"
+              className="lg:hidden p-2 rounded-xl hover:bg-accent transition-colors"
             >
-              <X className="w-5 h-5 text-slate-500" />
+              <X className="w-5 h-5 text-aury-muted" />
             </button>
           </div>
 
@@ -161,12 +161,12 @@ export default function Layout({ children, currentPageName }) {
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
                     ${isActive 
-                      ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20' 
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-[#1B3A52]'
+                      ? 'bg-gradient-to-r from-[#4ECDC4] to-[#4ECDC4]/70 text-[#0D2B3E] shadow-lg shadow-[#4ECDC4]/20' 
+                      : 'text-aury-muted hover:bg-accent hover:text-aury'
                     }
                   `}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-[#0D2B3E]' : 'text-aury-muted'}`} />
                   <span className="font-medium">{item.name}</span>
                   {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
                 </Link>
