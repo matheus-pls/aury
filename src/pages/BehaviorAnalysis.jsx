@@ -131,16 +131,24 @@ export default function BehaviorAnalysis() {
   };
 
   // Analyze month-over-month trends for personalization
+  const currentMonth = new Date().toISOString().slice(0, 7);
   const currentMonthSpending = byMonth[currentMonth] || 0;
-  const lastMonthKey = lastMonths[lastMonths.length - 2];
+  const lastMonthKey = lastMonths[1] || lastMonths[0];
   const lastMonthSpending = byMonth[lastMonthKey] || 0;
   const spendingTrend = lastMonthSpending > 0 ? ((currentMonthSpending - lastMonthSpending) / lastMonthSpending) * 100 : 0;
+
+  // By category per month
+  const byCategoryByMonth = expenses.reduce((acc, e) => {
+    if (!acc[e.month_year]) acc[e.month_year] = {};
+    acc[e.month_year][e.category] = (acc[e.month_year][e.category] || 0) + e.amount;
+    return acc;
+  }, {});
 
   // Category growth analysis
   const categoryGrowth = {};
   Object.keys(categoryLabels).forEach(cat => {
-    const currentCat = byCategory[currentMonth]?.[cat] || 0;
-    const lastCat = byCategory[lastMonthKey]?.[cat] || 0;
+    const currentCat = byCategoryByMonth[currentMonth]?.[cat] || 0;
+    const lastCat = byCategoryByMonth[lastMonthKey]?.[cat] || 0;
     if (lastCat > 0) {
       categoryGrowth[cat] = ((currentCat - lastCat) / lastCat) * 100;
     }
@@ -177,7 +185,7 @@ export default function BehaviorAnalysis() {
   // Category-specific personalized insight
   if (growingCategory[0] && growingCategory[1] > 30) {
     const catLabel = categoryLabels[growingCategory[0]];
-    const currentCatAmount = byCategory[currentMonth]?.[growingCategory[0]] || 0;
+    const currentCatAmount = byCategoryByMonth[currentMonth]?.[growingCategory[0]] || 0;
     insights.push({
       type: 'category',
       title: `${catLabel} disparou`,
@@ -187,6 +195,8 @@ export default function BehaviorAnalysis() {
     });
   }
 
+  const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+  
   // Day-specific personalized insight
   if (mostExpensiveDay[0] && mostExpensiveDay[1] > totalExpenses * 0.2) {
     const dayName = daysOfWeek[mostExpensiveDay[0]];
