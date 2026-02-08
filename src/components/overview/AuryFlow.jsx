@@ -223,26 +223,21 @@ export default function AuryFlow() {
         throw new Error("Arquivo de áudio vazio");
       }
 
-      console.log("Audio blob size:", blob.size, "type:", blob.type);
-
-      // Ensure correct mime type
-      const mimeType = blob.type || 'audio/webm';
-      const fileExtension = mimeType.includes('webm') ? 'webm' : 
-                           mimeType.includes('mp4') ? 'mp4' : 
-                           mimeType.includes('mpeg') ? 'mp3' : 'webm';
+      // Convert to WAV format (universally supported)
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const arrayBuffer = await blob.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       
-      const file = new File([blob], `audio_${Date.now()}.${fileExtension}`, { type: mimeType });
+      // Convert to WAV
+      const wavBlob = await audioBufferToWav(audioBuffer);
+      const file = new File([wavBlob], `audio_${Date.now()}.wav`, { type: 'audio/wav' });
       
-      console.log("Uploading audio file...");
       // Upload audio file
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
       
       if (!uploadResult?.file_url) {
         throw new Error("Falha ao fazer upload do áudio");
       }
-      
-      console.log("Audio uploaded:", uploadResult.file_url);
-      console.log("Processing with LLM...");
       
       // Process audio with LLM (transcription + extraction)
       const result = await base44.integrations.Core.InvokeLLM({
@@ -313,36 +308,31 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
         }
       });
       
-      console.log("LLM result:", result);
-      
       if (!result?.amount || !result?.description) {
-        console.error("Incomplete LLM result:", result);
-        throw new Error("Não consegui entender o áudio completamente. Tente falar mais devagar e claramente.");
+        throw new Error("Não consegui entender o áudio. Tente falar mais devagar e claramente.");
       }
       
       if (result.amount <= 0) {
         throw new Error("O valor precisa ser maior que zero.");
       }
       
-      console.log("Audio processed successfully");
       setParsedData(result);
       setInputMode("confirming");
     } catch (error) {
       console.error("Error processing audio:", error);
-      console.error("Error details:", error.message, error.stack);
       
       let errorMsg = "Não consegui processar o áudio.";
       
-      if (error.message.includes("upload") || error.message.includes("UploadFile")) {
+      if (error.message.includes("Unsupported file type") || error.message.includes("decodeAudioData")) {
+        errorMsg = "Formato de áudio não suportado. Tente novamente.";
+      } else if (error.message.includes("upload") || error.message.includes("UploadFile")) {
         errorMsg = "Erro ao enviar áudio. Verifique sua conexão.";
-      } else if (error.message.includes("entender") || error.message.includes("completamente")) {
+      } else if (error.message.includes("entender")) {
         errorMsg = error.message;
-      } else if (error.message.includes("vazio") || error.message.includes("inválido")) {
+      } else if (error.message.includes("vazio")) {
         errorMsg = "Arquivo de áudio inválido. Grave novamente.";
-      } else if (error.message.includes("InvokeLLM")) {
-        errorMsg = "Erro ao processar áudio. Tente novamente ou digite manualmente.";
       } else {
-        errorMsg = `Erro: ${error.message || "Tente novamente ou use o modo texto"}`;
+        errorMsg = error.message || "Tente novamente ou use o modo texto";
       }
       
       setErrorMessage(errorMsg);
