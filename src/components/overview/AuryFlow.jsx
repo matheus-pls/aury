@@ -132,7 +132,9 @@ export default function AuryFlow() {
       
       streamRef.current = stream;
       
+      // Use default browser format
       mediaRecorderRef.current = new MediaRecorder(stream);
+      console.log('Recording with mimeType:', mediaRecorderRef.current.mimeType);
       audioChunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (event) => {
@@ -143,7 +145,12 @@ export default function AuryFlow() {
 
       mediaRecorderRef.current.onstop = async () => {
         const actualDuration = (Date.now() - recordingStartTimeRef.current) / 1000;
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/mpeg' });
+        
+        // Use the actual recorded format
+        const mimeType = mediaRecorderRef.current.mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        
+        console.log('Audio recorded:', audioBlob.size, 'bytes, type:', mimeType);
         
         stopRecordingCleanup();
         
@@ -214,16 +221,24 @@ export default function AuryFlow() {
         throw new Error("Arquivo de áudio vazio");
       }
 
-      // Force mp3 format - most universally compatible
-      const file = new File([blob], `audio_${Date.now()}.mp3`, { 
-        type: 'audio/mpeg'
+      // Keep the original format - API supports webm, mp4, mp3, wav, ogg
+      const extension = blob.type.includes('webm') ? 'webm' : 
+                       blob.type.includes('mp4') ? 'mp4' : 
+                       blob.type.includes('ogg') ? 'ogg' : 'webm';
+      
+      const file = new File([blob], `audio_${Date.now()}.${extension}`, { 
+        type: blob.type
       });
+      
+      console.log('Uploading file:', file.name, file.type, file.size);
       
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
       
       if (!uploadResult?.file_url) {
         throw new Error("Falha ao fazer upload do áudio");
       }
+      
+      console.log('File uploaded:', uploadResult.file_url);
       
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Você está recebendo um arquivo de áudio em português brasileiro. Sua tarefa é:
