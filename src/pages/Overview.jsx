@@ -263,22 +263,17 @@ export default function Overview() {
         transition={{ delay: 0.1 }}
         className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury"
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Heart className="w-4 h-4 text-white/90" />
-              <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
-              <span className="text-lg font-light text-white/80">/100</span>
-              <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">
-                {tranquilityStatus.label}
-              </span>
-            </div>
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Heart className="w-4 h-4 text-white/90" />
+            <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
           </div>
-          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-            <Heart className="w-8 h-8 text-white/90" />
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
+            <span className="text-lg font-light text-white/80">/100</span>
+            <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">
+              {tranquilityStatus.label}
+            </span>
           </div>
         </div>
         {/* Decorative gradient */}
