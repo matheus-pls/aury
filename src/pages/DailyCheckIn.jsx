@@ -66,9 +66,9 @@ export default function DailyCheckIn() {
    let status = {
      label: "Tranquilo",
      icon: Shield,
-     color: "from-[#5FBDBD] to-[#4FA9A5]",
-     textColor: "text-[#5FBDBD]",
-     bgColor: "bg-[#5FBDBD]/10",
+     color: "from-green-500 to-green-600",
+     textColor: "text-green-600",
+     bgColor: "bg-green-50",
      message: "Sua situação financeira está estável"
    };
 
@@ -77,27 +77,27 @@ export default function DailyCheckIn() {
      status = {
        label: "Risco",
        icon: AlertTriangle,
-       color: "from-rose-500 to-red-600",
-       textColor: "text-rose-600",
-       bgColor: "bg-rose-50",
+       color: "from-red-500 to-red-600",
+       textColor: "text-red-600",
+       bgColor: "bg-red-50",
        message: "Você ultrapassou seu orçamento"
      };
    } else if (spendingPercentage > 85) {
      status = {
        label: "Risco",
        icon: AlertTriangle,
-       color: "from-rose-500 to-red-600",
-       textColor: "text-rose-600",
-       bgColor: "bg-rose-50",
+       color: "from-red-500 to-red-600",
+       textColor: "text-red-600",
+       bgColor: "bg-red-50",
        message: "Atenção aos gastos deste mês"
      };
    } else if (spendingPercentage > 70) {
      status = {
        label: "Atenção",
        icon: TrendingUp,
-       color: "from-amber-500 to-orange-600",
-       textColor: "text-amber-600",
-       bgColor: "bg-amber-50",
+       color: "from-[#1B3A52] to-[#0A2540]",
+       textColor: "text-[#1B3A52]",
+       bgColor: "bg-[#1B3A52]/10",
        message: "Fique atento ao seu orçamento"
      };
    }
