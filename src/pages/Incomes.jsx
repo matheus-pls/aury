@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -67,6 +68,7 @@ export default function Incomes() {
     mutationFn: (data) => base44.entities.Income.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['incomes']);
+      toast.success("Renda criada com sucesso!");
       handleCloseDialog();
     }
   });
@@ -75,13 +77,17 @@ export default function Incomes() {
     mutationFn: ({ id, data }) => base44.entities.Income.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries(['incomes']);
+      toast.success("Renda atualizada!");
       handleCloseDialog();
     }
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Income.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['incomes'])
+    onSuccess: () => {
+      queryClient.invalidateQueries(['incomes']);
+      toast.success("Renda excluída!");
+    }
   });
 
   const handleOpenDialog = (income = null) => {
