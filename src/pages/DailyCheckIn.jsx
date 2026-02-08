@@ -135,9 +135,21 @@ export default function DailyCheckIn() {
     }
   };
 
+  // Dynamic greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) {
+      return { text: "Bom dia", emoji: "☀️" };
+    } else if (hour >= 12 && hour < 18) {
+      return { text: "Boa tarde", emoji: "🌤️" };
+    } else {
+      return { text: "Boa noite", emoji: "🌙" };
+    }
+  };
+
   const [showAuryFlow, setShowAuryFlow] = useState(false);
-  const [showManualEntry, setShowManualEntry] = useState(false);
-  const [entryType, setEntryType] = useState("expense");
+   const [showManualEntry, setShowManualEntry] = useState(false);
+   const [entryType, setEntryType] = useState("expense");
   const [formData, setFormData] = useState({
     description: "",
     amount: "",
@@ -214,7 +226,7 @@ export default function DailyCheckIn() {
                className="h-12 mx-auto mb-4"
              />
            </motion.div>
-           <h1 className="text-2xl font-bold text-[#1B3A52] mb-2">Bom dia! ☀️</h1>
+           <h1 className="text-2xl font-bold text-[#1B3A52] mb-2">{getGreeting().text}! {getGreeting().emoji}</h1>
            <p className="text-slate-500">Seu check-in financeiro de hoje</p>
          </div>
 
