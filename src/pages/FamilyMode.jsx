@@ -274,6 +274,19 @@ export default function FamilyMode() {
     return email.split('@')[0];
   };
 
+  const getMemberAvatar = (email) => {
+    // Gera uma cor de avatar consistente baseada no email
+    const colors = [
+      "from-[#5FBDBD] to-[#4FA9A5]",
+      "from-[#1B3A52] to-[#2A4A62]",
+      "from-emerald-500 to-teal-600",
+      "from-violet-500 to-purple-600",
+      "from-amber-500 to-orange-600"
+    ];
+    const index = email.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
+    return colors[index];
+  };
+
   if (userLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
@@ -396,76 +409,98 @@ export default function FamilyMode() {
         </div>
       </motion.div>
 
-      {/* Tranquilidade da Família - Eixo Central */}
+      {/* Harmonia Financeira Premium */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury mb-4"
+        className="relative overflow-hidden rounded-3xl p-8 bg-gradient-to-br from-[#5FBDBD] via-[#4FA9A5] to-[#1B3A52] text-white shadow-aury-lg"
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <Heart className="w-5 h-5 text-white/90" />
-              <p className="text-white/80 text-sm font-medium">Harmonia Financeira</p>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <h2 className="text-4xl font-bold">
-                {totalSharedExpenses > 0 ? "Equilibrado" : "Iniciando"}
+        <div className="relative z-10">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                  <Heart className="w-5 h-5 text-white" />
+                </div>
+                <p className="text-white/90 text-sm font-medium">Harmonia Financeira</p>
+              </div>
+              <h2 className="text-4xl font-bold mb-2">
+                {totalSharedExpenses > 0 ? "Equilibrado" : "Pronto para começar"}
               </h2>
+              <p className="text-white/80 text-base leading-relaxed">
+                {sharedGoals.length > 0 
+                  ? `${sharedGoals.length} ${sharedGoals.length === 1 ? 'objetivo' : 'objetivos'} construindo o futuro juntos`
+                  : "Organizem as finanças com clareza e cooperação"
+                }
+              </p>
             </div>
-            <p className="text-white/70 text-sm mt-2">
-              {sharedGoals.length > 0 
-                ? `${sharedGoals.length} meta${sharedGoals.length > 1 ? 's' : ''} em progresso juntos`
-                : "Organize suas finanças em família"
-              }
-            </p>
           </div>
-          <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-3xl">💚</div>
+          
+          {/* Mini stats */}
+          <div className="grid grid-cols-3 gap-4 pt-6 border-t border-white/20">
+            <div>
+              <p className="text-white/70 text-xs mb-1">Membros</p>
+              <p className="text-2xl font-bold">{activeGroup.members?.length || 0}</p>
+            </div>
+            <div>
+              <p className="text-white/70 text-xs mb-1">Gastos</p>
+              <p className="text-2xl font-bold">{sharedExpenses.length}</p>
+            </div>
+            <div>
+              <p className="text-white/70 text-xs mb-1">Metas</p>
+              <p className="text-2xl font-bold">{sharedGoals.length}</p>
+            </div>
           </div>
         </div>
-        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
+        
+        {/* Decorative elements */}
+        <div className="absolute -right-8 -top-8 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute -left-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
       </motion.div>
 
-      {/* Visão Geral Familiar */}
+      {/* Visão Geral Premium */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card className="border-slate-200 shadow-sm hover:shadow-aury transition-shadow">
-          <CardHeader className="pb-3">
+        <Card className="border-slate-100 shadow-sm hover:shadow-aury transition-all group">
+          <CardHeader className="pb-4">
             <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-[#5FBDBD]" />
-              Gastos Coletivos
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] flex items-center justify-center">
+                <TrendingDown className="w-4 h-4 text-white" />
+              </div>
+              Gastos do Mês
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-[#1B3A52] mb-2">
+            <p className="text-4xl font-bold text-[#1B3A52] mb-3">
               {formatCurrency(totalSharedExpenses)}
             </p>
-            <p className="text-sm text-slate-500 mb-4">
-              Organização compartilhada, não fiscalização
+            <p className="text-sm text-slate-600 leading-relaxed">
+              Transparência para todos, sem julgamentos
             </p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-200 shadow-sm hover:shadow-aury transition-shadow">
-          <CardHeader className="pb-3">
+        <Card className="border-slate-100 shadow-sm hover:shadow-aury transition-all group">
+          <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
-                <Target className="w-4 h-4 text-[#5FBDBD]" />
-                Metas Compartilhadas
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                  <Target className="w-4 h-4 text-white" />
+                </div>
+                Objetivos Comuns
               </CardTitle>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => setIsAddGoalOpen(true)}
-                className="h-8 w-8 p-0 hover:bg-[#5FBDBD]/10"
+                className="h-8 w-8 p-0 hover:bg-emerald-50 transition-colors"
               >
-                <Plus className="w-4 h-4 text-[#5FBDBD]" />
+                <Plus className="w-4 h-4 text-emerald-600" />
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold text-[#5FBDBD] mb-4">
+            <p className="text-4xl font-bold text-emerald-600 mb-4">
               {sharedGoals.length}
             </p>
             {sharedGoals.length > 0 ? (
@@ -477,14 +512,14 @@ export default function FamilyMode() {
                     <button
                       key={goal.id}
                       onClick={() => openGoalDetails(goal)}
-                      className="w-full text-left space-y-2 p-3 rounded-xl hover:bg-[#5FBDBD]/5 transition-colors group"
+                      className="w-full text-left space-y-2 p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 hover:from-emerald-100 hover:to-teal-100 border border-emerald-100 transition-all group/goal"
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium text-[#1B3A52] group-hover:text-[#5FBDBD] transition-colors">{goal.title}</span>
-                        <span className="text-xs font-semibold text-[#5FBDBD]">{progress.toFixed(0)}%</span>
+                        <span className="text-sm font-semibold text-[#1B3A52] group-hover/goal:text-emerald-700 transition-colors">{goal.title}</span>
+                        <span className="text-xs font-bold text-emerald-600 px-2 py-1 bg-white rounded-full">{progress.toFixed(0)}%</span>
                       </div>
-                      <Progress value={progress} className="h-2" />
-                      <p className="text-xs text-emerald-600 font-medium">
+                      <Progress value={progress} className="h-2 bg-white" />
+                      <p className="text-xs text-emerald-700 font-medium">
                         Juntos faltam {formatCurrency(remaining)}
                       </p>
                     </button>
@@ -492,63 +527,101 @@ export default function FamilyMode() {
                 })}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">Crie sua primeira meta compartilhada</p>
+              <p className="text-sm text-slate-500">Comecem com um sonho em comum</p>
             )}
           </CardContent>
         </Card>
       </div>
 
-      {/* Membros - Foco em Colaboração */}
-      <Card className="border-slate-200 shadow-sm">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
-            <Heart className="w-4 h-4 text-[#5FBDBD]" />
-            Nossa Equipe
-          </CardTitle>
+      {/* Membros Premium */}
+      <Card className="border-slate-100 shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg text-[#1B3A52] flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                <Users className="w-4 h-4 text-white" />
+              </div>
+              Quem Está Junto
+            </CardTitle>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setIsAddMemberOpen(true)}
+              className="h-8 border-slate-200 hover:bg-violet-50 hover:border-violet-200"
+            >
+              <UserPlus className="w-3 h-3 mr-1" />
+              <span className="text-xs">Adicionar</span>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-slate-500 mb-4">
-            {activeGroup.members?.length || 0} {activeGroup.members?.length === 1 ? 'pessoa' : 'pessoas'} colaborando juntas
+          <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+            {activeGroup.members?.length === 1 
+              ? 'Você está começando. Convide mais pessoas!' 
+              : `${activeGroup.members?.length} pessoas construindo juntas`
+            }
           </p>
-          <div className="flex flex-wrap gap-3">
-            {activeGroup.members?.map((email, index) => (
-              <div
-                key={index}
-                className="flex items-center gap-3 px-4 py-3 bg-gradient-to-br from-slate-50 to-slate-100 rounded-xl border border-slate-200 hover:border-[#5FBDBD]/30 transition-colors"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-full flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-white">
-                  {getMemberInitials(email)}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-[#1B3A52]">{getMemberName(email)}</p>
-                  {email === activeGroup.admin_email && (
-                    <span className="text-xs px-2 py-0.5 bg-[#5FBDBD] text-white rounded-full">
-                      Admin
-                    </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {activeGroup.members?.map((email, index) => {
+              const memberExpenses = sharedExpenses.filter(e => e.paid_by === email).reduce((s, e) => s + e.amount, 0);
+              return (
+                <div
+                  key={index}
+                  className="group relative overflow-hidden rounded-2xl p-4 bg-gradient-to-br from-slate-50 via-white to-slate-50 border border-slate-200 hover:border-[#5FBDBD]/40 hover:shadow-md transition-all"
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${getMemberAvatar(email)} rounded-xl flex items-center justify-center text-white font-bold text-base shadow-md`}>
+                      {getMemberInitials(email)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[#1B3A52] truncate">{getMemberName(email)}</p>
+                      {email === activeGroup.admin_email ? (
+                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] text-white rounded-full font-medium">
+                          <Shield className="w-3 h-3" />
+                          Responsável
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-500">Membro</span>
+                      )}
+                    </div>
+                  </div>
+                  {memberExpenses > 0 && (
+                    <div className="pt-3 border-t border-slate-100">
+                      <p className="text-xs text-slate-500 mb-1">Contribuição este mês</p>
+                      <p className="text-sm font-bold text-[#1B3A52]">{formatCurrency(memberExpenses)}</p>
+                    </div>
                   )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
 
-      {/* Gastos por Categoria */}
+      {/* Distribuição dos Gastos */}
       <div>
-        <h3 className="font-semibold text-[#1B3A52] mb-3 text-lg">Gastos por Categoria</h3>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-[#1B3A52] text-lg">Como Estão Gastando</h3>
+          <p className="text-xs text-slate-500">Visão clara, sem cobranças</p>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {Object.entries(EXPENSE_CATEGORIES).map(([key, config]) => {
             const Icon = config.icon;
+            const categoryTotal = expensesByCategory[key];
+            const percentage = totalSharedExpenses > 0 ? (categoryTotal / totalSharedExpenses) * 100 : 0;
             return (
-              <Card key={key} className="border-slate-200 hover:shadow-aury transition-shadow">
-                <CardContent className="p-4 text-center">
-                  <div className={`w-12 h-12 bg-gradient-to-br ${config.color} rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md`}>
-                    <Icon className="w-6 h-6 text-white" />
+              <Card key={key} className="border-slate-100 hover:shadow-aury transition-all group">
+                <CardContent className="p-5 text-center">
+                  <div className={`w-14 h-14 bg-gradient-to-br ${config.color} rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md group-hover:scale-110 transition-transform`}>
+                    <Icon className="w-7 h-7 text-white" />
                   </div>
-                  <p className="text-xs text-slate-500 mb-1">{config.label}</p>
-                  <p className="text-sm font-bold text-[#1B3A52]">
-                    {formatCurrency(expensesByCategory[key])}
+                  <p className="text-xs text-slate-600 font-medium mb-2">{config.label}</p>
+                  <p className="text-base font-bold text-[#1B3A52] mb-1">
+                    {formatCurrency(categoryTotal)}
                   </p>
+                  {percentage > 0 && (
+                    <p className="text-xs text-slate-500">{percentage.toFixed(0)}% do total</p>
+                  )}
                 </CardContent>
               </Card>
             );
@@ -556,14 +629,22 @@ export default function FamilyMode() {
         </div>
       </div>
 
-      {/* Gastos Recentes */}
+      {/* Histórico Compartilhado */}
       <div className="space-y-3">
-        <h3 className="font-semibold text-[#1B3A52] text-lg">Gastos Recentes</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-[#1B3A52] text-lg">Histórico Compartilhado</h3>
+          <p className="text-xs text-slate-500">{sharedExpenses.length} {sharedExpenses.length === 1 ? 'registro' : 'registros'}</p>
+        </div>
         {sharedExpenses.length === 0 ? (
-          <Card className="border-slate-200">
-            <CardContent className="p-8 text-center">
-              <TrendingDown className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500">Nenhum gasto compartilhado ainda</p>
+          <Card className="border-slate-100">
+            <CardContent className="p-12 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mx-auto mb-4">
+                <TrendingDown className="w-8 h-8 text-slate-400" />
+              </div>
+              <h4 className="font-semibold text-[#1B3A52] mb-2">Tudo tranquilo por aqui</h4>
+              <p className="text-sm text-slate-500 leading-relaxed">
+                Registre o primeiro gasto compartilhado e acompanhem juntos
+              </p>
             </CardContent>
           </Card>
         ) : (
@@ -571,31 +652,39 @@ export default function FamilyMode() {
             {sharedExpenses.slice(0, 10).map(expense => {
               const categoryConfig = EXPENSE_CATEGORIES[expense.category];
               const Icon = categoryConfig.icon;
+              const isCurrentUser = user?.email === expense.paid_by;
               return (
-                <Card key={expense.id} className="border-slate-200 hover:border-[#5FBDBD]/30 hover:shadow-sm transition-all">
-                  <CardContent className="p-4">
+                <Card key={expense.id} className="border-slate-100 hover:border-[#5FBDBD]/30 hover:shadow-md transition-all group">
+                  <CardContent className="p-5">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3 flex-1">
-                        <div className={`p-2.5 rounded-xl bg-gradient-to-br ${categoryConfig.color} shadow-md`}>
+                      <div className="flex items-center gap-4 flex-1">
+                        <div className={`p-3 rounded-xl bg-gradient-to-br ${categoryConfig.color} shadow-md group-hover:scale-110 transition-transform`}>
                           <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-[#1B3A52] text-sm">{expense.description}</h4>
-                          <p className="text-xs text-slate-500">
-                            {new Date(expense.date).toLocaleDateString('pt-BR')} • {getMemberName(expense.paid_by)}
-                          </p>
+                          <h4 className="font-semibold text-[#1B3A52] text-sm mb-1">{expense.description}</h4>
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <span>{new Date(expense.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
+                            <span>•</span>
+                            <div className="flex items-center gap-1">
+                              <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${getMemberAvatar(expense.paid_by)} flex items-center justify-center`}>
+                                <span className="text-[8px] font-bold text-white">{getMemberInitials(expense.paid_by)}</span>
+                              </div>
+                              <span className="font-medium">{getMemberName(expense.paid_by)}</span>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <p className="font-bold text-[#1B3A52] text-sm">
+                      <div className="flex items-center gap-3">
+                        <p className="font-bold text-[#1B3A52] text-base">
                           {formatCurrency(expense.amount)}
                         </p>
-                        {user?.email === expense.paid_by && (
+                        {isCurrentUser && (
                           <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => deleteExpenseMutation.mutate(expense.id)}
-                            className="h-8 w-8 hover:bg-rose-50"
+                            className="h-8 w-8 opacity-0 group-hover:opacity-100 hover:bg-rose-50 transition-all"
                           >
                             <Trash2 className="w-4 h-4 text-slate-400 hover:text-rose-500" />
                           </Button>
@@ -610,69 +699,71 @@ export default function FamilyMode() {
         )}
       </div>
 
-      {/* Add Member Dialog */}
+      {/* Add Member Dialog Premium */}
       <Dialog open={isAddMemberOpen} onOpenChange={setIsAddMemberOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">Convidar Membro</DialogTitle>
+            <DialogTitle className="text-[#1B3A52] text-xl font-bold">Convidar Alguém</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 mt-4">
-            <p className="text-sm text-slate-600">
-              Adicione o email de quem você quer convidar para o grupo
-            </p>
+          <div className="space-y-5 mt-4">
+            <div className="p-4 bg-gradient-to-br from-violet-50 to-purple-50 rounded-xl border border-violet-100">
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Adicione o email de quem você quer incluir no grupo. Vocês compartilharão gastos e metas, sempre com transparência.
+              </p>
+            </div>
             <div className="space-y-2">
-              <Label htmlFor="memberEmail" className="text-[#1B3A52]">Email</Label>
+              <Label htmlFor="memberEmail" className="text-[#1B3A52] font-medium">Email da pessoa</Label>
               <Input
                 id="memberEmail"
                 type="email"
-                placeholder="email@exemplo.com"
+                placeholder="nome@email.com"
                 value={newMemberEmail}
                 onChange={(e) => setNewMemberEmail(e.target.value)}
-                className="border-slate-200 focus:border-[#5FBDBD]"
+                className="border-slate-200 focus:border-[#5FBDBD] h-11"
               />
             </div>
             <div className="flex gap-3">
               <Button
                 variant="outline"
-                className="flex-1 border-slate-200"
+                className="flex-1 border-slate-200 h-11"
                 onClick={() => setIsAddMemberOpen(false)}
               >
                 Cancelar
               </Button>
               <Button
-                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
+                className="flex-1 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 shadow-md h-11"
                 onClick={handleAddMember}
                 disabled={!newMemberEmail || addMemberMutation.isPending}
               >
-                Convidar
+                {addMemberMutation.isPending ? "Convidando..." : "Enviar Convite"}
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Add Expense Dialog */}
+      {/* Add Expense Dialog Premium */}
       <Dialog open={isAddExpenseOpen} onOpenChange={setIsAddExpenseOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">Novo Gasto Compartilhado</DialogTitle>
+            <DialogTitle className="text-[#1B3A52] text-xl font-bold">Registrar Gasto</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleAddExpense} className="space-y-4 mt-4">
+          <form onSubmit={handleAddExpense} className="space-y-5 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="description" className="text-[#1B3A52]">Descrição</Label>
+              <Label htmlFor="description" className="text-[#1B3A52] font-medium">O que foi?</Label>
               <Input
                 id="description"
-                placeholder="Ex: Supermercado"
+                placeholder="Ex: Compras do mês"
                 value={expenseForm.description}
                 onChange={(e) => setExpenseForm({ ...expenseForm, description: e.target.value })}
                 required
-                className="border-slate-200 focus:border-[#5FBDBD]"
+                className="border-slate-200 focus:border-[#5FBDBD] h-11"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-2">
-                <Label htmlFor="amount" className="text-[#1B3A52]">Valor</Label>
+                <Label htmlFor="amount" className="text-[#1B3A52] font-medium">Valor</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -681,29 +772,29 @@ export default function FamilyMode() {
                   value={expenseForm.amount}
                   onChange={(e) => setExpenseForm({ ...expenseForm, amount: e.target.value })}
                   required
-                  className="border-slate-200 focus:border-[#5FBDBD]"
+                  className="border-slate-200 focus:border-[#5FBDBD] h-11"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="date" className="text-[#1B3A52]">Data</Label>
+                <Label htmlFor="date" className="text-[#1B3A52] font-medium">Quando</Label>
                 <Input
                   id="date"
                   type="date"
                   value={expenseForm.date}
                   onChange={(e) => setExpenseForm({ ...expenseForm, date: e.target.value })}
                   required
-                  className="border-slate-200 focus:border-[#5FBDBD]"
+                  className="border-slate-200 focus:border-[#5FBDBD] h-11"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[#1B3A52]">Categoria</Label>
+              <Label className="text-[#1B3A52] font-medium">Categoria</Label>
               <Select
                 value={expenseForm.category}
                 onValueChange={(value) => setExpenseForm({ ...expenseForm, category: value })}
               >
-                <SelectTrigger className="border-slate-200">
+                <SelectTrigger className="border-slate-200 h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -714,34 +805,40 @@ export default function FamilyMode() {
               </Select>
             </div>
 
+            <div className="p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Este gasto será visível para todos os membros do grupo, mantendo a transparência financeira.
+              </p>
+            </div>
+
             <div className="flex gap-3">
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1 border-slate-200"
+                className="flex-1 border-slate-200 h-11"
                 onClick={() => setIsAddExpenseOpen(false)}
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
+                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] shadow-md h-11"
                 disabled={createExpenseMutation.isPending}
               >
-                Adicionar
+                {createExpenseMutation.isPending ? "Salvando..." : "Registrar"}
               </Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Add Goal Dialog */}
+      {/* Add Goal Dialog Premium */}
       <Dialog open={isAddGoalOpen} onOpenChange={setIsAddGoalOpen}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">Nova Meta Compartilhada</DialogTitle>
+            <DialogTitle className="text-[#1B3A52] text-xl font-bold">Criar Objetivo Comum</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleAddGoal} className="space-y-4 mt-4">
+          <form onSubmit={handleAddGoal} className="space-y-5 mt-4">
             <div className="space-y-2">
               <Label htmlFor="goalTitle" className="text-[#1B3A52]">Título</Label>
               <Input
@@ -793,17 +890,20 @@ export default function FamilyMode() {
               />
             </div>
 
-            <div className="space-y-3 p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
-              <Label className="flex items-center gap-2 text-[#1B3A52]">
-                <Users className="w-4 h-4" />
-                Responsabilidades (% de contribuição)
+            <div className="space-y-3 p-5 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
+              <Label className="flex items-center gap-2 text-[#1B3A52] font-medium">
+                <Users className="w-4 h-4 text-emerald-600" />
+                Contribuição de Cada Um
               </Label>
-              <p className="text-xs text-slate-500 mb-2">
-                Defina quanto cada membro deve contribuir para essa meta
+              <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                Não é obrigação, é um combinado. Definam juntos quanto cada um pode contribuir.
               </p>
               {activeGroup.members?.map(email => (
-                <div key={email} className="flex items-center gap-3">
-                  <span className="text-sm text-slate-700 flex-1">{getMemberName(email)}</span>
+                <div key={email} className="flex items-center gap-3 p-3 bg-white rounded-lg">
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getMemberAvatar(email)} flex items-center justify-center text-white font-semibold text-xs`}>
+                    {getMemberInitials(email)}
+                  </div>
+                  <span className="text-sm font-medium text-slate-700 flex-1">{getMemberName(email)}</span>
                   <div className="flex items-center gap-2">
                     <Input
                       type="number"
@@ -818,9 +918,9 @@ export default function FamilyMode() {
                           [email]: parseFloat(e.target.value) || 0
                         }
                       })}
-                      className="w-20 border-slate-200"
+                      className="w-20 border-slate-200 h-10"
                     />
-                    <span className="text-sm text-slate-500">%</span>
+                    <span className="text-sm font-medium text-emerald-600">%</span>
                   </div>
                 </div>
               ))}
