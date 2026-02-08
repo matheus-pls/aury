@@ -555,37 +555,24 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
             >
               <div className="space-y-3">
                 <button
-                  onClick={toggleRecording}
-                  className="w-full flex items-center gap-4 group bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-all"
-                >
-                  <div className="relative">
-                    <div className="w-14 h-14 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-2xl flex items-center justify-center shadow-lg shadow-[#5FBDBD]/30 group-hover:scale-105 transition-transform">
-                      <Mic className="w-6 h-6 text-white" />
-                    </div>
-                    <motion.div
-                      className="absolute inset-0 rounded-2xl bg-[#5FBDBD]/30"
-                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                  </div>
-                  
-                  <div className="flex-1 text-left">
-                    <h3 className="text-white font-semibold">Gravação por Voz</h3>
-                    <p className="text-white/60 text-sm">Clique para iniciar</p>
-                  </div>
-
-                  <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
-                </button>
-
-                <button
                   onClick={() => {
                     setInputMode("text");
                     setTimeout(() => inputRef.current?.focus(), 100);
                   }}
-                  className="w-full flex items-center gap-4 text-center justify-center py-3 text-white/60 hover:text-white text-sm transition-colors"
+                  className="w-full flex items-center gap-4 group bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-all"
                 >
-                  <Edit3 className="w-4 h-4" />
-                  <span>ou digite manualmente</span>
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-2xl flex items-center justify-center shadow-lg shadow-[#5FBDBD]/30 group-hover:scale-105 transition-transform">
+                      <Edit3 className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 text-left">
+                    <h3 className="text-white font-semibold">Registrar Movimentação</h3>
+                    <p className="text-white/60 text-sm">Digite rapidamente</p>
+                  </div>
+
+                  <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
                 </button>
 
                 {errorMessage && (
@@ -638,17 +625,10 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                     <Send className="w-4 h-4 text-white" />
                   </button>
                 </div>
-                
-                <button
-                  onClick={toggleRecording}
-                  className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shadow-lg"
-                >
-                  <Mic className="w-5 h-5 text-white" />
-                </button>
               </div>
 
               <div className="flex flex-col items-center justify-center gap-1 mt-3">
-                <p className="text-white/40 text-xs">Digite ou clique no microfone para gravar</p>
+                <p className="text-white/40 text-xs">Digite o valor e descrição</p>
                 {errorMessage && (
                   <p className="text-rose-400 text-xs">{errorMessage}</p>
                 )}
