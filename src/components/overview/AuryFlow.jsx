@@ -203,49 +203,99 @@ export default function AuryFlow() {
     setInputMode("processing");
     
     try {
+      // Convert audio to WAV format for better compatibility
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const arrayBuffer = await blob.arrayBuffer();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       
       const wavBlob = await audioBufferToWav(audioBuffer);
-      const file = new File([wavBlob], "audio.wav", { type: "audio/wav" });
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
       
+      // Upload audio file
+      const file = new File([wavBlob], "audio.wav", { type: "audio/wav" });
+      const uploadResult = await base44.integrations.Core.UploadFile({ file });
+      
+      if (!uploadResult?.file_url) {
+        throw new Error("Falha ao fazer upload do áudio");
+      }
+      
+      // Process audio with LLM (transcription + extraction)
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Você é um assistente financeiro. O usuário gravou um áudio sobre uma transação financeira.
+        prompt: `Você receberá um áudio de um usuário brasileiro falando sobre uma transação financeira.
 
-Analise o áudio e extraia as informações financeiras.
+TAREFA:
+1. TRANSCREVA o áudio (entenda o que o usuário disse em português)
+2. EXTRAIA as informações financeiras da transcrição
 
-IMPORTANTE:
-- Se for um GASTO, identifique como "expense"
-- Se for uma ENTRADA/RECEITA, identifique como "income"
-- Extraia o valor numérico
-- Sugira uma categoria apropriada
-- Extraia a descrição
+REGRAS DE CLASSIFICAÇÃO:
+- GASTO: se o usuário disse "gastei", "paguei", "comprei", "saiu", "débito" → type: "expense"
+- ENTRADA: se o usuário disse "recebi", "ganhei", "entrou", "crédito", "renda" → type: "income"
 
-CATEGORIAS DE GASTO: fixed (contas fixas como aluguel, internet), essential (alimentação, transporte, saúde), superfluous (lazer, compras não essenciais), emergency (emergências), investment (investimentos)
+CATEGORIAS DE GASTO:
+- fixed: aluguel, condomínio, internet, luz, água, plano de celular
+- essential: mercado, farmácia, transporte, combustível, saúde
+- superfluous: restaurante, lazer, cinema, shopping, delivery não essencial
+- emergency: médico urgente, conserto emergencial, remédio urgente
+- investment: aplicação, ações, tesouro, poupança
 
-CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (rendimento), rental (aluguel recebido), other (outros)`,
-        file_urls: [file_url],
+CATEGORIAS DE RENDA:
+- salary: salário mensal
+- freelance: trabalho extra, bico, freela
+- investment: dividendos, rendimento de aplicação
+- rental: aluguel recebido
+- other: outras entradas
+
+IMPORTANTE: 
+- Extraia o VALOR numérico que o usuário mencionou
+- Crie uma descrição CURTA e CLARA do que foi dito
+- Se não conseguir identificar algo, use valores padrão sensatos
+
+Responda SEMPRE no formato JSON solicitado.`,
+        file_urls: [uploadResult.file_url],
         response_json_schema: {
           type: "object",
           properties: {
-            type: { type: "string", enum: ["expense", "income"] },
-            amount: { type: "number" },
-            description: { type: "string" },
-            category: { type: "string" },
-            confidence: { type: "number" }
+            type: { 
+              type: "string", 
+              enum: ["expense", "income"],
+              description: "Tipo da transação baseado no que o usuário disse"
+            },
+            amount: { 
+              type: "number",
+              description: "Valor numérico mencionado pelo usuário"
+            },
+            description: { 
+              type: "string",
+              description: "Descrição curta e clara da transação"
+            },
+            category: { 
+              type: "string",
+              description: "Categoria apropriada baseada na descrição"
+            },
+            confidence: { 
+              type: "number",
+              description: "Nível de confiança na extração (0-1)"
+            },
+            transcription: {
+              type: "string",
+              description: "Transcrição do que o usuário disse"
+            }
           },
           required: ["type", "amount", "description", "category"]
         }
       });
       
+      if (!result?.amount || !result?.description) {
+        throw new Error("Não consegui entender o áudio. Tente falar mais claramente.");
+      }
+      
       setParsedData(result);
       setInputMode("confirming");
     } catch (error) {
       console.error("Error processing audio:", error);
-      setErrorMessage("Não consegui processar o áudio");
+      const errorMsg = error.message || "Não consegui processar o áudio. Tente novamente ou digite manualmente.";
+      setErrorMessage(errorMsg);
       setInputMode("text");
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
