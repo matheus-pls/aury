@@ -213,56 +213,6 @@ export default function AuryFlow() {
     setIsRecording(false);
   };
 
-  const convertToWav = async (blob) => {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const arrayBuffer = await blob.arrayBuffer();
-    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-    
-    // Convert to WAV
-    const numberOfChannels = audioBuffer.numberOfChannels;
-    const length = audioBuffer.length * numberOfChannels * 2;
-    const buffer = new ArrayBuffer(44 + length);
-    const view = new DataView(buffer);
-    const channels = [];
-    let offset = 0;
-    let pos = 0;
-    
-    // Write WAV header
-    const setUint16 = (data) => { view.setUint16(pos, data, true); pos += 2; };
-    const setUint32 = (data) => { view.setUint32(pos, data, true); pos += 4; };
-    
-    setUint32(0x46464952); // "RIFF"
-    setUint32(36 + length); // file length - 8
-    setUint32(0x45564157); // "WAVE"
-    setUint32(0x20746d66); // "fmt " chunk
-    setUint32(16); // length = 16
-    setUint16(1); // PCM (uncompressed)
-    setUint16(numberOfChannels);
-    setUint32(audioBuffer.sampleRate);
-    setUint32(audioBuffer.sampleRate * 2 * numberOfChannels); // avg. bytes/sec
-    setUint16(numberOfChannels * 2); // block-align
-    setUint16(16); // 16-bit
-    setUint32(0x61746164); // "data" - chunk
-    setUint32(length); // chunk length
-    
-    // Write interleaved data
-    for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
-      channels.push(audioBuffer.getChannelData(i));
-    }
-    
-    while (pos < buffer.byteLength) {
-      for (let i = 0; i < numberOfChannels; i++) {
-        let sample = Math.max(-1, Math.min(1, channels[i][offset]));
-        sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
-        view.setInt16(pos, sample, true);
-        pos += 2;
-      }
-      offset++;
-    }
-    
-    return new Blob([buffer], { type: 'audio/wav' });
-  };
-
   const processAudio = async (blob) => {
     setInputMode("processing");
     
@@ -271,14 +221,52 @@ export default function AuryFlow() {
         throw new Error("Arquivo de áudio vazio");
       }
 
-      console.log('Converting audio to WAV...');
-      const wavBlob = await convertToWav(blob);
+      // Convert WebM to WAV using Web Audio API
+      console.log('Converting audio to WAV format...');
       
-      const file = new File([wavBlob], `audio_${Date.now()}.wav`, { 
-        type: 'audio/wav'
-      });
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const arrayBuffer = await blob.arrayBuffer();
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       
-      console.log('Uploading file:', file.name, file.type, file.size);
+      // Create WAV file
+      const numberOfChannels = 1; // Mono for smaller file
+      const sampleRate = 16000; // 16kHz is enough for speech
+      const length = audioBuffer.length * numberOfChannels * 2;
+      const buffer = new ArrayBuffer(44 + length);
+      const view = new DataView(buffer);
+      
+      // WAV Header
+      let pos = 0;
+      const writeString = (s) => { for (let i = 0; i < s.length; i++) { view.setUint8(pos++, s.charCodeAt(i)); } };
+      const writeUint32 = (d) => { view.setUint32(pos, d, true); pos += 4; };
+      const writeUint16 = (d) => { view.setUint16(pos, d, true); pos += 2; };
+      
+      writeString('RIFF');
+      writeUint32(36 + length);
+      writeString('WAVE');
+      writeString('fmt ');
+      writeUint32(16);
+      writeUint16(1);
+      writeUint16(numberOfChannels);
+      writeUint32(sampleRate);
+      writeUint32(sampleRate * 2);
+      writeUint16(2);
+      writeUint16(16);
+      writeString('data');
+      writeUint32(length);
+      
+      // Audio data
+      const channelData = audioBuffer.getChannelData(0);
+      for (let i = 0; i < audioBuffer.length; i++) {
+        const sample = Math.max(-1, Math.min(1, channelData[i]));
+        view.setInt16(pos, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+        pos += 2;
+      }
+      
+      const wavBlob = new Blob([buffer], { type: 'audio/wav' });
+      const file = new File([wavBlob], `audio_${Date.now()}.wav`, { type: 'audio/wav' });
+      
+      console.log('WAV created:', file.size, 'bytes');
       
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
       
@@ -286,7 +274,7 @@ export default function AuryFlow() {
         throw new Error("Falha ao fazer upload do áudio");
       }
       
-      console.log('File uploaded:', uploadResult.file_url);
+      console.log('Transcribing audio...');
       
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Você está recebendo um arquivo de áudio em português brasileiro. Sua tarefa é:
@@ -369,12 +357,12 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
     } catch (error) {
       console.error("Audio processing error:", error);
       
-      let errorMsg = "Tente novamente ou digite manualmente";
+      let errorMsg = "Por favor, use o modo texto digitando manualmente";
       
-      if (error.message.includes("entender") || error.message.includes("claramente")) {
+      if (error.message.includes("decode")) {
+        errorMsg = "Não foi possível processar o áudio. Use o modo texto.";
+      } else if (error.message.includes("entender")) {
         errorMsg = error.message;
-      } else if (error.message.includes("conexão") || error.message.includes("upload")) {
-        errorMsg = "Erro de conexão. Verifique sua internet.";
       }
       
       setErrorMessage(errorMsg);
