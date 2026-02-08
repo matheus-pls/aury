@@ -41,11 +41,14 @@ export default function AuryFlow() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [parsedData, setParsedData] = useState(null);
   const [audioBlob, setAudioBlob] = useState(null);
+  const [audioError, setAudioError] = useState(null);
+  const [quickMode, setQuickMode] = useState(false);
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const recordingIntervalRef = useRef(null);
   const inputRef = useRef(null);
+  const streamRef = useRef(null);
   
   const queryClient = useQueryClient();
 
@@ -85,30 +88,93 @@ export default function AuryFlow() {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      setAudioError(null);
+      
+      // Check for browser support
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("Seu navegador não suporta gravação de áudio");
+      }
+
+      // Request audio with specific constraints for better quality
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
+      
+      streamRef.current = stream;
+      
+      // Check for MediaRecorder support with preferred format
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm') 
+        ? 'audio/webm' 
+        : MediaRecorder.isTypeSupported('audio/mp4')
+        ? 'audio/mp4'
+        : 'audio/ogg';
+      
+      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
       audioChunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (event) => {
-        audioChunksRef.current.push(event.data);
+        if (event.data.size > 0) {
+          audioChunksRef.current.push(event.data);
+        }
       };
 
       mediaRecorderRef.current.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         setAudioBlob(audioBlob);
-        stream.getTracks().forEach(track => track.stop());
-        await processAudio(audioBlob);
+        
+        // Cleanup stream
+        if (streamRef.current) {
+          streamRef.current.getTracks().forEach(track => track.stop());
+          streamRef.current = null;
+        }
+        
+        // Only process if we have valid audio data
+        if (audioBlob.size > 0) {
+          await processAudio(audioBlob);
+        } else {
+          setAudioError("Gravação muito curta");
+          setInputMode("text");
+        }
       };
 
-      mediaRecorderRef.current.start();
+      mediaRecorderRef.current.onerror = (event) => {
+        console.error("MediaRecorder error:", event);
+        setAudioError("Erro ao gravar áudio");
+        stopRecording();
+        setInputMode("text");
+      };
+
+      mediaRecorderRef.current.start(100); // Capture in 100ms chunks for better quality
       setIsRecording(true);
       setInputMode("recording");
+      setRecordingTime(0);
       
       recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime(prev => prev + 1);
+        setRecordingTime(prev => {
+          // Auto-stop after 30 seconds
+          if (prev >= 30) {
+            stopRecording();
+            return 30;
+          }
+          return prev + 1;
+        });
       }, 1000);
     } catch (error) {
       console.error("Error starting recording:", error);
+      
+      // Set user-friendly error messages
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        setAudioError("Permissão de microfone negada");
+      } else if (error.name === 'NotFoundError') {
+        setAudioError("Nenhum microfone encontrado");
+      } else {
+        setAudioError(error.message || "Erro ao acessar microfone");
+      }
+      
       // Fallback to text mode
       setInputMode("text");
       if (inputRef.current) inputRef.current.focus();
@@ -116,12 +182,20 @@ export default function AuryFlow() {
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-      }
+    }
+    setIsRecording(false);
+    
+    if (recordingIntervalRef.current) {
+      clearInterval(recordingIntervalRef.current);
+      recordingIntervalRef.current = null;
+    }
+    
+    // Cleanup stream immediately
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
     }
   };
 
@@ -130,7 +204,7 @@ export default function AuryFlow() {
     
     try {
       // Upload audio file
-      const file = new File([blob], "audio.webm", { type: "audio/webm" });
+      const file = new File([blob], "audio.webm", { type: blob.type });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       
       // Use LLM to transcribe and parse
@@ -164,10 +238,22 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
       });
       
       setParsedData(result);
-      setInputMode("confirming");
+      
+      // In quick mode, auto-confirm if confidence is high
+      if (quickMode && result.confidence >= 0.8) {
+        setInputMode("confirming");
+        // Auto-confirm after 1 second
+        setTimeout(() => {
+          confirmTransaction();
+        }, 1000);
+      } else {
+        setInputMode("confirming");
+      }
     } catch (error) {
       console.error("Error processing audio:", error);
+      setAudioError("Não consegui entender o áudio");
       setInputMode("text");
+      setQuickMode(false);
     }
   };
 
@@ -255,6 +341,11 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
     }
   };
 
+  const quickRecordAndConfirm = async () => {
+    setQuickMode(true);
+    await startRecording();
+  };
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -298,32 +389,52 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
               exit={{ opacity: 0 }}
               className="p-5"
             >
-              <button
-                onClick={() => {
-                  setIsExpanded(true);
-                  setInputMode("text");
-                  setTimeout(() => inputRef.current?.focus(), 100);
-                }}
-                className="w-full flex items-center gap-4 group"
-              >
-                <div className="relative">
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-2xl flex items-center justify-center shadow-lg shadow-[#5FBDBD]/30 group-hover:scale-105 transition-transform">
-                    <Mic className="w-6 h-6 text-white" />
+              <div className="space-y-3">
+                {/* Quick Record Button */}
+                <button
+                  onMouseDown={quickRecordAndConfirm}
+                  onMouseUp={stopRecording}
+                  onTouchStart={quickRecordAndConfirm}
+                  onTouchEnd={stopRecording}
+                  className="w-full flex items-center gap-4 group bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-all"
+                >
+                  <div className="relative">
+                    <div className="w-14 h-14 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-2xl flex items-center justify-center shadow-lg shadow-[#5FBDBD]/30 group-hover:scale-105 transition-transform">
+                      <Mic className="w-6 h-6 text-white" />
+                    </div>
+                    <motion.div
+                      className="absolute inset-0 rounded-2xl bg-[#5FBDBD]/30"
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    />
                   </div>
-                  <motion.div
-                    className="absolute inset-0 rounded-2xl bg-[#5FBDBD]/30"
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0, 0.5] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                  />
-                </div>
-                
-                <div className="flex-1 text-left">
-                  <h3 className="text-white font-semibold text-lg">Aury Flow</h3>
-                  <p className="text-white/60 text-sm">Segure para gravar ou toque para digitar</p>
-                </div>
+                  
+                  <div className="flex-1 text-left">
+                    <h3 className="text-white font-semibold">Gravação Rápida</h3>
+                    <p className="text-white/60 text-sm">Segure para gravar e confirmar</p>
+                  </div>
 
-                <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
-              </button>
+                  <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
+                </button>
+
+                {/* Standard Mode Button */}
+                <button
+                  onClick={() => {
+                    setIsExpanded(true);
+                    setInputMode("text");
+                    setQuickMode(false);
+                    setTimeout(() => inputRef.current?.focus(), 100);
+                  }}
+                  className="w-full flex items-center gap-4 text-center justify-center py-3 text-white/60 hover:text-white text-sm transition-colors"
+                >
+                  <Edit3 className="w-4 h-4" />
+                  <span>ou digite manualmente</span>
+                </button>
+
+                {audioError && (
+                  <p className="text-rose-400 text-xs text-center">{audioError}</p>
+                )}
+              </div>
             </motion.div>
           )}
 
@@ -383,9 +494,12 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                 </button>
               </div>
 
-              <p className="text-white/40 text-xs mt-3 text-center">
-                Digite ou segure o microfone para gravar
-              </p>
+              <div className="flex items-center justify-center gap-2 mt-3">
+                <p className="text-white/40 text-xs">Digite ou segure o microfone para gravar</p>
+                {audioError && (
+                  <p className="text-rose-400 text-xs">• {audioError}</p>
+                )}
+              </div>
             </motion.div>
           )}
 
@@ -393,34 +507,80 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
           {inputMode === "recording" && (
             <motion.div
               key="recording"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="p-8 text-center"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="p-8 text-center relative"
             >
-              <motion.div
-                className="w-24 h-24 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-[#5FBDBD]/40"
-                animate={{ scale: [1, 1.1, 1] }}
+              {/* Recording indicator */}
+              <div className="absolute top-4 right-4 flex items-center gap-2">
+                <motion.div
+                  className="w-3 h-3 bg-rose-500 rounded-full"
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                />
+                <span className="text-rose-400 text-xs font-semibold">REC</span>
+              </div>
+
+              {/* Animated mic circle */}
+              <div className="relative w-32 h-32 mx-auto mb-6">
+                <motion.div
+                  className="absolute inset-0 bg-[#5FBDBD]/20 rounded-full"
+                  animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0, 0.5] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+                <motion.div
+                  className="absolute inset-2 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-full flex items-center justify-center shadow-2xl shadow-[#5FBDBD]/40"
+                  animate={{ scale: [1, 1.05, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                >
+                  <Mic className="w-12 h-12 text-white" />
+                </motion.div>
+              </div>
+              
+              <motion.p 
+                className="text-white font-bold text-2xl mb-2"
+                animate={{ opacity: [1, 0.7, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
               >
-                <Mic className="w-10 h-10 text-white" />
-              </motion.div>
+                Escutando...
+              </motion.p>
               
-              <p className="text-white font-semibold text-lg mb-1">Gravando...</p>
-              <p className="text-[#5FBDBD] text-2xl font-bold tabular-nums">{formatTime(recordingTime)}</p>
-              <p className="text-white/50 text-sm mt-3">Solte para processar</p>
+              <div className="bg-white/10 rounded-xl px-6 py-3 inline-block mb-4">
+                <p className="text-[#5FBDBD] text-3xl font-bold tabular-nums">{formatTime(recordingTime)}</p>
+              </div>
+              
+              <p className="text-white/60 text-sm mb-6">
+                {quickMode ? "Auto-confirmando ao soltar" : "Solte para processar"}
+              </p>
 
               {/* Audio wave animation */}
-              <div className="flex items-center justify-center gap-1 mt-4">
-                {[...Array(5)].map((_, i) => (
+              <div className="flex items-center justify-center gap-2">
+                {[...Array(7)].map((_, i) => (
                   <motion.div
                     key={i}
-                    className="w-1 bg-[#5FBDBD] rounded-full"
-                    animate={{ height: [8, 24, 8] }}
-                    transition={{ duration: 0.5, repeat: Infinity, delay: i * 0.1 }}
+                    className="w-1.5 bg-[#5FBDBD] rounded-full"
+                    animate={{ height: [12, 32, 12] }}
+                    transition={{ 
+                      duration: 0.6, 
+                      repeat: Infinity, 
+                      delay: i * 0.1,
+                      ease: "easeInOut"
+                    }}
                   />
                 ))}
               </div>
+
+              {/* Cancel button */}
+              <button
+                onClick={() => {
+                  stopRecording();
+                  resetFlow();
+                }}
+                className="mt-6 text-white/40 hover:text-white text-sm transition-colors"
+              >
+                Cancelar gravação
+              </button>
             </motion.div>
           )}
 
@@ -455,6 +615,18 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
               exit={{ opacity: 0, y: -20 }}
               className="p-6"
             >
+              {quickMode && (
+                <div className="mb-4 text-center">
+                  <motion.div
+                    className="inline-flex items-center gap-2 bg-[#5FBDBD]/20 text-[#5FBDBD] px-4 py-2 rounded-full text-sm"
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Confirmando automaticamente...
+                  </motion.div>
+                </div>
+              )}
               <div className="flex items-center gap-3 mb-6">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                   parsedData.type === "expense" 
