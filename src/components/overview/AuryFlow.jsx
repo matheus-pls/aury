@@ -127,27 +127,12 @@ export default function AuryFlow() {
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({ 
-        audio: {
-          echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,
-          sampleRate: 16000
-        }
+        audio: true
       });
       
       streamRef.current = stream;
       
-      // Try to use the most compatible format
-      let mimeType = 'audio/webm;codecs=opus';
-      if (MediaRecorder.isTypeSupported('audio/mp4')) {
-        mimeType = 'audio/mp4';
-      } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-        mimeType = 'audio/webm;codecs=opus';
-      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-        mimeType = 'audio/webm';
-      }
-      
-      mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
+      mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
 
       mediaRecorderRef.current.ondataavailable = (event) => {
@@ -158,7 +143,7 @@ export default function AuryFlow() {
 
       mediaRecorderRef.current.onstop = async () => {
         const actualDuration = (Date.now() - recordingStartTimeRef.current) / 1000;
-        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/mpeg' });
         
         stopRecordingCleanup();
         
@@ -225,36 +210,21 @@ export default function AuryFlow() {
     setInputMode("processing");
     
     try {
-      // Validate blob
       if (!blob || blob.size === 0) {
         throw new Error("Arquivo de áudio vazio");
       }
 
-      // Determine file extension based on mime type
-      let extension = 'mp3';
-      if (blob.type.includes('mp4')) {
-        extension = 'mp4';
-      } else if (blob.type.includes('mpeg')) {
-        extension = 'mp3';
-      } else if (blob.type.includes('ogg')) {
-        extension = 'ogg';
-      } else if (blob.type.includes('wav')) {
-        extension = 'wav';
-      }
-      
-      // Create file with mp3 extension (most compatible)
-      const file = new File([blob], `audio_${Date.now()}.${extension}`, { 
-        type: extension === 'mp3' ? 'audio/mpeg' : blob.type 
+      // Force mp3 format - most universally compatible
+      const file = new File([blob], `audio_${Date.now()}.mp3`, { 
+        type: 'audio/mpeg'
       });
       
-      // Upload audio file
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
       
       if (!uploadResult?.file_url) {
         throw new Error("Falha ao fazer upload do áudio");
       }
       
-      // Process audio with LLM (transcription + extraction)
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Você está recebendo um arquivo de áudio em português brasileiro. Sua tarefa é:
 
@@ -324,7 +294,7 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
       });
       
       if (!result?.amount || !result?.description) {
-        throw new Error("Não consegui entender o áudio. Tente falar mais devagar e claramente.");
+        throw new Error("Não consegui entender. Tente falar mais claramente.");
       }
       
       if (result.amount <= 0) {
@@ -334,20 +304,14 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
       setParsedData(result);
       setInputMode("confirming");
     } catch (error) {
-      console.error("Error processing audio:", error);
+      console.error("Audio processing error:", error);
       
-      let errorMsg = "Não consegui processar o áudio.";
+      let errorMsg = "Tente novamente ou digite manualmente";
       
-      if (error.message.includes("Unsupported file type") || error.message.includes("decodeAudioData")) {
-        errorMsg = "Formato de áudio não suportado. Tente novamente.";
-      } else if (error.message.includes("upload") || error.message.includes("UploadFile")) {
-        errorMsg = "Erro ao enviar áudio. Verifique sua conexão.";
-      } else if (error.message.includes("entender")) {
+      if (error.message.includes("entender") || error.message.includes("claramente")) {
         errorMsg = error.message;
-      } else if (error.message.includes("vazio")) {
-        errorMsg = "Arquivo de áudio inválido. Grave novamente.";
-      } else {
-        errorMsg = error.message || "Tente novamente ou use o modo texto";
+      } else if (error.message.includes("conexão") || error.message.includes("upload")) {
+        errorMsg = "Erro de conexão. Verifique sua internet.";
       }
       
       setErrorMessage(errorMsg);
