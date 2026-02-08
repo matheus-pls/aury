@@ -278,9 +278,7 @@ export default function Overview() {
             </div>
           </div>
           <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-2xl">
-              {tranquilityIndex >= 70 ? "😌" : tranquilityIndex >= 40 ? "🤔" : "😰"}
-            </div>
+            <Heart className="w-8 h-8 text-white/90" />
           </div>
         </div>
         {/* Decorative gradient */}
