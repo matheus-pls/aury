@@ -197,30 +197,46 @@ export default function Simulations() {
           break;
 
         case "stop_superfluous":
-          const savingsFromChallenge = superfluousExpenses;
-          const newSavingsChallenge = currentSavings + savingsFromChallenge;
+          let savingsAmount = 0;
+          const numericMatch = simulationValue.match(/[\d.,]+/);
+          
+          if (numericMatch) {
+            // Valor numérico fornecido
+            savingsAmount = parseFloat(numericMatch[0].replace(',', '.'));
+          } else if (simulationValue.trim()) {
+            // Buscar gastos por descrição
+            const matchingExpenses = expenses.filter(e => 
+              e.description?.toLowerCase().includes(simulationValue.toLowerCase())
+            );
+            savingsAmount = matchingExpenses.reduce((sum, e) => sum + e.amount, 0);
+          }
+          
+          const newSavingsWithCut = currentSavings + savingsAmount;
+          const savingsRate = currentIncome > 0 ? (savingsAmount / currentIncome) * 100 : 0;
           
           simulationResult = {
-            title: "Desafio: 30 dias sem supérfluos",
+            title: `Economizando ${formatCurrency(savingsAmount)}/mês`,
             metrics: [
-              { label: "Economia no mês", value: `R$ ${savingsFromChallenge.toFixed(2)}` },
-              { label: "Nova economia mensal", value: `R$ ${newSavingsChallenge.toFixed(2)}` },
-              { label: "Em 3 meses", value: `R$ ${(savingsFromChallenge * 3).toFixed(2)}` }
+              { label: "Economia mensal", value: `R$ ${savingsAmount.toFixed(2)}` },
+              { label: "Nova poupança", value: `R$ ${newSavingsWithCut.toFixed(2)}` },
+              { label: "Em 1 ano", value: `R$ ${(savingsAmount * 12).toFixed(2)}` }
             ],
             emotional: {
-              message: savingsFromChallenge > currentIncome * 0.1 
-                ? "Impressionante! Você tem margem para economizar muito!"
-                : "Seus supérfluos já estão controlados. Parabéns!",
-              impact: savingsFromChallenge > currentIncome * 0.15 ? "high" : savingsFromChallenge > currentIncome * 0.05 ? "medium" : "low"
+              message: savingsAmount > currentIncome * 0.1 
+                ? "Ótima economia! Isso fará diferença real!"
+                : savingsAmount > 0
+                ? "Toda economia conta! Continue assim!"
+                : "Especifique um valor ou gasto para simular",
+              impact: savingsAmount > currentIncome * 0.15 ? "high" : savingsAmount > currentIncome * 0.05 ? "medium" : "low"
             }
           };
 
-          if (selectedGoal && activeGoals.length > 0) {
+          if (selectedGoal && activeGoals.length > 0 && savingsAmount > 0) {
             const goal = activeGoals.find(g => g.id === selectedGoal);
             if (goal) {
               const remaining = goal.target_amount - (goal.current_amount || 0);
               const monthsBefore = currentSavings > 0 ? Math.ceil(remaining / currentSavings) : 999;
-              const monthsAfter = newSavingsChallenge > 0 ? Math.ceil(remaining / newSavingsChallenge) : 999;
+              const monthsAfter = newSavingsWithCut > 0 ? Math.ceil(remaining / newSavingsWithCut) : 999;
               const timeSaved = monthsBefore - monthsAfter;
               
               simulationResult.goalImpact = {
@@ -400,13 +416,19 @@ export default function Simulations() {
                   )}
 
                   {selectedSimulation.id === "stop_superfluous" && (
-                    <div className="bg-[#5FBDBD]/10 border border-[#5FBDBD]/30 rounded-xl p-6">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Ban className="w-6 h-6 text-[#5FBDBD]" />
-                        <h3 className="font-semibold text-[#1B3A52]">Economize cortando gastos</h3>
-                      </div>
-                      <p className="text-[#1B3A52] text-sm">
-                        Digite o valor mensal que deseja economizar ou o nome de um gasto específico (ex: streaming, delivery, academia)
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Quanto você quer economizar ou qual gasto quer cortar?
+                      </label>
+                      <Input
+                        type="text"
+                        placeholder="Ex: 500 ou 'Netflix e Spotify'"
+                        value={simulationValue}
+                        onChange={(e) => setSimulationValue(e.target.value)}
+                        className="h-12 text-lg"
+                      />
+                      <p className="text-xs text-slate-500 mt-2">
+                        Digite um valor em R$ ou o nome de gastos que deseja eliminar
                       </p>
                     </div>
                   )}
@@ -465,7 +487,7 @@ export default function Simulations() {
                   </Button>
                   <Button
                     onClick={runSimulation}
-                    disabled={isSimulating || (selectedSimulation.id !== "stop_superfluous" && !simulationValue) || (selectedSimulation.id === "reach_goal" && !selectedGoal)}
+                    disabled={isSimulating || (!simulationValue && selectedSimulation.id !== "reach_goal") || (selectedSimulation.id === "reach_goal" && !selectedGoal)}
                     className="flex-1 h-12 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] text-white hover:opacity-90"
                   >
                     {isSimulating ? (
