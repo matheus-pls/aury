@@ -60,8 +60,10 @@ export default function FamilyMode() {
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
   const [isGoalDetailsOpen, setIsGoalDetailsOpen] = useState(false);
+  const [isEditGoalOpen, setIsEditGoalOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [contributionAmount, setContributionAmount] = useState("");
+  const [editGoalForm, setEditGoalForm] = useState({});
   const [groupName, setGroupName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
   
@@ -178,8 +180,18 @@ export default function FamilyMode() {
     onSuccess: () => {
       queryClient.invalidateQueries(['shared-goals']);
       setIsGoalDetailsOpen(false);
+      setIsEditGoalOpen(false);
       setSelectedGoal(null);
       setContributionAmount("");
+    }
+  });
+
+  const deleteGoalMutation = useMutation({
+    mutationFn: (id) => base44.entities.SharedGoal.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['shared-goals']);
+      setIsGoalDetailsOpen(false);
+      setSelectedGoal(null);
     }
   });
 
@@ -265,6 +277,42 @@ export default function FamilyMode() {
   const openGoalDetails = (goal) => {
     setSelectedGoal(goal);
     setIsGoalDetailsOpen(true);
+  };
+
+  const openEditGoal = (goal) => {
+    setEditGoalForm({
+      title: goal.title,
+      target_amount: goal.target_amount.toString(),
+      deadline: goal.deadline || "",
+      category: goal.category,
+      responsibilities: goal.responsibilities || {}
+    });
+    setIsGoalDetailsOpen(false);
+    setIsEditGoalOpen(true);
+  };
+
+  const handleEditGoal = (e) => {
+    e.preventDefault();
+    if (!selectedGoal) return;
+    
+    updateGoalMutation.mutate({
+      id: selectedGoal.id,
+      data: {
+        ...selectedGoal,
+        title: editGoalForm.title,
+        target_amount: parseFloat(editGoalForm.target_amount),
+        deadline: editGoalForm.deadline,
+        category: editGoalForm.category,
+        responsibilities: editGoalForm.responsibilities
+      }
+    });
+  };
+
+  const handleDeleteGoal = () => {
+    if (!selectedGoal) return;
+    if (window.confirm(`Tem certeza que deseja excluir "${selectedGoal.title}"?`)) {
+      deleteGoalMutation.mutate(selectedGoal.id);
+    }
   };
 
   const formatCurrency = (value) => {
@@ -960,7 +1008,27 @@ export default function FamilyMode() {
       <Dialog open={isGoalDetailsOpen} onOpenChange={setIsGoalDetailsOpen}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">{selectedGoal?.title}</DialogTitle>
+            <div className="flex items-center justify-between">
+              <DialogTitle className="text-[#1B3A52]">{selectedGoal?.title}</DialogTitle>
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => openEditGoal(selectedGoal)}
+                  className="h-8 w-8 hover:bg-[#5FBDBD]/10"
+                >
+                  <Sparkles className="w-4 h-4 text-[#5FBDBD]" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleDeleteGoal}
+                  className="h-8 w-8 hover:bg-rose-50"
+                >
+                  <Trash2 className="w-4 h-4 text-rose-500" />
+                </Button>
+              </div>
+            </div>
           </DialogHeader>
           {selectedGoal && (
             <div className="space-y-6 mt-4">
@@ -1074,6 +1142,108 @@ export default function FamilyMode() {
               </Button>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Goal Dialog */}
+      <Dialog open={isEditGoalOpen} onOpenChange={setIsEditGoalOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-[#1B3A52] text-xl font-bold">Editar Objetivo</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleEditGoal} className="space-y-5 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="editGoalTitle" className="text-[#1B3A52] font-medium">Título</Label>
+              <Input
+                id="editGoalTitle"
+                placeholder="Ex: Viagem em família"
+                value={editGoalForm.title}
+                onChange={(e) => setEditGoalForm({ ...editGoalForm, title: e.target.value })}
+                required
+                className="border-slate-200 focus:border-[#5FBDBD] h-11"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="editTargetAmount" className="text-[#1B3A52] font-medium">Valor da Meta</Label>
+                <Input
+                  id="editTargetAmount"
+                  type="number"
+                  step="0.01"
+                  placeholder="0,00"
+                  value={editGoalForm.target_amount}
+                  onChange={(e) => setEditGoalForm({ ...editGoalForm, target_amount: e.target.value })}
+                  required
+                  className="border-slate-200 focus:border-[#5FBDBD] h-11"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="editDeadline" className="text-[#1B3A52] font-medium">Prazo</Label>
+                <Input
+                  id="editDeadline"
+                  type="date"
+                  value={editGoalForm.deadline}
+                  onChange={(e) => setEditGoalForm({ ...editGoalForm, deadline: e.target.value })}
+                  className="border-slate-200 focus:border-[#5FBDBD] h-11"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-3 p-5 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border border-emerald-100">
+              <Label className="flex items-center gap-2 text-[#1B3A52] font-medium">
+                <Users className="w-4 h-4 text-emerald-600" />
+                Contribuição de Cada Um
+              </Label>
+              <p className="text-xs text-slate-600 leading-relaxed mb-3">
+                Ajuste os percentuais de contribuição de cada membro.
+              </p>
+              {activeGroup.members?.map(email => (
+                <div key={email} className="flex items-center gap-3 p-3 bg-white rounded-lg">
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getMemberAvatar(email)} flex items-center justify-center text-white font-semibold text-xs`}>
+                    {getMemberInitials(email)}
+                  </div>
+                  <span className="text-sm font-medium text-slate-700 flex-1">{getMemberName(email)}</span>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      placeholder="0"
+                      value={editGoalForm.responsibilities?.[email] || ''}
+                      onChange={(e) => setEditGoalForm({
+                        ...editGoalForm,
+                        responsibilities: {
+                          ...editGoalForm.responsibilities,
+                          [email]: parseFloat(e.target.value) || 0
+                        }
+                      })}
+                      className="w-20 border-slate-200 h-10"
+                    />
+                    <span className="text-sm font-medium text-emerald-600">%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1 border-slate-200 h-11"
+                onClick={() => setIsEditGoalOpen(false)}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 shadow-md h-11"
+                disabled={updateGoalMutation.isPending}
+              >
+                {updateGoalMutation.isPending ? "Salvando..." : "Salvar Alterações"}
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
