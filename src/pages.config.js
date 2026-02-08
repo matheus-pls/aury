@@ -66,10 +66,10 @@ import Movements from './pages/Movements';
 import Overview from './pages/Overview';
 import Planning from './pages/Planning';
 import Settings from './pages/Settings';
+import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
-import Simulations from './pages/Simulations';
 import __Layout from './Layout.jsx';
 
 
@@ -93,10 +93,10 @@ export const PAGES = {
     "Overview": Overview,
     "Planning": Planning,
     "Settings": Settings,
+    "Simulations": Simulations,
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
-    "Simulations": Simulations,
 }
 
 export const pagesConfig = {

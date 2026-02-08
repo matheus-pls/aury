@@ -258,23 +258,43 @@ export default function Simulations() {
               const targetDate = new Date();
               targetDate.setMonth(targetDate.getMonth() + monthsNeeded);
               
+              // Calcular economia realista (20-30% da renda disponível)
+              const availableForSavings = currentIncome - currentExpenses;
+              const realisticMonthlySavings = Math.max(availableForSavings * 0.3, currentSavings);
+              const realisticMonths = realisticMonthlySavings > 0 ? Math.ceil(remaining / realisticMonthlySavings) : 999;
+              
+              // Calcular se precisa economizar mais
+              const needsMoreSavings = monthsNeeded > 24;
+              const recommendedSavings = needsMoreSavings ? realisticMonthlySavings : currentSavings;
+              
               simulationResult = {
                 title: `Meta: ${goal.title}`,
                 metrics: [
                   { label: "Faltam", value: `R$ ${remaining.toFixed(2)}` },
-                  { label: "Você economiza por mês", value: `R$ ${currentSavings.toFixed(2)}` },
-                  { label: "Tempo estimado", value: monthsNeeded > 100 ? "Nunca" : `${monthsNeeded} meses` }
+                  { label: "Economia atual/mês", value: `R$ ${currentSavings.toFixed(2)}` },
+                  { label: "Tempo no ritmo atual", value: monthsNeeded > 100 ? "Mais de 8 anos" : `${monthsNeeded} meses` }
                 ],
                 emotional: {
                   message: monthsNeeded <= 12 
                     ? `Você está quase lá! Só mais ${monthsNeeded} meses!`
-                    : monthsNeeded <= 36 
-                    ? "Com disciplina, você consegue! Continue firme!"
-                    : "Meta ambiciosa! Considere aumentar a renda ou cortar gastos.",
-                  impact: monthsNeeded <= 12 ? "high" : monthsNeeded <= 36 ? "medium" : "low",
+                    : monthsNeeded <= 24 
+                    ? "Com foco e disciplina, você alcança! Continue firme!"
+                    : realisticMonths <= 36
+                    ? `Para alcançar em ${realisticMonths} meses, tente economizar R$ ${realisticMonthlySavings.toFixed(2)}/mês (cerca de ${Math.round((realisticMonthlySavings/currentIncome)*100)}% da sua renda)`
+                    : "Meta muito ambiciosa para sua renda atual. Considere aumentar a renda, cortar gastos ou ajustar o valor da meta.",
+                  impact: monthsNeeded <= 12 ? "high" : monthsNeeded <= 24 ? "medium" : "low",
                   date: monthsNeeded <= 100 ? targetDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : null
                 }
               };
+              
+              // Adicionar métricas de economia recomendada se necessário
+              if (needsMoreSavings && realisticMonthlySavings > currentSavings) {
+                simulationResult.metrics.push({
+                  label: "Economia recomendada/mês",
+                  value: `R$ ${realisticMonthlySavings.toFixed(2)}`,
+                  change: `Para alcançar em ${realisticMonths} meses`
+                });
+              }
             }
           }
           break;
