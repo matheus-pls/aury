@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Shield, AlertTriangle, TrendingUp, Mic, ChevronLeft, Edit3, Receipt, TrendingUp as TrendingUpIcon } from "lucide-react";
+import { Shield, AlertTriangle, TrendingUp, ChevronLeft, Edit3, Receipt, TrendingUp as TrendingUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -62,35 +62,45 @@ export default function DailyCheckIn() {
   const canSpendToday = remaining > 0 ? remaining / daysRemaining : 0;
   const spendingPercentage = totalIncome > 0 ? (totalSpent / totalIncome) * 100 : 0;
 
-  // Financial Status
-  let status = {
-    label: "Tranquilo",
-    icon: Shield,
-    color: "from-green-500 to-green-600",
-    textColor: "text-green-600",
-    bgColor: "bg-green-50",
-    message: "Sua situação financeira está estável"
-  };
+  // Financial Status - Intelligent logic
+   let status = {
+     label: "Tranquilo",
+     icon: Shield,
+     color: "from-[#5FBDBD] to-[#4FA9A5]",
+     textColor: "text-[#5FBDBD]",
+     bgColor: "bg-[#5FBDBD]/10",
+     message: "Sua situação financeira está estável"
+   };
 
-  if (spendingPercentage > 85) {
-    status = {
-      label: "Risco",
-      icon: AlertTriangle,
-      color: "from-red-500 to-red-600",
-      textColor: "text-red-600",
-      bgColor: "bg-red-50",
-      message: "Atenção aos gastos deste mês"
-    };
-  } else if (spendingPercentage > 70) {
-    status = {
-      label: "Atenção",
-      icon: TrendingUp,
-      color: "from-yellow-500 to-yellow-600",
-      textColor: "text-yellow-600",
-      bgColor: "bg-yellow-50",
-      message: "Fique atento ao seu orçamento"
-    };
-  }
+   // Check if overspent (spent more than income)
+   if (remaining < 0) {
+     status = {
+       label: "Risco",
+       icon: AlertTriangle,
+       color: "from-rose-500 to-red-600",
+       textColor: "text-rose-600",
+       bgColor: "bg-rose-50",
+       message: "Você ultrapassou seu orçamento"
+     };
+   } else if (spendingPercentage > 85) {
+     status = {
+       label: "Risco",
+       icon: AlertTriangle,
+       color: "from-rose-500 to-red-600",
+       textColor: "text-rose-600",
+       bgColor: "bg-rose-50",
+       message: "Atenção aos gastos deste mês"
+     };
+   } else if (spendingPercentage > 70) {
+     status = {
+       label: "Atenção",
+       icon: TrendingUp,
+       color: "from-amber-500 to-orange-600",
+       textColor: "text-amber-600",
+       bgColor: "bg-amber-50",
+       message: "Fique atento ao seu orçamento"
+     };
+   }
 
   const StatusIcon = status.icon;
 
@@ -192,24 +202,24 @@ export default function DailyCheckIn() {
         className="w-full max-w-md"
       >
         {/* Header */}
-        <div className="text-center mb-8">
-          <motion.div
-            initial={{ y: -20 }}
-            animate={{ y: 0 }}
-            className="inline-block"
-          >
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
-              alt="Aury" 
-              className="h-12 mx-auto mb-4"
-            />
-          </motion.div>
-          <h1 className="text-2xl font-bold text-[#1B3A52] mb-2">Bom dia! ☀️</h1>
-          <p className="text-slate-500">Seu check-in financeiro de hoje</p>
-        </div>
+         <div className="text-center mb-8">
+           <motion.div
+             initial={{ y: -20 }}
+             animate={{ y: 0 }}
+             className="inline-block"
+           >
+             <img 
+               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
+               alt="Aury" 
+               className="h-12 mx-auto mb-4"
+             />
+           </motion.div>
+           <h1 className="text-2xl font-bold text-[#1B3A52] mb-2">Bom dia! ☀️</h1>
+           <p className="text-slate-500">Seu check-in financeiro de hoje</p>
+         </div>
 
-        {/* Main Card */}
-        <Card className="border-2 border-slate-200 shadow-aury mb-6">
+         {/* Main Card */}
+         <Card className="border-2 border-[#5FBDBD]/20 shadow-aury mb-6">
           <CardContent className="p-8">
             {/* Status */}
             <div className={`${status.bgColor} rounded-2xl p-6 mb-6`}>
@@ -251,24 +261,27 @@ export default function DailyCheckIn() {
                   className="space-y-3"
                 >
                   <Button
-                    onClick={() => setShowAuryFlow(true)}
-                    className="w-full bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white shadow-md h-12"
-                  >
-                    <Mic className="w-5 h-5 mr-2" />
-                    Registrar com Voz
-                  </Button>
+                     onClick={() => {
+                       setEntryType("expense");
+                       setShowManualEntry(true);
+                     }}
+                     className="w-full bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white shadow-md h-12"
+                   >
+                     <Edit3 className="w-5 h-5 mr-2" />
+                     Registrar Gasto
+                   </Button>
 
-                  <Button
-                    onClick={() => {
-                      setEntryType("expense");
-                      setShowManualEntry(true);
-                    }}
-                    variant="outline"
-                    className="w-full border-[#5FBDBD] text-[#5FBDBD] hover:bg-[#5FBDBD]/5 h-12"
-                  >
-                    <Edit3 className="w-5 h-5 mr-2" />
-                    Preencher Manualmente
-                  </Button>
+                   <Button
+                     onClick={() => {
+                       setEntryType("income");
+                       setShowManualEntry(true);
+                     }}
+                     variant="outline"
+                     className="w-full border-[#5FBDBD] text-[#5FBDBD] hover:bg-[#5FBDBD]/5 h-12"
+                   >
+                     <TrendingUpIcon className="w-5 h-5 mr-2" />
+                     Registrar Renda
+                   </Button>
                   
                   <Button
                     onClick={handleComplete}
@@ -295,11 +308,31 @@ export default function DailyCheckIn() {
                     <ChevronLeft className="w-4 h-4 mr-2" />
                     Voltar
                   </Button>
-                  <AuryFlowInline 
-                    onSuccess={() => {
-                      handleComplete();
-                    }}
-                  />
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => {
+                        setEntryType("expense");
+                        setShowManualEntry(true);
+                        setShowAuryFlow(false);
+                      }}
+                      className="w-full bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white shadow-md h-12"
+                    >
+                      <Edit3 className="w-5 h-5 mr-2" />
+                      Registrar Gasto
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setEntryType("income");
+                        setShowManualEntry(true);
+                        setShowAuryFlow(false);
+                      }}
+                      variant="outline"
+                      className="w-full border-[#5FBDBD] text-[#5FBDBD] hover:bg-[#5FBDBD]/5 h-12"
+                    >
+                      <TrendingUpIcon className="w-5 h-5 mr-2" />
+                      Registrar Renda
+                    </Button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -325,7 +358,7 @@ export default function DailyCheckIn() {
             <Button
               onClick={() => setEntryType("expense")}
               variant={entryType === "expense" ? "default" : "outline"}
-              className={entryType === "expense" ? "flex-1 bg-rose-500 hover:bg-rose-600" : "flex-1"}
+              className={entryType === "expense" ? "flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white" : "flex-1 border-[#5FBDBD] text-[#5FBDBD] hover:bg-[#5FBDBD]/5"}
             >
               <Receipt className="w-4 h-4 mr-2" />
               Gasto
@@ -333,7 +366,7 @@ export default function DailyCheckIn() {
             <Button
               onClick={() => setEntryType("income")}
               variant={entryType === "income" ? "default" : "outline"}
-              className={entryType === "income" ? "flex-1 bg-emerald-500 hover:bg-emerald-600" : "flex-1"}
+              className={entryType === "income" ? "flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white" : "flex-1 border-[#5FBDBD] text-[#5FBDBD] hover:bg-[#5FBDBD]/5"}
             >
               <TrendingUpIcon className="w-4 h-4 mr-2" />
               Renda
@@ -427,7 +460,7 @@ export default function DailyCheckIn() {
               </Button>
               <Button 
                 type="submit" 
-                className={`flex-1 ${entryType === "expense" ? "bg-rose-500 hover:bg-rose-600" : "bg-emerald-500 hover:bg-emerald-600"}`}
+                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white"
               >
                 Registrar
               </Button>
