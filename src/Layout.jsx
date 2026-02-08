@@ -15,6 +15,8 @@ import {
   TrendingUp,
   Heart
 } from "lucide-react";
+import NotificationCenter from "@/components/NotificationCenter";
+import NotificationGenerator from "@/components/NotificationGenerator";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Layout({ children, currentPageName }) {
@@ -70,6 +72,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <NotificationGenerator />
       <style>{`
         :root {
           --aury-teal: #5FBDBD;
@@ -108,7 +111,7 @@ export default function Layout({ children, currentPageName }) {
             className="h-8"
           />
         </div>
-        <div className="w-10" />
+        <NotificationCenter />
       </header>
 
       {/* Mobile Sidebar Overlay */}
@@ -139,12 +142,17 @@ export default function Layout({ children, currentPageName }) {
               alt="Aury" 
               className="h-10"
             />
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors"
-            >
-              <X className="w-5 h-5 text-slate-500" />
-            </button>
+            <div className="flex items-center gap-2">
+              <div className="hidden lg:block">
+                <NotificationCenter />
+              </div>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                <X className="w-5 h-5 text-slate-500" />
+              </button>
+            </div>
           </div>
 
           {/* Navigation */}
