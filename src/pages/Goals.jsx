@@ -43,7 +43,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
-import MilestoneManager from "@/components/goals/MilestoneManager";
 import { toast } from "sonner";
 
 const GOAL_CATEGORIES = {
@@ -75,7 +74,6 @@ export default function Goals() {
     deadline: "",
     category: "other",
     priority: "medium",
-    milestones: [],
     travel_budget: "",
     travel_currency: "BRL",
     travel_start_date: "",
@@ -133,7 +131,6 @@ export default function Goals() {
         deadline: goal.deadline || "",
         category: goal.category,
         priority: goal.priority || "medium",
-        milestones: goal.milestones || [],
         travel_budget: goal.travel_budget?.toString() || "",
         travel_currency: goal.travel_currency || "BRL",
         travel_start_date: goal.travel_start_date || "",
@@ -149,7 +146,6 @@ export default function Goals() {
         deadline: "",
         category: "other",
         priority: "medium",
-        milestones: [],
         travel_budget: "",
         travel_currency: "BRL",
         travel_start_date: "",
@@ -238,19 +234,6 @@ export default function Goals() {
     if (!days || days <= 0) return remaining;
     const months = Math.ceil(days / 30);
     return remaining / months;
-  };
-
-  const getNextMilestone = (goal) => {
-    if (!goal.milestones || goal.milestones.length === 0) return null;
-    return goal.milestones
-      .filter(m => !m.is_completed)
-      .sort((a, b) => new Date(a.target_date) - new Date(b.target_date))[0];
-  };
-
-  const getMilestoneProgress = (goal) => {
-    if (!goal.milestones || goal.milestones.length === 0) return 0;
-    const completed = goal.milestones.filter(m => m.is_completed).length;
-    return Math.round((completed / goal.milestones.length) * 100);
   };
 
   return (
@@ -424,7 +407,7 @@ export default function Goals() {
                       </DropdownMenu>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       <div className="flex justify-between items-end">
                         <div>
                           <p className="text-xs text-slate-500">Economizado</p>
@@ -442,30 +425,11 @@ export default function Goals() {
 
                       <div className="space-y-1">
                         <div className="flex justify-between text-xs text-slate-500">
-                          <span>Progresso Geral</span>
+                          <span>Progresso</span>
                           <span>{progress.toFixed(0)}%</span>
                         </div>
                         <Progress value={progress} className="h-2" />
                       </div>
-
-                      {goal.milestones && goal.milestones.length > 0 && (
-                        <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                          <div className="flex justify-between items-center mb-2">
-                            <span className="text-xs font-semibold text-slate-600">Milestones</span>
-                            <span className="text-xs text-slate-500">{getMilestoneProgress(goal)}% completo</span>
-                          </div>
-                          {(() => {
-                            const nextMs = getNextMilestone(goal);
-                            return nextMs ? (
-                              <p className="text-xs text-slate-600">
-                                Próximo: <span className="font-medium">{nextMs.title}</span> ({formatCurrency(nextMs.target_amount)})
-                              </p>
-                            ) : (
-                              <p className="text-xs text-emerald-600 font-medium">✓ Todos os milestones completos!</p>
-                            );
-                          })()}
-                        </div>
-                      )}
 
                       <div className="flex justify-between pt-2 border-t border-slate-100">
                         {daysRemaining !== null && (
@@ -631,15 +595,6 @@ export default function Goals() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="space-y-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <MilestoneManager 
-                milestones={formData.milestones}
-                onUpdate={(milestones) => setFormData({ ...formData, milestones })}
-                targetAmount={parseFloat(formData.target_amount) || 0}
-                currentAmount={parseFloat(formData.current_amount) || 0}
-              />
             </div>
 
             {formData.category === 'travel' && (
