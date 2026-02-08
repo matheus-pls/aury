@@ -236,52 +236,21 @@ export default function Overview() {
         <p className="text-slate-500 mt-1">Seu panorama financeiro de hoje</p>
       </motion.div>
 
-      {/* Método Aury - Card Fixo e Discreto */}
+      {/* Método Aury - Compacto e Elegante */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.05 }}
       >
-        <Card className="border-2 border-[#5FBDBD]/20 bg-gradient-to-br from-[#5FBDBD]/5 to-[#1B3A52]/5">
-          <CardContent className="p-5">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center flex-shrink-0">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-bold text-[#1B3A52] text-base mb-2 flex items-center gap-2">
-                  O Método Aury
-                </h3>
-                <p className="text-sm text-slate-600 leading-relaxed mb-3">
-                  Seu caminho para clareza financeira em 3 pilares:
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-slate-200">
-                    <Shield className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                    <div>
-                      <p className="text-xs font-semibold text-slate-700">Segurança</p>
-                      <p className="text-xs text-slate-500">Proteção financeira</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-slate-200">
-                    <TrendingUp className="w-4 h-4 text-[#5FBDBD] flex-shrink-0" />
-                    <div>
-                      <p className="text-xs font-semibold text-slate-700">Clareza</p>
-                      <p className="text-xs text-slate-500">Quanto posso gastar</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-white/80 rounded-lg border border-slate-200">
-                    <Target className="w-4 h-4 text-[#1B3A52] flex-shrink-0" />
-                    <div>
-                      <p className="text-xs font-semibold text-slate-700">Ação</p>
-                      <p className="text-xs text-slate-500">O que ajustar</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-2xl border border-[#5FBDBD]/20">
+          <div className="w-10 h-10 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-[#1B3A52] text-sm">Método Aury</h3>
+            <p className="text-xs text-slate-600">Segurança • Clareza • Ação</p>
+          </div>
+        </div>
       </motion.div>
 
       {/* Aury Flow - Entrada Rápida Inteligente */}
