@@ -18,6 +18,7 @@ import {
 import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
 import { motion, AnimatePresence } from "framer-motion";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -72,6 +73,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <Toaster position="top-center" richColors />
       <NotificationGenerator />
       <style>{`
         :root {
