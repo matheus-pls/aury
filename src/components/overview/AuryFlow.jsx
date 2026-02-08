@@ -130,15 +130,22 @@ export default function AuryFlow() {
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          autoGainControl: true
+          autoGainControl: true,
+          sampleRate: 16000
         }
       });
       
       streamRef.current = stream;
       
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm') 
-        ? 'audio/webm' 
-        : 'audio/mp4';
+      // Try to use the most compatible format
+      let mimeType = 'audio/webm;codecs=opus';
+      if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        mimeType = 'audio/mp4';
+      } else if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        mimeType = 'audio/webm;codecs=opus';
+      } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+        mimeType = 'audio/webm';
+      }
       
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
       audioChunksRef.current = [];
@@ -223,14 +230,22 @@ export default function AuryFlow() {
         throw new Error("Arquivo de áudio vazio");
       }
 
-      // Convert to WAV format (universally supported)
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const arrayBuffer = await blob.arrayBuffer();
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      // Determine file extension based on mime type
+      let extension = 'mp3';
+      if (blob.type.includes('mp4')) {
+        extension = 'mp4';
+      } else if (blob.type.includes('mpeg')) {
+        extension = 'mp3';
+      } else if (blob.type.includes('ogg')) {
+        extension = 'ogg';
+      } else if (blob.type.includes('wav')) {
+        extension = 'wav';
+      }
       
-      // Convert to WAV
-      const wavBlob = await audioBufferToWav(audioBuffer);
-      const file = new File([wavBlob], `audio_${Date.now()}.wav`, { type: 'audio/wav' });
+      // Create file with mp3 extension (most compatible)
+      const file = new File([blob], `audio_${Date.now()}.${extension}`, { 
+        type: extension === 'mp3' ? 'audio/mpeg' : blob.type 
+      });
       
       // Upload audio file
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
