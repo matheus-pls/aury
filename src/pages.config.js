@@ -60,11 +60,15 @@ import Goals from './pages/Goals';
 import Home from './pages/Home';
 import Incomes from './pages/Incomes';
 import Movements from './pages/Movements';
+import Overview from './pages/Overview';
 import Planning from './pages/Planning';
+import Settings from './pages/Settings';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
-import Overview from './pages/Overview';
-import Settings from './pages/Settings';
+import SmartAnalysis from './pages/SmartAnalysis';
+import CategoryDistribution from './pages/CategoryDistribution';
+import MonthlyTrends from './pages/MonthlyTrends';
+import ConsumptionPatterns from './pages/ConsumptionPatterns';
 import __Layout from './Layout.jsx';
 
 
@@ -82,11 +86,15 @@ export const PAGES = {
     "Home": Home,
     "Incomes": Incomes,
     "Movements": Movements,
+    "Overview": Overview,
     "Planning": Planning,
+    "Settings": Settings,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
-    "Overview": Overview,
-    "Settings": Settings,
+    "SmartAnalysis": SmartAnalysis,
+    "CategoryDistribution": CategoryDistribution,
+    "MonthlyTrends": MonthlyTrends,
+    "ConsumptionPatterns": ConsumptionPatterns,
 }
 
 export const pagesConfig = {

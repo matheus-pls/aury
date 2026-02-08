@@ -15,9 +15,17 @@ import { Card, CardContent } from "@/components/ui/card";
 
 const ANALYSIS_SECTIONS = [
   {
+    id: "smart",
+    title: "Análise Inteligente",
+    description: "Resumo automatizado com destaques e pontos de atenção",
+    icon: Sparkles,
+    page: "SmartAnalysis",
+    gradient: "from-[#5FBDBD] to-[#4FA9A5]"
+  },
+  {
     id: "behavior",
     title: "Comportamento Financeiro",
-    description: "Analise seus padrões de gastos e identifique oportunidades",
+    description: "Hábitos, frequências e padrões de comportamento",
     icon: Activity,
     page: "BehaviorAnalysis",
     gradient: "from-[#5FBDBD] to-[#4FA9A5]"
@@ -27,23 +35,23 @@ const ANALYSIS_SECTIONS = [
     title: "Para onde vai meu dinheiro",
     description: "Veja exatamente quanto você gasta em cada área da sua vida",
     icon: PieChart,
-    page: "BehaviorAnalysis",
+    page: "CategoryDistribution",
     gradient: "from-[#1B3A52] to-[#0A2540]"
   },
   {
     id: "trends",
     title: "Tendências Mensais",
-    description: "Acompanhe a evolução dos seus gastos ao longo do tempo",
+    description: "Evolução mês a mês e projeções futuras",
     icon: TrendingUp,
-    page: "BehaviorAnalysis",
+    page: "MonthlyTrends",
     gradient: "from-[#2A4A62] to-[#1B3A52]"
   },
   {
     id: "patterns",
     title: "Padrões de Consumo",
-    description: "Descubra quando e como você mais gasta",
+    description: "Gastos recorrentes e repetições ocultas",
     icon: Calendar,
-    page: "BehaviorAnalysis",
+    page: "ConsumptionPatterns",
     gradient: "from-[#4FA9A5] to-[#2A4A62]"
   }
 ];
@@ -68,26 +76,7 @@ export default function Analysis() {
         </div>
       </motion.div>
 
-      {/* Premium Insight Card */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1 }}
-        className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 p-6 border border-[#5FBDBD]/20"
-      >
-        <div className="flex items-start gap-4">
-          <div className="p-3 bg-white rounded-xl shadow-sm">
-            <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
-          </div>
-          <div className="flex-1">
-            <h3 className="font-semibold text-[#1B3A52] mb-1">Análise Inteligente</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              Utilize dados dos últimos meses para tomar decisões mais informadas sobre seu futuro financeiro.
-            </p>
-          </div>
-        </div>
-        <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-[#5FBDBD]/5 rounded-full blur-2xl" />
-      </motion.div>
+
 
       {/* Analysis Sections - Compact & Elegant */}
       <div className="space-y-4">

@@ -315,8 +315,8 @@ export default function BehaviorAnalysis() {
             <Activity className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Análise de Comportamento</h1>
-            <p className="text-slate-500 text-sm">Últimos {selectedPeriod} meses de atividade financeira</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Comportamento Financeiro</h1>
+            <p className="text-slate-500 text-sm">Hábitos e padrões dos últimos {selectedPeriod} meses</p>
           </div>
           <Select value={selectedPeriod.toString()} onValueChange={(val) => setSelectedPeriod(parseInt(val))}>
             <SelectTrigger className="w-40 border-slate-200">
