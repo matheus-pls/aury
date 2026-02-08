@@ -608,18 +608,6 @@ export default function Simulations() {
                       </>
                     )}
                   </Button>
-                    {isSimulating ? (
-                      <>
-                        <Zap className="w-4 h-4 mr-2 animate-pulse" />
-                        Simulando...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Simular
-                      </>
-                    )}
-                  </Button>
                 </div>
               </CardContent>
             </Card>
