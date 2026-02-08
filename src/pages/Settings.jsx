@@ -12,7 +12,13 @@ import {
   Bell,
   User,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Share2,
+  Star,
+  HelpCircle,
+  Instagram,
+  MessageCircle,
+  ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -437,6 +443,129 @@ export default function Settings() {
                   setHasChanges(true);
                 }}
               />
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Social & Support */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35 }}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle>Compartilhar e Suporte</CardTitle>
+            <CardDescription>
+              Conecte-se, compartilhe e obtenha ajuda
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {/* Convidar Amigos */}
+            <button
+              onClick={() => {
+                const shareText = "Estou usando o Aury para organizar minhas finanças! É incrível, experimente: " + window.location.origin;
+                if (navigator.share) {
+                  navigator.share({
+                    title: 'Aury - Seu Aliado Financeiro',
+                    text: shareText,
+                    url: window.location.origin
+                  }).then(() => {
+                    toast.success("Obrigado por compartilhar!");
+                  }).catch(() => {});
+                } else {
+                  navigator.clipboard.writeText(shareText);
+                  toast.success("Link copiado! Compartilhe com seus amigos");
+                }
+              }}
+              className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-[#5FBDBD] hover:bg-slate-50 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-lg">
+                  <Share2 className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-700">Convidar Amigos</p>
+                  <p className="text-xs text-slate-500">Compartilhe o Aury</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-[#5FBDBD] transition-colors" />
+            </button>
+
+            {/* Avaliar App */}
+            <a
+              href="https://www.google.com/search?q=avalie+nosso+app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-slate-50 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
+                  <Star className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-700">Avaliar o App</p>
+                  <p className="text-xs text-slate-500">Deixe sua opinião</p>
+                </div>
+              </div>
+              <ExternalLink className="w-5 h-5 text-slate-400 group-hover:text-amber-500 transition-colors" />
+            </a>
+
+            {/* Ajuda */}
+            <a
+              href="mailto:suporte@aury.app?subject=Preciso de ajuda com o Aury"
+              className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-slate-50 transition-all group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg">
+                  <HelpCircle className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-slate-700">Ajuda & Suporte</p>
+                  <p className="text-xs text-slate-500">Entre em contato</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-500 transition-colors" />
+            </a>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Redes Sociais */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle>Redes Sociais</CardTitle>
+            <CardDescription>
+              Siga-nos e fique por dentro
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-3">
+              <a
+                href="https://instagram.com/auryapp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-pink-200 hover:border-pink-400 bg-gradient-to-br from-pink-50 to-purple-50 hover:shadow-md transition-all group"
+              >
+                <Instagram className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
+                <span className="font-medium text-pink-700">Instagram</span>
+              </a>
+              
+              <a
+                href="https://wa.me/5511999999999?text=Olá,%20vim%20do%20app%20Aury!"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-green-200 hover:border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-md transition-all group"
+              >
+                <MessageCircle className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />
+                <span className="font-medium text-green-700">WhatsApp</span>
+              </a>
             </div>
           </CardContent>
         </Card>
