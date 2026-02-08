@@ -216,37 +216,40 @@ export default function AuryFlow() {
       
       // Process audio with LLM (transcription + extraction)
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Você receberá um áudio de um usuário brasileiro falando sobre uma transação financeira.
+        prompt: `Você está recebendo um arquivo de áudio em português brasileiro. Sua tarefa é:
 
-TAREFA:
-1. TRANSCREVA o áudio (entenda o que o usuário disse em português)
-2. EXTRAIA as informações financeiras da transcrição
+1. TRANSCREVER o áudio completamente - ouça com atenção e transcreva tudo que o usuário disse
+2. EXTRAIR as informações financeiras da transcrição
 
-REGRAS DE CLASSIFICAÇÃO:
-- GASTO: se o usuário disse "gastei", "paguei", "comprei", "saiu", "débito" → type: "expense"
-- ENTRADA: se o usuário disse "recebi", "ganhei", "entrou", "crédito", "renda" → type: "income"
+O usuário está falando sobre uma movimentação financeira (gasto ou entrada de dinheiro).
 
-CATEGORIAS DE GASTO:
-- fixed: aluguel, condomínio, internet, luz, água, plano de celular
-- essential: mercado, farmácia, transporte, combustível, saúde
-- superfluous: restaurante, lazer, cinema, shopping, delivery não essencial
-- emergency: médico urgente, conserto emergencial, remédio urgente
-- investment: aplicação, ações, tesouro, poupança
+CLASSIFICAÇÃO:
+- Se o usuário falou sobre GASTAR DINHEIRO (ex: "gastei", "paguei", "comprei", "despesa", "conta") → type: "expense"
+- Se o usuário falou sobre RECEBER DINHEIRO (ex: "recebi", "ganhei", "entrou dinheiro", "renda") → type: "income"
+
+CATEGORIAS DE GASTOS:
+- fixed: contas fixas (aluguel, condomínio, internet, luz, água, celular)
+- essential: necessidades básicas (mercado, farmácia, transporte, combustível, saúde)
+- superfluous: lazer e compras extras (restaurante, cinema, roupas, delivery)
+- emergency: emergências (médico urgente, conserto, remédio urgente)
+- investment: investimentos (aplicação, ações, fundos)
 
 CATEGORIAS DE RENDA:
-- salary: salário mensal
-- freelance: trabalho extra, bico, freela
-- investment: dividendos, rendimento de aplicação
+- salary: salário mensal fixo
+- freelance: trabalhos extras, bicos
+- investment: rendimentos de investimentos
 - rental: aluguel recebido
-- other: outras entradas
+- other: outras fontes
 
-IMPORTANTE: 
-- Extraia o VALOR numérico que o usuário mencionou
-- Crie uma descrição CURTA e CLARA do que foi dito
-- Se não conseguir identificar algo, use valores padrão sensatos
+INSTRUÇÕES IMPORTANTES:
+- Extraia o VALOR exato que o usuário mencionou (pode ser em reais, "reais", "pila", "conto", etc)
+- Crie uma descrição clara e objetiva do que foi dito
+- A transcrição deve ser EXATAMENTE o que você ouviu no áudio
+- Seja preciso na escolha da categoria baseado no contexto
 
-Responda SEMPRE no formato JSON solicitado.`,
+ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever o que está no áudio.`,
         file_urls: [uploadResult.file_url],
+        add_context_from_internet: false,
         response_json_schema: {
           type: "object",
           properties: {
