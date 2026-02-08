@@ -213,6 +213,56 @@ export default function AuryFlow() {
     setIsRecording(false);
   };
 
+  const convertToWav = async (blob) => {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const arrayBuffer = await blob.arrayBuffer();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    
+    // Convert to WAV
+    const numberOfChannels = audioBuffer.numberOfChannels;
+    const length = audioBuffer.length * numberOfChannels * 2;
+    const buffer = new ArrayBuffer(44 + length);
+    const view = new DataView(buffer);
+    const channels = [];
+    let offset = 0;
+    let pos = 0;
+    
+    // Write WAV header
+    const setUint16 = (data) => { view.setUint16(pos, data, true); pos += 2; };
+    const setUint32 = (data) => { view.setUint32(pos, data, true); pos += 4; };
+    
+    setUint32(0x46464952); // "RIFF"
+    setUint32(36 + length); // file length - 8
+    setUint32(0x45564157); // "WAVE"
+    setUint32(0x20746d66); // "fmt " chunk
+    setUint32(16); // length = 16
+    setUint16(1); // PCM (uncompressed)
+    setUint16(numberOfChannels);
+    setUint32(audioBuffer.sampleRate);
+    setUint32(audioBuffer.sampleRate * 2 * numberOfChannels); // avg. bytes/sec
+    setUint16(numberOfChannels * 2); // block-align
+    setUint16(16); // 16-bit
+    setUint32(0x61746164); // "data" - chunk
+    setUint32(length); // chunk length
+    
+    // Write interleaved data
+    for (let i = 0; i < audioBuffer.numberOfChannels; i++) {
+      channels.push(audioBuffer.getChannelData(i));
+    }
+    
+    while (pos < buffer.byteLength) {
+      for (let i = 0; i < numberOfChannels; i++) {
+        let sample = Math.max(-1, Math.min(1, channels[i][offset]));
+        sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+        view.setInt16(pos, sample, true);
+        pos += 2;
+      }
+      offset++;
+    }
+    
+    return new Blob([buffer], { type: 'audio/wav' });
+  };
+
   const processAudio = async (blob) => {
     setInputMode("processing");
     
@@ -221,13 +271,11 @@ export default function AuryFlow() {
         throw new Error("Arquivo de áudio vazio");
       }
 
-      // Keep the original format - API supports webm, mp4, mp3, wav, ogg
-      const extension = blob.type.includes('webm') ? 'webm' : 
-                       blob.type.includes('mp4') ? 'mp4' : 
-                       blob.type.includes('ogg') ? 'ogg' : 'webm';
+      console.log('Converting audio to WAV...');
+      const wavBlob = await convertToWav(blob);
       
-      const file = new File([blob], `audio_${Date.now()}.${extension}`, { 
-        type: blob.type
+      const file = new File([wavBlob], `audio_${Date.now()}.wav`, { 
+        type: 'audio/wav'
       });
       
       console.log('Uploading file:', file.name, file.type, file.size);

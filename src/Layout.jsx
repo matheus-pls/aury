@@ -64,7 +64,7 @@ export default function Layout({ children, currentPageName }) {
     baseNav.push({ name: "Configurações", page: "Settings", icon: Settings });
 
     setNavigation(baseNav);
-  }, [familyGroups]);
+  }, [familyGroups.length]);
 
   useEffect(() => {
     setSidebarOpen(false);
