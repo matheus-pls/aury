@@ -64,18 +64,7 @@ export default function Overview() {
     }
   });
 
-  // Check if user needs daily check-in
-  React.useEffect(() => {
-    if (!settingsLoading && settings) {
-      const today = new Date().toISOString().split('T')[0];
-      const lastCheckin = settings.last_checkin_date;
-      
-      // Redirect to check-in if not done today
-      if (lastCheckin !== today) {
-        window.location.href = createPageUrl("DailyCheckIn");
-      }
-    }
-  }, [settings, settingsLoading]);
+
 
   const totalIncome = incomes.reduce((sum, i) => sum + (i.amount || 0), 0);
   const totalExpenses = expenses.reduce((sum, e) => sum + (e.amount || 0), 0);
