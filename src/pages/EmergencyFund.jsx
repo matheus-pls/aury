@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import BackButton from "@/components/BackButton";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -60,10 +61,18 @@ export default function EmergencyFund() {
 
   const updateSettingsMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.UserSettings.update(id, data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries(['settings']);
+      if (showAddDialog) {
+        toast.success("Valor adicionado à caixinha!");
+      } else if (showWithdrawDialog) {
+        toast.success("Valor retirado da caixinha");
+      }
       setShowAddDialog(false);
+      setShowWithdrawDialog(false);
       setAddAmount("");
+      setWithdrawAmount("");
+      setWithdrawConfirm(false);
     }
   });
 

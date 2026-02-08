@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
+import { toast } from "sonner";
 
 const GOAL_CATEGORIES = {
   travel: { label: "Viagem", icon: Plane, color: "bg-blue-500", bgLight: "bg-blue-50" },
@@ -91,14 +92,20 @@ export default function Goals() {
     mutationFn: (data) => base44.entities.FinancialGoal.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['goals']);
+      toast.success("Meta criada com sucesso!");
       handleCloseDialog();
     }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.FinancialGoal.update(id, data),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries(['goals']);
+      if (isAddingMoney) {
+        toast.success("Dinheiro adicionado à meta!");
+      } else {
+        toast.success("Meta atualizada com sucesso!");
+      }
       handleCloseDialog();
       setIsAddingMoney(false);
       setSelectedGoalForMoney(null);
@@ -108,7 +115,10 @@ export default function Goals() {
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.FinancialGoal.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['goals'])
+    onSuccess: () => {
+      queryClient.invalidateQueries(['goals']);
+      toast.success("Meta excluída");
+    }
   });
 
   const handleOpenDialog = (goal = null) => {

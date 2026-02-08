@@ -37,9 +37,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import AuryFlow from "../components/overview/AuryFlow";
+import { toast } from "sonner";
 
 export default function Overview() {
   const currentMonth = new Date().toISOString().slice(0, 7);
+  const queryClient = useQueryClient();
 
   const { data: incomes = [] } = useQuery({
     queryKey: ['incomes'],
@@ -135,6 +137,7 @@ export default function Overview() {
     mutationFn: (data) => base44.entities.Expense.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['expenses']);
+      toast.success("Gasto registrado com sucesso!");
       setQuickActionDialog(null);
       setQuickFormData({
         description: "",
@@ -150,6 +153,7 @@ export default function Overview() {
     mutationFn: (data) => base44.entities.Income.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['incomes']);
+      toast.success("Renda adicionada com sucesso!");
       setQuickActionDialog(null);
       setQuickFormData({
         description: "",

@@ -54,12 +54,11 @@ import CategoryDistribution from './pages/CategoryDistribution';
 import ConsumptionPatterns from './pages/ConsumptionPatterns';
 import DailyCheckIn from './pages/DailyCheckIn';
 import DailyMode from './pages/DailyMode';
+import Dashboard from './pages/Dashboard';
 import EmergencyFund from './pages/EmergencyFund';
 import Expenses from './pages/Expenses';
 import FamilyMode from './pages/FamilyMode';
-import Goals from './pages/Goals';
 import Home from './pages/Home';
-import Incomes from './pages/Incomes';
 import MonthlyTrends from './pages/MonthlyTrends';
 import Movements from './pages/Movements';
 import Overview from './pages/Overview';
@@ -69,7 +68,8 @@ import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
-import Dashboard from './pages/Dashboard';
+import Goals from './pages/Goals';
+import Incomes from './pages/Incomes';
 import __Layout from './Layout.jsx';
 
 
@@ -81,12 +81,11 @@ export const PAGES = {
     "ConsumptionPatterns": ConsumptionPatterns,
     "DailyCheckIn": DailyCheckIn,
     "DailyMode": DailyMode,
+    "Dashboard": Dashboard,
     "EmergencyFund": EmergencyFund,
     "Expenses": Expenses,
     "FamilyMode": FamilyMode,
-    "Goals": Goals,
     "Home": Home,
-    "Incomes": Incomes,
     "MonthlyTrends": MonthlyTrends,
     "Movements": Movements,
     "Overview": Overview,
@@ -96,7 +95,8 @@ export const PAGES = {
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
-    "Dashboard": Dashboard,
+    "Goals": Goals,
+    "Incomes": Incomes,
 }
 
 export const pagesConfig = {
