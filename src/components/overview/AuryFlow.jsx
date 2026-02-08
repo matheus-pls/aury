@@ -47,6 +47,7 @@ export default function AuryFlow() {
   const recordingIntervalRef = useRef(null);
   const inputRef = useRef(null);
   const streamRef = useRef(null);
+  const recordingStartTimeRef = useRef(0);
   
   const queryClient = useQueryClient();
 
@@ -84,6 +85,7 @@ export default function AuryFlow() {
     setParsedData(null);
     setRecordingTime(0);
     setErrorMessage(null);
+    recordingStartTimeRef.current = 0;
     stopRecordingCleanup();
   };
 
@@ -97,8 +99,13 @@ export default function AuryFlow() {
       streamRef.current = null;
     }
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      mediaRecorderRef.current.stop();
+      try {
+        mediaRecorderRef.current.stop();
+      } catch (e) {
+        console.error("Error stopping recorder:", e);
+      }
     }
+    setIsRecording(false);
   };
 
   const toggleRecording = async () => {
@@ -143,16 +150,24 @@ export default function AuryFlow() {
       };
 
       mediaRecorderRef.current.onstop = async () => {
+        const actualDuration = (Date.now() - recordingStartTimeRef.current) / 1000;
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         
         stopRecordingCleanup();
         
-        if (audioBlob.size > 0 && recordingTime >= 0.5) {
-          await processAudio(audioBlob);
-        } else {
-          setErrorMessage("Gravação muito curta. Grave por pelo menos 1 segundo.");
-          setInputMode("text");
+        if (audioBlob.size === 0) {
+          setErrorMessage("Erro na gravação. Tente novamente.");
+          setInputMode("idle");
+          return;
         }
+        
+        if (actualDuration < 0.8) {
+          setErrorMessage("Gravação muito curta. Grave por pelo menos 1 segundo e fale claramente.");
+          setInputMode("idle");
+          return;
+        }
+        
+        await processAudio(audioBlob);
       };
 
       mediaRecorderRef.current.onerror = () => {
@@ -162,14 +177,14 @@ export default function AuryFlow() {
         setInputMode("text");
       };
 
+      recordingStartTimeRef.current = Date.now();
       mediaRecorderRef.current.start(100);
       setIsRecording(true);
       setInputMode("recording");
       setRecordingTime(0);
       
-      let startTime = Date.now();
       recordingIntervalRef.current = setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
+        const elapsed = (Date.now() - recordingStartTimeRef.current) / 1000;
         setRecordingTime(elapsed);
         
         if (elapsed >= 30) {
@@ -203,9 +218,18 @@ export default function AuryFlow() {
     setInputMode("processing");
     
     try {
-      // Use the original audio format (webm/mp4) - no conversion needed
-      const fileExtension = blob.type.includes('webm') ? 'webm' : 'mp4';
-      const file = new File([blob], `audio.${fileExtension}`, { type: blob.type });
+      // Validate blob
+      if (!blob || blob.size === 0) {
+        throw new Error("Arquivo de áudio vazio");
+      }
+
+      // Ensure correct mime type
+      const mimeType = blob.type || 'audio/webm';
+      const fileExtension = mimeType.includes('webm') ? 'webm' : 
+                           mimeType.includes('mp4') ? 'mp4' : 
+                           mimeType.includes('mpeg') ? 'mp3' : 'webm';
+      
+      const file = new File([blob], `audio_${Date.now()}.${fileExtension}`, { type: mimeType });
       
       // Upload audio file
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
@@ -284,17 +308,30 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
       });
       
       if (!result?.amount || !result?.description) {
-        throw new Error("Não consegui entender o áudio. Tente falar mais claramente.");
+        throw new Error("Não consegui entender o áudio completamente. Tente falar mais devagar e claramente.");
+      }
+      
+      if (result.amount <= 0) {
+        throw new Error("O valor precisa ser maior que zero.");
       }
       
       setParsedData(result);
       setInputMode("confirming");
     } catch (error) {
       console.error("Error processing audio:", error);
-      const errorMsg = error.message || "Não consegui processar o áudio. Tente novamente ou digite manualmente.";
+      
+      let errorMsg = "Não consegui processar o áudio.";
+      
+      if (error.message.includes("upload")) {
+        errorMsg = "Erro ao enviar áudio. Verifique sua conexão e tente novamente.";
+      } else if (error.message.includes("entender")) {
+        errorMsg = error.message;
+      } else if (error.message.includes("vazio")) {
+        errorMsg = "Arquivo de áudio inválido. Grave novamente.";
+      }
+      
       setErrorMessage(errorMsg);
-      setInputMode("text");
-      setTimeout(() => inputRef.current?.focus(), 100);
+      setInputMode("idle");
     }
   };
 
