@@ -9,7 +9,8 @@ import {
   Shield,
   Target,
   ChevronRight,
-  Info
+  Info,
+  Heart
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -178,6 +179,37 @@ export default function Dashboard() {
     }).format(value);
   };
 
+  // Cálculo do Índice de Tranquilidade Financeira (0-100)
+  const calculateTranquilityIndex = () => {
+    let score = 0;
+    
+    // Reserva de emergência (40 pontos)
+    score += Math.min(emergencyProgress, 100) * 0.4;
+    
+    // Controle de gastos (40 pontos)
+    if (spentPercentage <= 70) score += 40;
+    else if (spentPercentage <= 85) score += 25;
+    else if (spentPercentage <= 100) score += 15;
+    
+    // Equilíbrio mensal (20 pontos)
+    if (availableBalance > 0) {
+      const balanceRatio = availableBalance / Math.max(totalIncome, 1);
+      score += Math.min(balanceRatio * 100, 20);
+    }
+    
+    return Math.round(Math.max(0, Math.min(100, score)));
+  };
+
+  const tranquilityIndex = calculateTranquilityIndex();
+  
+  const getTranquilityStatus = () => {
+    if (tranquilityIndex >= 70) return { label: "Tranquilo", color: "from-emerald-500 to-teal-500", bgColor: "bg-emerald-50" };
+    if (tranquilityIndex >= 40) return { label: "Atenção", color: "from-amber-500 to-orange-500", bgColor: "bg-amber-50" };
+    return { label: "Risco", color: "from-rose-500 to-red-500", bgColor: "bg-rose-50" };
+  };
+
+  const tranquilityStatus = getTranquilityStatus();
+
   const profileInfo = getProfileInfo();
 
   // Show profile selector overlay
@@ -187,6 +219,29 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 pb-8">
+      {/* Tranquilidade Financeira */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.05 }}
+        className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${tranquilityStatus.color} text-white shadow-lg`}
+      >
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Heart className="w-4 h-4 text-white/90" />
+            <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
+          </div>
+          <div className="flex items-baseline gap-2">
+            <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
+            <span className="text-lg font-light text-white/80">/100</span>
+            <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">
+              {tranquilityStatus.label}
+            </span>
+          </div>
+        </div>
+        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
+      </motion.div>
+
       {/* Profile Badge */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
