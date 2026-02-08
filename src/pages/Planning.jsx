@@ -24,6 +24,14 @@ const PLANNING_MODULES = [
     page: "AutoPlanning"
   },
   {
+    id: "simulations",
+    title: "Simulações",
+    description: "Visualize o impacto das suas decisões financeiras",
+    icon: Calculator,
+    color: "from-purple-400 to-purple-600",
+    page: "Simulations"
+  },
+  {
     id: "tight_month",
     title: "Mês Apertado",
     description: "Plano de sobrevivência financeira com empatia",

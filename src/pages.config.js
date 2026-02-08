@@ -50,6 +50,8 @@
 import Analysis from './pages/Analysis';
 import AutoPlanning from './pages/AutoPlanning';
 import BehaviorAnalysis from './pages/BehaviorAnalysis';
+import CategoryDistribution from './pages/CategoryDistribution';
+import ConsumptionPatterns from './pages/ConsumptionPatterns';
 import DailyCheckIn from './pages/DailyCheckIn';
 import DailyMode from './pages/DailyMode';
 import Dashboard from './pages/Dashboard';
@@ -59,16 +61,15 @@ import FamilyMode from './pages/FamilyMode';
 import Goals from './pages/Goals';
 import Home from './pages/Home';
 import Incomes from './pages/Incomes';
+import MonthlyTrends from './pages/MonthlyTrends';
 import Movements from './pages/Movements';
 import Overview from './pages/Overview';
 import Planning from './pages/Planning';
+import Settings from './pages/Settings';
+import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
-import SmartAnalysis from './pages/SmartAnalysis';
-import CategoryDistribution from './pages/CategoryDistribution';
-import MonthlyTrends from './pages/MonthlyTrends';
-import ConsumptionPatterns from './pages/ConsumptionPatterns';
-import Settings from './pages/Settings';
+import Simulations from './pages/Simulations';
 import __Layout from './Layout.jsx';
 
 
@@ -76,6 +77,8 @@ export const PAGES = {
     "Analysis": Analysis,
     "AutoPlanning": AutoPlanning,
     "BehaviorAnalysis": BehaviorAnalysis,
+    "CategoryDistribution": CategoryDistribution,
+    "ConsumptionPatterns": ConsumptionPatterns,
     "DailyCheckIn": DailyCheckIn,
     "DailyMode": DailyMode,
     "Dashboard": Dashboard,
@@ -85,16 +88,15 @@ export const PAGES = {
     "Goals": Goals,
     "Home": Home,
     "Incomes": Incomes,
+    "MonthlyTrends": MonthlyTrends,
     "Movements": Movements,
     "Overview": Overview,
     "Planning": Planning,
+    "Settings": Settings,
+    "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
-    "SmartAnalysis": SmartAnalysis,
-    "CategoryDistribution": CategoryDistribution,
-    "MonthlyTrends": MonthlyTrends,
-    "ConsumptionPatterns": ConsumptionPatterns,
-    "Settings": Settings,
+    "Simulations": Simulations,
 }
 
 export const pagesConfig = {
