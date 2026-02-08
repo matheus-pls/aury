@@ -139,11 +139,16 @@ export default function Layout({ children, currentPageName }) {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="h-20 flex items-center justify-between px-6 border-b border-slate-100">
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
-              alt="Aury" 
-              className="h-10"
-            />
+            <div className="relative">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
+                alt="Aury" 
+                className="h-10"
+              />
+              <div className="absolute -top-1.5 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-md">
+                ✨ Premium
+              </div>
+            </div>
             <div className="flex items-center gap-2">
               <div className="hidden lg:block">
                 <NotificationCenter />
