@@ -373,13 +373,13 @@ export default function Overview() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-aury transition-all border border-slate-100">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2.5 bg-emerald-50 rounded-xl">
-                  <Shield className="w-5 h-5 text-emerald-600" />
+                <div className="p-3 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-xl shadow-md">
+                  <Shield className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-sm font-medium text-slate-600">Reserva de Emergência</p>
+                <p className="text-sm font-semibold text-[#1B3A52]">Caixinha</p>
               </div>
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{emergencyProgress.toFixed(0)}%</p>
               <Progress value={emergencyProgress} className="h-2 mb-2" />
@@ -395,13 +395,13 @@ export default function Overview() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
         >
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-aury transition-all border border-slate-100">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2.5 bg-purple-50 rounded-xl">
-                  <Target className="w-5 h-5 text-purple-600" />
+                <div className="p-3 bg-gradient-to-br from-[#2A4A62] to-[#1B3A52] rounded-xl shadow-md">
+                  <Target className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-sm font-medium text-slate-600">Metas Ativas</p>
+                <p className="text-sm font-semibold text-[#1B3A52]">Metas Ativas</p>
               </div>
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{goals.length}</p>
               <p className="text-xs text-slate-500">
@@ -416,13 +416,13 @@ export default function Overview() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card className="hover:shadow-aury transition-all border border-slate-100">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2.5 bg-rose-50 rounded-xl">
-                  <Receipt className="w-5 h-5 text-rose-600" />
+                <div className="p-3 bg-gradient-to-br from-[#4FA9A5] to-[#2A4A62] rounded-xl shadow-md">
+                  <Calendar className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-sm font-medium text-slate-600">Este Mês</p>
+                <p className="text-sm font-semibold text-[#1B3A52]">Este Mês</p>
               </div>
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{formatCurrency(totalExpenses)}</p>
               <p className="text-xs text-slate-500">
