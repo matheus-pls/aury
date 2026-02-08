@@ -24,11 +24,11 @@ import { createPageUrl } from "@/utils";
 const SIMULATION_TYPES = [
   {
     id: "cut_expenses",
-    title: "Cortar Gastos",
-    description: "Veja como economizar mais",
+    title: "Economizar Mais",
+    description: "O que muda se você ajustar gastos",
     icon: Scissors,
     color: "from-[#5FBDBD] to-[#4FA9A5]",
-    prompt: "E se eu cortar"
+    prompt: "E se eu economizar"
   },
   {
     id: "new_job",
@@ -134,8 +134,8 @@ export default function Simulations() {
             ],
             emotional: {
               message: savingsIncrease > 0 
-                ? `Você economizaria ${Math.round((savingsIncrease / currentIncome) * 100)}% a mais do seu salário!`
-                : "Essa economia não fará diferença significativa",
+                ? `Isso representa ${Math.round((savingsIncrease / currentIncome) * 100)}% a mais do seu salário. Vale a pena!`
+                : "Talvez valha a pena explorar outras formas de economizar",
               impact: savingsIncrease > currentSavings * 0.3 ? "high" : savingsIncrease > 0 ? "medium" : "low"
             }
           };
@@ -172,8 +172,8 @@ export default function Simulations() {
             ],
             emotional: {
               message: incomeIncrease > currentIncome * 0.2 
-                ? "Uma mudança transformadora! Vale a pena buscar!"
-                : "Um bom aumento, mas analise outros fatores",
+                ? "Essa mudança pode transformar sua situação. Vale explorar!"
+                : "Um avanço positivo. Considere também outros aspectos da mudança.",
               impact: incomeIncrease > currentIncome * 0.3 ? "high" : incomeIncrease > currentIncome * 0.1 ? "medium" : "low"
             }
           };
@@ -223,10 +223,10 @@ export default function Simulations() {
             ],
             emotional: {
               message: savingsAmount > currentIncome * 0.1 
-                ? "Ótima economia! Isso fará diferença real!"
+                ? "Essa economia faz uma diferença real no longo prazo!"
                 : savingsAmount > 0
-                ? "Toda economia conta! Continue assim!"
-                : "Especifique um valor ou gasto para simular",
+                ? "Pequenas mudanças somam muito ao longo do tempo!"
+                : "Digite um valor ou nome de gasto para ver o impacto",
               impact: savingsAmount > currentIncome * 0.15 ? "high" : savingsAmount > currentIncome * 0.05 ? "medium" : "low"
             }
           };
@@ -276,12 +276,12 @@ export default function Simulations() {
                 ],
                 emotional: {
                   message: monthsNeeded <= 12 
-                    ? `Você está quase lá! Só mais ${monthsNeeded} meses!`
+                    ? `Você está perto! Apenas ${monthsNeeded} meses no ritmo atual.`
                     : monthsNeeded <= 24 
-                    ? "Com foco e disciplina, você alcança! Continue firme!"
+                    ? "Mantendo o foco, você chega lá. Um passo de cada vez!"
                     : realisticMonths <= 36
-                    ? `Para alcançar em ${realisticMonths} meses, tente economizar R$ ${realisticMonthlySavings.toFixed(2)}/mês (cerca de ${Math.round((realisticMonthlySavings/currentIncome)*100)}% da sua renda)`
-                    : "Meta muito ambiciosa para sua renda atual. Considere aumentar a renda, cortar gastos ou ajustar o valor da meta.",
+                    ? `Ajustando para R$ ${realisticMonthlySavings.toFixed(2)}/mês (${Math.round((realisticMonthlySavings/currentIncome)*100)}% da renda), você alcança em ${realisticMonths} meses`
+                    : "Essa meta pede uma renda maior ou um ajuste no valor. Vamos encontrar o caminho juntos?",
                   impact: monthsNeeded <= 12 ? "high" : monthsNeeded <= 24 ? "medium" : "low",
                   date: monthsNeeded <= 100 ? targetDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' }) : null
                 }
@@ -332,7 +332,7 @@ export default function Simulations() {
           </div>
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Simulações</h1>
-            <p className="text-slate-500">Visualize o impacto das suas decisões</p>
+            <p className="text-slate-500">Veja como pequenas mudanças fazem diferença</p>
           </div>
         </div>
       </motion.div>

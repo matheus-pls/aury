@@ -195,17 +195,17 @@ export default function Overview() {
   if ((spentPercentage > 85 || tranquilityIndex < 40) && totalIncome > 0) {
     alerts.push({
       type: "action",
-      message: `Seus gastos estão acima do ideal este mês. Ative o Modo Mês Apertado para reorganizar suas finanças rapidamente.`,
+      message: `Este mês está pedindo mais atenção. O Modo Mês Apertado pode ajudar você a reorganizar tudo com calma.`,
       icon: Shield,
       action: {
-        label: "Ativar Modo Mês Apertado",
+        label: "Reorganizar Finanças",
         page: "TightMonth"
       }
     });
   } else if (spentPercentage > 90) {
     alerts.push({
       type: "danger",
-      message: "Atenção: você está perto do limite do seu orçamento mensal",
+      message: "Seu orçamento está perto do limite. Ainda dá tempo de ajustar.",
       icon: AlertCircle
     });
   }
@@ -214,14 +214,14 @@ export default function Overview() {
     const monthsToSafety = emergencyGoal > 0 ? Math.ceil(emergencyGoal / (totalIncome * 0.15)) : 0;
     alerts.push({
       type: "warning",
-      message: `Se algo inesperado acontecer hoje, sua reserva cobre apenas ${(emergencyProgress / 100 * 6).toFixed(1)} meses. ${monthsToSafety > 0 ? `Economizando 15% ao mês, você atinge segurança em ${monthsToSafety} meses.` : ''}`,
+      message: `Sua reserva ainda está crescendo. ${monthsToSafety > 0 ? `Com pequenos passos de 15% ao mês, você chega lá em ${monthsToSafety} meses.` : 'Continue construindo sua segurança aos poucos.'}`,
       icon: Shield
     });
   }
   if (totalIncome === 0) {
     alerts.push({
       type: "info",
-      message: "Cadastre suas fontes de renda para começar a usar o Aury",
+      message: "Vamos começar! Adicione suas fontes de renda para o Aury te ajudar melhor.",
       icon: Info
     });
   }
@@ -233,7 +233,7 @@ export default function Overview() {
         animate={{ opacity: 1, y: 0 }}
       >
         <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Visão Geral</h1>
-        <p className="text-slate-500 mt-1">Seu panorama financeiro de hoje</p>
+        <p className="text-slate-500 mt-1">Um olhar claro sobre suas finanças</p>
       </motion.div>
 
       {/* Método Aury - Compacto e Elegante */}
@@ -293,8 +293,8 @@ export default function Overview() {
             <h2 className="text-5xl font-bold">{formatCurrency(availableBalance)}</h2>
             <p className="text-white/70 text-xs mt-2">
               {availableBalance > 0 
-                ? `Você ainda tem ${formatCurrency(availableBalance)} para usar`
-                : "Você ultrapassou seu orçamento mensal"}
+                ? `Você tem ${formatCurrency(availableBalance)} para o resto do mês`
+                : "Este mês precisou de mais atenção, e está tudo bem"}
             </p>
           </div>
           <div className="p-3 bg-white/10 rounded-2xl">
@@ -316,7 +316,7 @@ export default function Overview() {
         <div className="mt-6">
           <div className="flex justify-between text-xs text-white/90 mb-2">
             <span>Utilizado: {spentPercentage.toFixed(0)}%</span>
-            <span>{spentPercentage <= 100 ? 'Dentro do controle' : 'Acima do esperado'}</span>
+            <span>{spentPercentage <= 100 ? 'No caminho certo' : 'Ajustes necessários'}</span>
           </div>
           <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
             <motion.div
@@ -384,7 +384,7 @@ export default function Overview() {
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{emergencyProgress.toFixed(0)}%</p>
               <Progress value={emergencyProgress} className="h-2 mb-2" />
               <p className="text-xs text-slate-500">
-                {emergencyProgress < 100 ? `Faltam ${(100 - emergencyProgress).toFixed(0)}% para segurança total` : 'Você está protegido'}
+                {emergencyProgress < 100 ? `Um passo de cada vez. Você está ${emergencyProgress.toFixed(0)}% mais seguro` : 'Você construiu sua proteção'}
               </p>
             </CardContent>
           </Card>
@@ -405,7 +405,7 @@ export default function Overview() {
               </div>
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{goals.length}</p>
               <p className="text-xs text-slate-500">
-                {goals.length === 0 ? 'Defina seus objetivos' : `${goals.length} objetivo${goals.length > 1 ? 's' : ''} em andamento`}
+                {goals.length === 0 ? 'O que você quer conquistar?' : `${goals.length} sonho${goals.length > 1 ? 's' : ''} em andamento`}
               </p>
             </CardContent>
           </Card>
