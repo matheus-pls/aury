@@ -68,6 +68,19 @@ export default function Settings() {
 
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Fetch total income
+  const { data: incomes = [] } = useQuery({
+    queryKey: ['incomes'],
+    queryFn: async () => {
+      const result = await base44.entities.Income.list();
+      return result || [];
+    }
+  });
+
+  const totalIncome = incomes
+    .filter(income => income.is_active)
+    .reduce((sum, income) => sum + (income.amount || 0), 0);
+
   const { data: existingSettings, isLoading } = useQuery({
     queryKey: ['settings'],
     queryFn: async () => {
@@ -277,9 +290,16 @@ export default function Settings() {
 
             {/* Fixed */}
             <div className="space-y-3">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <Label>Gastos Fixos</Label>
-                <span className="text-sm font-semibold text-slate-700">{settings.fixed_percentage}%</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-700">{settings.fixed_percentage}%</span>
+                  {totalIncome > 0 && (
+                    <span className="text-xs text-slate-500">
+                      ({formatCurrency((totalIncome * settings.fixed_percentage) / 100)})
+                    </span>
+                  )}
+                </div>
               </div>
               <Slider
                 value={[settings.fixed_percentage]}
@@ -293,9 +313,16 @@ export default function Settings() {
 
             {/* Essential */}
             <div className="space-y-3">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <Label>Essenciais Variáveis</Label>
-                <span className="text-sm font-semibold text-slate-700">{settings.essential_percentage}%</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-700">{settings.essential_percentage}%</span>
+                  {totalIncome > 0 && (
+                    <span className="text-xs text-slate-500">
+                      ({formatCurrency((totalIncome * settings.essential_percentage) / 100)})
+                    </span>
+                  )}
+                </div>
               </div>
               <Slider
                 value={[settings.essential_percentage]}
@@ -309,9 +336,16 @@ export default function Settings() {
 
             {/* Superfluous */}
             <div className="space-y-3">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <Label>Supérfluos</Label>
-                <span className="text-sm font-semibold text-slate-700">{settings.superfluous_percentage}%</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-700">{settings.superfluous_percentage}%</span>
+                  {totalIncome > 0 && (
+                    <span className="text-xs text-slate-500">
+                      ({formatCurrency((totalIncome * settings.superfluous_percentage) / 100)})
+                    </span>
+                  )}
+                </div>
               </div>
               <Slider
                 value={[settings.superfluous_percentage]}
@@ -325,9 +359,16 @@ export default function Settings() {
 
             {/* Emergency */}
             <div className="space-y-3">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <Label>Reserva de Emergência</Label>
-                <span className="text-sm font-semibold text-slate-700">{settings.emergency_percentage}%</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-700">{settings.emergency_percentage}%</span>
+                  {totalIncome > 0 && (
+                    <span className="text-xs text-slate-500">
+                      ({formatCurrency((totalIncome * settings.emergency_percentage) / 100)})
+                    </span>
+                  )}
+                </div>
               </div>
               <Slider
                 value={[settings.emergency_percentage]}
@@ -341,9 +382,16 @@ export default function Settings() {
 
             {/* Investment */}
             <div className="space-y-3">
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <Label>Investimentos</Label>
-                <span className="text-sm font-semibold text-slate-700">{settings.investment_percentage}%</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-semibold text-slate-700">{settings.investment_percentage}%</span>
+                  {totalIncome > 0 && (
+                    <span className="text-xs text-slate-500">
+                      ({formatCurrency((totalIncome * settings.investment_percentage) / 100)})
+                    </span>
+                  )}
+                </div>
               </div>
               <Slider
                 value={[settings.investment_percentage]}
