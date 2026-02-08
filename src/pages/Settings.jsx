@@ -29,7 +29,6 @@ import { Slider } from "@/components/ui/slider";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import BackButton from "@/components/BackButton";
-import DistributionChart from "@/components/dashboard/DistributionChart";
 
 const RISK_PROFILES = {
   essential: {
@@ -75,11 +74,6 @@ export default function Settings() {
       const result = await base44.entities.UserSettings.list();
       return result[0] || null;
     }
-  });
-
-  const { data: incomes = [] } = useQuery({
-    queryKey: ['incomes'],
-    queryFn: () => base44.entities.Income.filter({ is_active: true })
   });
 
   useEffect(() => {
@@ -151,16 +145,6 @@ export default function Settings() {
     settings.investment_percentage;
 
   const isValidDistribution = totalPercentage === 100;
-
-  const totalIncome = incomes.reduce((sum, i) => sum + (i.amount || 0), 0);
-
-  const distributionData = [
-    { category: 'fixed', value: settings.fixed_percentage },
-    { category: 'essential', value: settings.essential_percentage },
-    { category: 'superfluous', value: settings.superfluous_percentage },
-    { category: 'emergency', value: settings.emergency_percentage },
-    { category: 'investment', value: settings.investment_percentage }
-  ];
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -369,16 +353,6 @@ export default function Settings() {
                 className="[&>span]:bg-violet-500"
               />
               <p className="text-xs text-slate-500">Poupança, ações, fundos</p>
-            </div>
-
-            {/* Visual Distribution Chart */}
-            <div className="mt-8 pt-8 border-t border-slate-200">
-              <h3 className="text-lg font-semibold text-[#1B3A52] mb-4">Visualização da Distribuição</h3>
-              <DistributionChart 
-                data={distributionData}
-                type="current"
-                totalIncome={totalIncome}
-              />
             </div>
           </CardContent>
         </Card>
