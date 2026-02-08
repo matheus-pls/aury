@@ -312,13 +312,13 @@ export default function Dashboard() {
             transition={{ delay: 0.1 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow group"
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 bg-gradient-to-br from-rose-500 to-red-500 rounded-xl shadow-md group-hover:scale-110 transition-transform">
-                <TrendingDown className="w-6 h-6 text-white" />
+              <div className="p-2.5 bg-rose-50 rounded-xl">
+                <Plus className="w-5 h-5 text-rose-500" />
               </div>
-              <h3 className="font-semibold text-[#1B3A52]">Novo Gasto</h3>
+              <h3 className="font-semibold text-slate-800">Novo Gasto</h3>
             </div>
             <p className="text-sm text-slate-500">Registrar uma despesa</p>
           </motion.div>
@@ -331,13 +331,13 @@ export default function Dashboard() {
             transition={{ delay: 0.15 }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow group"
+            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
           >
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-3 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl shadow-md group-hover:scale-110 transition-transform">
-                <Plus className="w-6 h-6 text-white" />
+              <div className="p-2.5 bg-emerald-50 rounded-xl">
+                <Plus className="w-5 h-5 text-emerald-500" />
               </div>
-              <h3 className="font-semibold text-[#1B3A52]">Nova Renda</h3>
+              <h3 className="font-semibold text-slate-800">Nova Renda</h3>
             </div>
             <p className="text-sm text-slate-500">Adicionar fonte de renda</p>
           </motion.div>
@@ -349,21 +349,21 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-xl shadow-md">
-              <Shield className="w-6 h-6 text-white" />
+            <div className="p-2.5 bg-emerald-50 rounded-xl">
+              <Shield className="w-5 h-5 text-emerald-500" />
             </div>
             <div>
-              <h3 className="font-semibold text-[#1B3A52]">Caixinha</h3>
+              <h3 className="font-semibold text-slate-800">Reserva de Emergência</h3>
               <p className="text-sm text-slate-500">
                 {formatCurrency(totalEmergencyFund)} de {formatCurrency(emergencyGoal)}
               </p>
             </div>
           </div>
-          <span className="text-2xl font-bold text-[#5FBDBD]">
+          <span className="text-2xl font-bold text-emerald-600">
             {emergencyProgress.toFixed(0)}%
           </span>
         </div>
@@ -375,30 +375,28 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-gradient-to-br from-[#2A4A62] to-[#1B3A52] rounded-xl shadow-md">
-              <Target className="w-6 h-6 text-white" />
+            <div className="p-2.5 bg-purple-50 rounded-xl">
+              <Target className="w-5 h-5 text-purple-500" />
             </div>
-            <div>
-              <h3 className="font-semibold text-[#1B3A52]">Metas Ativas</h3>
-              <p className="text-sm text-slate-500">
-                {goals.length === 0 
-                  ? "Nenhuma meta criada ainda"
-                  : `${goals.length} ${goals.length === 1 ? 'objetivo' : 'objetivos'} em andamento`
-                }
-              </p>
-            </div>
+            <h3 className="font-semibold text-slate-800">Suas Metas</h3>
           </div>
           <Link to={createPageUrl("Goals")}>
-            <Button variant="ghost" size="sm" className="text-[#5FBDBD] hover:text-[#4FA9A5]">
+            <Button variant="ghost" size="sm" className="text-[#00A8A0]">
               Ver todas
               <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
           </Link>
         </div>
+        <p className="text-sm text-slate-500">
+          {goals.length === 0 
+            ? "Você ainda não tem metas. Crie sua primeira meta!"
+            : `${goals.length} ${goals.length === 1 ? 'meta ativa' : 'metas ativas'}`
+          }
+        </p>
       </motion.div>
 
       {/* Info Banner */}
