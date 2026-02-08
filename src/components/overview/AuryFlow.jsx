@@ -153,16 +153,17 @@ export default function AuryFlow() {
       setInputMode("recording");
       setRecordingTime(0);
       
+      // Use more precise timing
+      let startTime = Date.now();
       recordingIntervalRef.current = setInterval(() => {
-        setRecordingTime(prev => {
-          // Auto-stop after 30 seconds
-          if (prev >= 30) {
-            stopRecording();
-            return 30;
-          }
-          return prev + 1;
-        });
-      }, 1000);
+        const elapsed = (Date.now() - startTime) / 1000;
+        setRecordingTime(elapsed);
+        
+        // Auto-stop after 30 seconds
+        if (elapsed >= 30) {
+          stopRecording();
+        }
+      }, 100); // Update every 100ms for smoother display
     } catch (error) {
       console.error("Error starting recording:", error);
       
@@ -182,6 +183,29 @@ export default function AuryFlow() {
   };
 
   const stopRecording = () => {
+    // Only stop if we've been recording for at least 0.5 seconds
+    if (recordingTime < 0.5) {
+      setAudioError("Segure por mais tempo para gravar");
+      
+      // Cleanup
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+        mediaRecorderRef.current.stop();
+      }
+      if (recordingIntervalRef.current) {
+        clearInterval(recordingIntervalRef.current);
+        recordingIntervalRef.current = null;
+      }
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current = null;
+      }
+      
+      setIsRecording(false);
+      setInputMode("text");
+      setQuickMode(false);
+      return;
+    }
+    
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop();
     }
@@ -431,7 +455,7 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+    const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
@@ -487,7 +511,7 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                   
                   <div className="flex-1 text-left">
                     <h3 className="text-white font-semibold">Gravação Rápida</h3>
-                    <p className="text-white/60 text-sm">Segure para gravar e confirmar</p>
+                    <p className="text-white/60 text-sm">Pressione e SEGURE para gravar</p>
                   </div>
 
                   <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
@@ -570,10 +594,10 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                 </button>
               </div>
 
-              <div className="flex items-center justify-center gap-2 mt-3">
-                <p className="text-white/40 text-xs">Digite ou segure o microfone para gravar</p>
+              <div className="flex flex-col items-center justify-center gap-1 mt-3">
+                <p className="text-white/40 text-xs">Digite ou pressione e SEGURE o microfone para gravar</p>
                 {audioError && (
-                  <p className="text-rose-400 text-xs">• {audioError}</p>
+                  <p className="text-rose-400 text-xs">{audioError}</p>
                 )}
               </div>
             </motion.div>
