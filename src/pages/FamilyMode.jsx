@@ -234,13 +234,22 @@ export default function FamilyMode() {
     });
   };
 
-  const handleContribute = () => {
+  const handleContribute = (isAdding = true) => {
     if (!selectedGoal || !contributionAmount) return;
     
+    const amount = parseFloat(contributionAmount);
     const contributions = selectedGoal.contributions || {};
-    contributions[user.email] = (contributions[user.email] || 0) + parseFloat(contributionAmount);
+    const currentUserContribution = contributions[user.email] || 0;
     
-    const newCurrentAmount = (selectedGoal.current_amount || 0) + parseFloat(contributionAmount);
+    // Se estiver retirando, não permitir valor negativo
+    const newContribution = isAdding 
+      ? currentUserContribution + amount 
+      : Math.max(0, currentUserContribution - amount);
+    
+    contributions[user.email] = newContribution;
+    
+    const changeAmount = isAdding ? amount : -Math.min(amount, currentUserContribution);
+    const newCurrentAmount = Math.max(0, (selectedGoal.current_amount || 0) + changeAmount);
     
     updateGoalMutation.mutate({
       id: selectedGoal.id,
@@ -1020,11 +1029,11 @@ export default function FamilyMode() {
                 </div>
               </div>
 
-              {/* Add Contribution */}
+              {/* Add/Remove Contribution */}
               <div className="space-y-3 p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
                 <Label htmlFor="contribution" className="flex items-center gap-2 text-[#1B3A52]">
                   <Coins className="w-4 h-4" />
-                  Adicionar Contribuição
+                  Ajustar Contribuição
                 </Label>
                 <div className="flex gap-2">
                   <Input
@@ -1037,12 +1046,21 @@ export default function FamilyMode() {
                     className="border-slate-200 focus:border-[#5FBDBD]"
                   />
                   <Button
-                    onClick={handleContribute}
+                    onClick={() => handleContribute(false)}
+                    disabled={!contributionAmount || updateGoalMutation.isPending}
+                    variant="outline"
+                    className="border-rose-200 hover:bg-rose-50"
+                  >
+                    <TrendingDown className="w-4 h-4 mr-1" />
+                    Retirar
+                  </Button>
+                  <Button
+                    onClick={() => handleContribute(true)}
                     disabled={!contributionAmount || updateGoalMutation.isPending}
                     className="bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5]"
                   >
                     <Plus className="w-4 h-4 mr-1" />
-                    Contribuir
+                    Adicionar
                   </Button>
                 </div>
               </div>
