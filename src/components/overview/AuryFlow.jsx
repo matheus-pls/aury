@@ -12,7 +12,8 @@ import {
   ArrowDownCircle,
   ArrowUpCircle,
   Edit3,
-  Heart
+  Heart,
+  Square
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,15 +35,12 @@ const INCOME_TYPES = {
 };
 
 export default function AuryFlow() {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [inputMode, setInputMode] = useState("idle"); // idle, text, recording, processing, confirming
   const [inputText, setInputText] = useState("");
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [parsedData, setParsedData] = useState(null);
-  const [audioBlob, setAudioBlob] = useState(null);
-  const [audioError, setAudioError] = useState(null);
-  const [quickMode, setQuickMode] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -52,12 +50,9 @@ export default function AuryFlow() {
   
   const queryClient = useQueryClient();
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-      }
+      stopRecordingCleanup();
     };
   }, []);
 
@@ -66,6 +61,9 @@ export default function AuryFlow() {
     onSuccess: () => {
       queryClient.invalidateQueries(['expenses']);
       resetFlow();
+    },
+    onError: () => {
+      setErrorMessage("Erro ao salvar gasto");
     }
   });
 
@@ -74,28 +72,53 @@ export default function AuryFlow() {
     onSuccess: () => {
       queryClient.invalidateQueries(['incomes']);
       resetFlow();
+    },
+    onError: () => {
+      setErrorMessage("Erro ao salvar renda");
     }
   });
 
   const resetFlow = () => {
-    setIsExpanded(false);
     setInputMode("idle");
     setInputText("");
     setParsedData(null);
-    setAudioBlob(null);
     setRecordingTime(0);
+    setErrorMessage(null);
+    stopRecordingCleanup();
+  };
+
+  const stopRecordingCleanup = () => {
+    if (recordingIntervalRef.current) {
+      clearInterval(recordingIntervalRef.current);
+      recordingIntervalRef.current = null;
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+  };
+
+  const toggleRecording = async () => {
+    if (isRecording) {
+      // Stop recording
+      stopRecording();
+    } else {
+      // Start recording
+      await startRecording();
+    }
   };
 
   const startRecording = async () => {
     try {
-      setAudioError(null);
+      setErrorMessage(null);
       
-      // Check for browser support
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error("Seu navegador não suporta gravação de áudio");
       }
 
-      // Request audio with specific constraints for better quality
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
@@ -106,12 +129,9 @@ export default function AuryFlow() {
       
       streamRef.current = stream;
       
-      // Check for MediaRecorder support with preferred format
       const mimeType = MediaRecorder.isTypeSupported('audio/webm') 
         ? 'audio/webm' 
-        : MediaRecorder.isTypeSupported('audio/mp4')
-        ? 'audio/mp4'
-        : 'audio/ogg';
+        : 'audio/mp4';
       
       mediaRecorderRef.current = new MediaRecorder(stream, { mimeType });
       audioChunksRef.current = [];
@@ -124,125 +144,76 @@ export default function AuryFlow() {
 
       mediaRecorderRef.current.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
-        setAudioBlob(audioBlob);
         
-        // Cleanup stream
-        if (streamRef.current) {
-          streamRef.current.getTracks().forEach(track => track.stop());
-          streamRef.current = null;
-        }
+        stopRecordingCleanup();
         
-        // Only process if we have valid audio data
-        if (audioBlob.size > 0) {
+        if (audioBlob.size > 0 && recordingTime >= 0.5) {
           await processAudio(audioBlob);
         } else {
-          setAudioError("Gravação muito curta");
+          setErrorMessage("Gravação muito curta. Grave por pelo menos 1 segundo.");
           setInputMode("text");
         }
       };
 
-      mediaRecorderRef.current.onerror = (event) => {
-        console.error("MediaRecorder error:", event);
-        setAudioError("Erro ao gravar áudio");
-        stopRecording();
+      mediaRecorderRef.current.onerror = () => {
+        setErrorMessage("Erro ao gravar áudio");
+        stopRecordingCleanup();
+        setIsRecording(false);
         setInputMode("text");
       };
 
-      mediaRecorderRef.current.start(100); // Capture in 100ms chunks for better quality
+      mediaRecorderRef.current.start(100);
       setIsRecording(true);
       setInputMode("recording");
       setRecordingTime(0);
       
-      // Use more precise timing
       let startTime = Date.now();
       recordingIntervalRef.current = setInterval(() => {
         const elapsed = (Date.now() - startTime) / 1000;
         setRecordingTime(elapsed);
         
-        // Auto-stop after 30 seconds
         if (elapsed >= 30) {
           stopRecording();
         }
-      }, 100); // Update every 100ms for smoother display
+      }, 100);
     } catch (error) {
       console.error("Error starting recording:", error);
       
-      // Set user-friendly error messages
-      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        setAudioError("Permissão de microfone negada");
+      if (error.name === 'NotAllowedError') {
+        setErrorMessage("Permissão de microfone negada");
       } else if (error.name === 'NotFoundError') {
-        setAudioError("Nenhum microfone encontrado");
+        setErrorMessage("Nenhum microfone encontrado");
       } else {
-        setAudioError(error.message || "Erro ao acessar microfone");
+        setErrorMessage(error.message || "Erro ao acessar microfone");
       }
       
-      // Fallback to text mode
       setInputMode("text");
-      if (inputRef.current) inputRef.current.focus();
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   };
 
   const stopRecording = () => {
-    // Only stop if we've been recording for at least 0.5 seconds
-    if (recordingTime < 0.5) {
-      setAudioError("Segure por mais tempo para gravar");
-      
-      // Cleanup
-      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-        mediaRecorderRef.current.stop();
-      }
-      if (recordingIntervalRef.current) {
-        clearInterval(recordingIntervalRef.current);
-        recordingIntervalRef.current = null;
-      }
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-        streamRef.current = null;
-      }
-      
-      setIsRecording(false);
-      setInputMode("text");
-      setQuickMode(false);
-      return;
-    }
-    
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
       mediaRecorderRef.current.stop();
     }
     setIsRecording(false);
-    
-    if (recordingIntervalRef.current) {
-      clearInterval(recordingIntervalRef.current);
-      recordingIntervalRef.current = null;
-    }
-    
-    // Cleanup stream immediately
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
   };
 
   const processAudio = async (blob) => {
     setInputMode("processing");
     
     try {
-      // Convert webm to mp3 using the browser's capabilities
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
       const arrayBuffer = await blob.arrayBuffer();
       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
       
-      // Create a WAV file instead (more universally supported)
       const wavBlob = await audioBufferToWav(audioBuffer);
-      
-      // Upload audio file
       const file = new File([wavBlob], "audio.wav", { type: "audio/wav" });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       
-      // Use LLM to transcribe and parse
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Você é um assistente financeiro. O usuário gravou um áudio sobre uma transação financeira.
-        
+
 Analise o áudio e extraia as informações financeiras.
 
 IMPORTANTE:
@@ -270,31 +241,19 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
       });
       
       setParsedData(result);
-      
-      // In quick mode, auto-confirm if confidence is high
-      if (quickMode && result.confidence >= 0.8) {
-        setInputMode("confirming");
-        // Auto-confirm after 1 second
-        setTimeout(() => {
-          confirmTransaction();
-        }, 1000);
-      } else {
-        setInputMode("confirming");
-      }
+      setInputMode("confirming");
     } catch (error) {
       console.error("Error processing audio:", error);
-      setAudioError("Não consegui processar o áudio");
+      setErrorMessage("Não consegui processar o áudio");
       setInputMode("text");
-      setQuickMode(false);
     }
   };
 
-  // Helper function to convert AudioBuffer to WAV
   const audioBufferToWav = (audioBuffer) => {
     return new Promise((resolve) => {
       const numberOfChannels = audioBuffer.numberOfChannels;
       const sampleRate = audioBuffer.sampleRate;
-      const format = 1; // PCM
+      const format = 1;
       const bitDepth = 16;
       
       const bytesPerSample = bitDepth / 8;
@@ -310,7 +269,6 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
       const buffer = new ArrayBuffer(44 + dataLength);
       const view = new DataView(buffer);
       
-      // Write WAV header
       writeString(view, 0, 'RIFF');
       view.setUint32(4, 36 + dataLength, true);
       writeString(view, 8, 'WAVE');
@@ -325,7 +283,6 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
       writeString(view, 36, 'data');
       view.setUint32(40, dataLength, true);
       
-      // Write audio data
       floatTo16BitPCM(view, 44, interleaved);
       
       resolve(new Blob([buffer], { type: 'audio/wav' }));
@@ -395,22 +352,20 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
       setInputMode("confirming");
     } catch (error) {
       console.error("Error processing text:", error);
+      setErrorMessage("Erro ao processar texto");
       setInputMode("text");
     }
   };
 
-  // Calculate tranquility impact
   const calculateTranquilityImpact = () => {
     if (!parsedData) return 0;
     
     if (parsedData.type === "expense") {
-      // Expenses reduce tranquility
-      const percentOfIncome = (parsedData.amount / 3000) * 100; // Assuming avg income ~3k
+      const percentOfIncome = (parsedData.amount / 3000) * 100;
       if (parsedData.category === "superfluous") return -Math.ceil(percentOfIncome * 0.5);
       if (parsedData.category === "essential") return -Math.ceil(percentOfIncome * 0.2);
       if (parsedData.category === "fixed") return -Math.ceil(percentOfIncome * 0.1);
     } else {
-      // Income increases tranquility
       return Math.ceil((parsedData.amount / 1000) * 2);
     }
     return 0;
@@ -441,11 +396,6 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
     }
   };
 
-  const quickRecordAndConfirm = async () => {
-    setQuickMode(true);
-    await startRecording();
-  };
-
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -465,23 +415,16 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
       animate={{ opacity: 1, y: 0 }}
       className="relative"
     >
-      {/* Main Card */}
       <motion.div
         layout
-        className={`
-          relative overflow-hidden rounded-3xl
-          bg-gradient-to-br from-[#0A2540] to-[#1B3A52]
-          shadow-2xl shadow-[#1B3A52]/20
-          transition-all duration-500
-        `}
+        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0A2540] to-[#1B3A52] shadow-2xl shadow-[#1B3A52]/20"
       >
-        {/* Ambient glow */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#5FBDBD]/10 to-transparent pointer-events-none" />
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-[#5FBDBD]/20 rounded-full blur-3xl" />
         
         <AnimatePresence mode="wait">
-          {/* IDLE STATE - Collapsed */}
-          {inputMode === "idle" && !isExpanded && (
+          {/* IDLE STATE */}
+          {inputMode === "idle" && (
             <motion.div
               key="idle"
               initial={{ opacity: 0 }}
@@ -490,12 +433,8 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
               className="p-5"
             >
               <div className="space-y-3">
-                {/* Quick Record Button */}
                 <button
-                  onMouseDown={quickRecordAndConfirm}
-                  onMouseUp={stopRecording}
-                  onTouchStart={quickRecordAndConfirm}
-                  onTouchEnd={stopRecording}
+                  onClick={toggleRecording}
                   className="w-full flex items-center gap-4 group bg-white/5 hover:bg-white/10 rounded-2xl p-4 transition-all"
                 >
                   <div className="relative">
@@ -510,19 +449,16 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                   </div>
                   
                   <div className="flex-1 text-left">
-                    <h3 className="text-white font-semibold">Gravação Rápida</h3>
-                    <p className="text-white/60 text-sm">Pressione e SEGURE para gravar</p>
+                    <h3 className="text-white font-semibold">Gravação por Voz</h3>
+                    <p className="text-white/60 text-sm">Clique para iniciar</p>
                   </div>
 
                   <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
                 </button>
 
-                {/* Standard Mode Button */}
                 <button
                   onClick={() => {
-                    setIsExpanded(true);
                     setInputMode("text");
-                    setQuickMode(false);
                     setTimeout(() => inputRef.current?.focus(), 100);
                   }}
                   className="w-full flex items-center gap-4 text-center justify-center py-3 text-white/60 hover:text-white text-sm transition-colors"
@@ -531,15 +467,15 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                   <span>ou digite manualmente</span>
                 </button>
 
-                {audioError && (
-                  <p className="text-rose-400 text-xs text-center">{audioError}</p>
+                {errorMessage && (
+                  <p className="text-rose-400 text-xs text-center">{errorMessage}</p>
                 )}
               </div>
             </motion.div>
           )}
 
           {/* TEXT INPUT STATE */}
-          {(inputMode === "text" || isExpanded) && inputMode !== "recording" && inputMode !== "processing" && inputMode !== "confirming" && (
+          {inputMode === "text" && (
             <motion.div
               key="text"
               initial={{ opacity: 0, height: 0 }}
@@ -583,11 +519,7 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                 </div>
                 
                 <button
-                  onMouseDown={startRecording}
-                  onMouseUp={stopRecording}
-                  onMouseLeave={stopRecording}
-                  onTouchStart={startRecording}
-                  onTouchEnd={stopRecording}
+                  onClick={toggleRecording}
                   className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shadow-lg"
                 >
                   <Mic className="w-5 h-5 text-white" />
@@ -595,9 +527,9 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
               </div>
 
               <div className="flex flex-col items-center justify-center gap-1 mt-3">
-                <p className="text-white/40 text-xs">Digite ou pressione e SEGURE o microfone para gravar</p>
-                {audioError && (
-                  <p className="text-rose-400 text-xs">{audioError}</p>
+                <p className="text-white/40 text-xs">Digite ou clique no microfone para gravar</p>
+                {errorMessage && (
+                  <p className="text-rose-400 text-xs">{errorMessage}</p>
                 )}
               </div>
             </motion.div>
@@ -612,7 +544,6 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
               exit={{ opacity: 0, scale: 0.9 }}
               className="p-8 text-center relative"
             >
-              {/* Recording indicator */}
               <div className="absolute top-4 right-4 flex items-center gap-2">
                 <motion.div
                   className="w-3 h-3 bg-rose-500 rounded-full"
@@ -622,7 +553,6 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                 <span className="text-rose-400 text-xs font-semibold">REC</span>
               </div>
 
-              {/* Animated mic circle */}
               <div className="relative w-32 h-32 mx-auto mb-6">
                 <motion.div
                   className="absolute inset-0 bg-[#5FBDBD]/20 rounded-full"
@@ -651,11 +581,10 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
               </div>
               
               <p className="text-white/60 text-sm mb-6">
-                {quickMode ? "Auto-confirmando ao soltar" : "Solte para processar"}
+                Fale naturalmente sobre sua transação
               </p>
 
-              {/* Audio wave animation */}
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center gap-2 mb-6">
                 {[...Array(7)].map((_, i) => (
                   <motion.div
                     key={i}
@@ -671,16 +600,13 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                 ))}
               </div>
 
-              {/* Cancel button */}
-              <button
-                onClick={() => {
-                  stopRecording();
-                  resetFlow();
-                }}
-                className="mt-6 text-white/40 hover:text-white text-sm transition-colors"
+              <Button
+                onClick={toggleRecording}
+                className="bg-rose-500 hover:bg-rose-600 text-white"
               >
-                Cancelar gravação
-              </button>
+                <Square className="w-4 h-4 mr-2" />
+                Parar Gravação
+              </Button>
             </motion.div>
           )}
 
@@ -715,18 +641,6 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
               exit={{ opacity: 0, y: -20 }}
               className="p-6"
             >
-              {quickMode && (
-                <div className="mb-4 text-center">
-                  <motion.div
-                    className="inline-flex items-center gap-2 bg-[#5FBDBD]/20 text-[#5FBDBD] px-4 py-2 rounded-full text-sm"
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    Confirmando automaticamente...
-                  </motion.div>
-                </div>
-              )}
               <div className="flex items-center gap-3 mb-6">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
                   parsedData.type === "expense" 
@@ -766,7 +680,6 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                 </div>
               </div>
 
-              {/* Tranquility Impact */}
               {(() => {
                 const impact = calculateTranquilityImpact();
                 if (impact === 0) return null;
