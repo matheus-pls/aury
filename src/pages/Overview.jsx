@@ -116,10 +116,10 @@ export default function Overview() {
   const tranquilityStatus = getTranquilityStatus();
 
   const quickActions = [
-    { label: "Registrar Gasto", icon: Receipt, action: "expense", color: "from-rose-500 to-red-500" },
-    { label: "Adicionar Renda", icon: TrendingUp, action: "income", color: "from-emerald-500 to-green-500" },
-    { label: "Criar Meta", icon: Target, action: "goal", color: "from-[#5FBDBD] to-[#4FA9A5]" },
-    { label: "Ver Análises", icon: Sparkles, page: "BehaviorAnalysis", color: "from-[#1B3A52] to-[#0A2540]" }
+    { label: "Registrar Gasto", icon: Receipt, action: "expense", color: "from-[#5FBDBD] to-[#4FA9A5]" },
+    { label: "Adicionar Renda", icon: TrendingUp, action: "income", color: "from-[#2A4A62] to-[#1B3A52]" },
+    { label: "Criar Meta", icon: Target, action: "goal", color: "from-[#1B3A52] to-[#0A2540]" },
+    { label: "Ver Análises", icon: Sparkles, page: "BehaviorAnalysis", color: "from-[#5FBDBD] to-[#2A4A62]" }
   ];
 
   const [quickActionDialog, setQuickActionDialog] = React.useState(null);
