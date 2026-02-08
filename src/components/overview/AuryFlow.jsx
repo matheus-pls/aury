@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { 
   Mic, 
   Send, 
@@ -13,7 +13,8 @@ import {
   ArrowUpCircle,
   Edit3,
   Heart,
-  Square
+  Square,
+  Brain
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +43,7 @@ export default function AuryFlow() {
   const [recordingTime, setRecordingTime] = useState(0);
   const [parsedData, setParsedData] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const [isEditingCategory, setIsEditingCategory] = useState(false);
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -51,6 +53,15 @@ export default function AuryFlow() {
   const recordingStartTimeRef = useRef(0);
   
   const queryClient = useQueryClient();
+
+  // Fetch historical expenses for ML learning
+  const { data: historicalExpenses = [] } = useQuery({
+    queryKey: ['expenses-history'],
+    queryFn: async () => {
+      const result = await base44.entities.Expense.list();
+      return result || [];
+    }
+  });
 
   useEffect(() => {
     return () => {
@@ -90,6 +101,7 @@ export default function AuryFlow() {
     setParsedData(null);
     setRecordingTime(0);
     setErrorMessage(null);
+    setIsEditingCategory(false);
     recordingStartTimeRef.current = 0;
     stopRecordingCleanup();
   };
@@ -446,21 +458,51 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
     setInputMode("processing");
     
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Você é um assistente financeiro. O usuário digitou: "${inputText}"
+      // Build learning context from historical data
+      const recentExpenses = historicalExpenses
+        .slice(-30)
+        .map(e => ({
+          description: e.description,
+          amount: e.amount,
+          category: e.category
+        }));
 
-Analise o texto e extraia as informações financeiras.
+      const learningContext = recentExpenses.length > 0 
+        ? `\n\nAPRENDIZADO: Aqui estão as últimas despesas do usuário para você aprender os padrões:
+${recentExpenses.map(e => `- "${e.description}" (R$ ${e.amount}) → ${e.category}`).join('\n')}
+
+Use esses padrões para sugerir a categoria mais provável. Por exemplo:
+- Se o usuário já registrou "Uber" antes como "essential", use "essential" novamente
+- Se "Netflix" foi "superfluous", mantenha essa categoria
+- Aprenda com os valores típicos de cada descrição`
+        : '';
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Você é um assistente financeiro inteligente com APRENDIZADO DE MÁQUINA. 
+
+O usuário digitou: "${inputText}"
+
+Sua missão é extrair informações financeiras e APRENDER com o histórico para sugerir a categoria mais provável.
+${learningContext}
 
 IMPORTANTE:
 - Se for um GASTO (gastei, paguei, comprei, etc), identifique como "expense"
 - Se for uma ENTRADA/RECEITA (recebi, ganhei, entrou, etc), identifique como "income"
 - Extraia o valor numérico
-- Sugira uma categoria apropriada
-- Extraia a descrição
+- Use o histórico acima para sugerir a categoria MAIS PROVÁVEL baseada em padrões similares
+- Se a descrição for similar a algo no histórico, use a MESMA categoria
+- Extraia uma descrição clara
 
-CATEGORIAS DE GASTO: fixed (contas fixas como aluguel, internet), essential (alimentação, transporte, saúde), superfluous (lazer, compras não essenciais), emergency (emergências), investment (investimentos)
+CATEGORIAS DE GASTO: 
+- fixed: contas fixas (aluguel, internet, celular, condomínio)
+- essential: necessidades básicas (mercado, transporte, Uber, combustível, farmácia)
+- superfluous: lazer e extras (restaurante, cinema, Netflix, delivery, roupas)
+- emergency: emergências (médico urgente, conserto)
+- investment: investimentos
 
-CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (rendimento), rental (aluguel recebido), other (outros)`,
+CATEGORIAS DE RENDA: salary, freelance, investment, rental, other
+
+ATENÇÃO: Use o histórico para aumentar a precisão. Se houver padrão similar, mantenha a categoria!`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -468,9 +510,16 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
             amount: { type: "number" },
             description: { type: "string" },
             category: { type: "string" },
-            confidence: { type: "number" }
+            confidence: { 
+              type: "number",
+              description: "Confiança de 0-1, maior se baseada em histórico similar"
+            },
+            reasoning: {
+              type: "string",
+              description: "Breve explicação de por que escolheu essa categoria"
+            }
           },
-          required: ["type", "amount", "description", "category"]
+          required: ["type", "amount", "description", "category", "confidence"]
         }
       });
       
@@ -758,10 +807,18 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                     : <ArrowUpCircle className="w-6 h-6 text-emerald-400" />
                   }
                 </div>
-                <div>
-                  <p className="text-white/60 text-sm">
-                    {parsedData.type === "expense" ? "Registrar Gasto" : "Registrar Entrada"}
-                  </p>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-white/60 text-sm">
+                      {parsedData.type === "expense" ? "Registrar Gasto" : "Registrar Entrada"}
+                    </p>
+                    {historicalExpenses.length > 5 && (
+                      <div className="flex items-center gap-1 bg-purple-500/20 px-2 py-0.5 rounded-full">
+                        <Brain className="w-3 h-3 text-purple-400" />
+                        <span className="text-[10px] text-purple-300 font-medium">ML</span>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-white font-semibold text-lg">{parsedData.description}</p>
                 </div>
               </div>
@@ -775,15 +832,79 @@ CATEGORIAS DE RENDA: salary (salário), freelance (trabalho extra), investment (
                     {parsedData.type === "expense" ? "-" : "+"}{formatCurrency(parsedData.amount)}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-white/60">Categoria</span>
-                  <span className="text-white font-medium">
-                    {parsedData.type === "expense" 
-                      ? EXPENSE_CATEGORIES[parsedData.category] || parsedData.category
-                      : INCOME_TYPES[parsedData.category] || parsedData.category
-                    }
-                  </span>
+                
+                <div className="mb-3 pt-3 border-t border-white/10">
+                  <div className="flex justify-between items-start">
+                    <span className="text-white/60">Categoria</span>
+                    {!isEditingCategory ? (
+                      <button
+                        onClick={() => setIsEditingCategory(true)}
+                        className="flex items-center gap-2 text-white font-medium hover:text-[#5FBDBD] transition-colors"
+                      >
+                        <span>
+                          {parsedData.type === "expense" 
+                            ? EXPENSE_CATEGORIES[parsedData.category] || parsedData.category
+                            : INCOME_TYPES[parsedData.category] || parsedData.category
+                          }
+                        </span>
+                        <Edit3 className="w-3 h-3" />
+                      </button>
+                    ) : (
+                      <select
+                        value={parsedData.category}
+                        onChange={(e) => {
+                          setParsedData({...parsedData, category: e.target.value});
+                          setIsEditingCategory(false);
+                        }}
+                        className="bg-white/10 text-white rounded-lg px-3 py-1 text-sm border border-white/20 focus:border-[#5FBDBD] focus:outline-none"
+                      >
+                        {parsedData.type === "expense" ? (
+                          <>
+                            <option value="fixed">Gastos Fixos</option>
+                            <option value="essential">Essenciais</option>
+                            <option value="superfluous">Supérfluos</option>
+                            <option value="emergency">Reserva</option>
+                            <option value="investment">Investimentos</option>
+                          </>
+                        ) : (
+                          <>
+                            <option value="salary">Salário</option>
+                            <option value="freelance">Freelance</option>
+                            <option value="investment">Investimento</option>
+                            <option value="rental">Aluguel</option>
+                            <option value="other">Outros</option>
+                          </>
+                        )}
+                      </select>
+                    )}
+                  </div>
                 </div>
+
+                {parsedData.confidence !== undefined && (
+                  <div className="pt-3 border-t border-white/10">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full rounded-full transition-all ${
+                              parsedData.confidence > 0.7 ? 'bg-emerald-400' :
+                              parsedData.confidence > 0.4 ? 'bg-amber-400' : 'bg-rose-400'
+                            }`}
+                            style={{ width: `${parsedData.confidence * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                      <span className="text-xs text-white/60">
+                        {Math.round(parsedData.confidence * 100)}% confiante
+                      </span>
+                    </div>
+                    {parsedData.reasoning && (
+                      <p className="text-xs text-white/50 mt-2 italic">
+                        {parsedData.reasoning}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {(() => {
