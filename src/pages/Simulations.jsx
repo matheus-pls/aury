@@ -40,11 +40,11 @@ const SIMULATION_TYPES = [
   },
   {
     id: "stop_superfluous",
-    title: "Sem Supérfluos",
-    description: "Desafio de 30 dias",
+    title: "Economizar Com",
+    description: "Corte gastos específicos",
     icon: Ban,
     color: "from-[#1B3A52] to-[#0A2540]",
-    prompt: "Se eu parar por 30 dias"
+    prompt: "Se eu economizar com"
   },
   {
     id: "reach_goal",
@@ -403,13 +403,10 @@ export default function Simulations() {
                     <div className="bg-[#5FBDBD]/10 border border-[#5FBDBD]/30 rounded-xl p-6">
                       <div className="flex items-center gap-3 mb-3">
                         <Ban className="w-6 h-6 text-[#5FBDBD]" />
-                        <h3 className="font-semibold text-[#1B3A52]">Desafio de 30 dias</h3>
+                        <h3 className="font-semibold text-[#1B3A52]">Economize cortando gastos</h3>
                       </div>
-                      <p className="text-[#1B3A52] mb-2">
-                        Você economizaria <strong>{formatCurrency(calculateSuperflousExpenses())}</strong> este mês
-                      </p>
-                      <p className="text-sm text-slate-600">
-                        Seus gastos supérfluos representam {Math.round((calculateSuperflousExpenses() / calculateMonthlyIncome()) * 100)}% da sua renda
+                      <p className="text-[#1B3A52] text-sm">
+                        Digite o valor mensal que deseja economizar ou o nome de um gasto específico (ex: streaming, delivery, academia)
                       </p>
                     </div>
                   )}
