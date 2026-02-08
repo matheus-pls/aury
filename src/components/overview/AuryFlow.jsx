@@ -223,6 +223,8 @@ export default function AuryFlow() {
         throw new Error("Arquivo de áudio vazio");
       }
 
+      console.log("Audio blob size:", blob.size, "type:", blob.type);
+
       // Ensure correct mime type
       const mimeType = blob.type || 'audio/webm';
       const fileExtension = mimeType.includes('webm') ? 'webm' : 
@@ -231,12 +233,16 @@ export default function AuryFlow() {
       
       const file = new File([blob], `audio_${Date.now()}.${fileExtension}`, { type: mimeType });
       
+      console.log("Uploading audio file...");
       // Upload audio file
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
       
       if (!uploadResult?.file_url) {
         throw new Error("Falha ao fazer upload do áudio");
       }
+      
+      console.log("Audio uploaded:", uploadResult.file_url);
+      console.log("Processing with LLM...");
       
       // Process audio with LLM (transcription + extraction)
       const result = await base44.integrations.Core.InvokeLLM({
@@ -307,7 +313,10 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
         }
       });
       
+      console.log("LLM result:", result);
+      
       if (!result?.amount || !result?.description) {
+        console.error("Incomplete LLM result:", result);
         throw new Error("Não consegui entender o áudio completamente. Tente falar mais devagar e claramente.");
       }
       
@@ -315,19 +324,25 @@ ATENÇÃO: Este é um arquivo de ÁUDIO real. Você PRECISA ouvir e transcrever 
         throw new Error("O valor precisa ser maior que zero.");
       }
       
+      console.log("Audio processed successfully");
       setParsedData(result);
       setInputMode("confirming");
     } catch (error) {
       console.error("Error processing audio:", error);
+      console.error("Error details:", error.message, error.stack);
       
       let errorMsg = "Não consegui processar o áudio.";
       
-      if (error.message.includes("upload")) {
-        errorMsg = "Erro ao enviar áudio. Verifique sua conexão e tente novamente.";
-      } else if (error.message.includes("entender")) {
+      if (error.message.includes("upload") || error.message.includes("UploadFile")) {
+        errorMsg = "Erro ao enviar áudio. Verifique sua conexão.";
+      } else if (error.message.includes("entender") || error.message.includes("completamente")) {
         errorMsg = error.message;
-      } else if (error.message.includes("vazio")) {
+      } else if (error.message.includes("vazio") || error.message.includes("inválido")) {
         errorMsg = "Arquivo de áudio inválido. Grave novamente.";
+      } else if (error.message.includes("InvokeLLM")) {
+        errorMsg = "Erro ao processar áudio. Tente novamente ou digite manualmente.";
+      } else {
+        errorMsg = `Erro: ${error.message || "Tente novamente ou use o modo texto"}`;
       }
       
       setErrorMessage(errorMsg);
