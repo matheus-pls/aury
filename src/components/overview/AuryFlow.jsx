@@ -203,15 +203,11 @@ export default function AuryFlow() {
     setInputMode("processing");
     
     try {
-      // Convert audio to WAV format for better compatibility
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const arrayBuffer = await blob.arrayBuffer();
-      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-      
-      const wavBlob = await audioBufferToWav(audioBuffer);
+      // Use the original audio format (webm/mp4) - no conversion needed
+      const fileExtension = blob.type.includes('webm') ? 'webm' : 'mp4';
+      const file = new File([blob], `audio.${fileExtension}`, { type: blob.type });
       
       // Upload audio file
-      const file = new File([wavBlob], "audio.wav", { type: "audio/wav" });
       const uploadResult = await base44.integrations.Core.UploadFile({ file });
       
       if (!uploadResult?.file_url) {
