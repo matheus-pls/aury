@@ -4,9 +4,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Shield, AlertTriangle, TrendingUp, Mic, ChevronLeft } from "lucide-react";
+import { Shield, AlertTriangle, TrendingUp, Mic, ChevronLeft, Edit3, Receipt, TrendingUp as TrendingUpIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AuryFlowInline from "@/components/overview/AuryFlowInline";
 
 export default function DailyCheckIn() {
@@ -122,6 +126,63 @@ export default function DailyCheckIn() {
   };
 
   const [showAuryFlow, setShowAuryFlow] = useState(false);
+  const [showManualEntry, setShowManualEntry] = useState(false);
+  const [entryType, setEntryType] = useState("expense");
+  const [formData, setFormData] = useState({
+    description: "",
+    amount: "",
+    category: "essential",
+    date: new Date().toISOString().slice(0, 10),
+    type: "salary"
+  });
+
+  const createExpenseMutation = useMutation({
+    mutationFn: (data) => base44.entities.Expense.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['expenses']);
+      setShowManualEntry(false);
+      setFormData({
+        description: "",
+        amount: "",
+        category: "essential",
+        date: new Date().toISOString().slice(0, 10),
+        type: "salary"
+      });
+    }
+  });
+
+  const createIncomeMutation = useMutation({
+    mutationFn: (data) => base44.entities.Income.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['incomes']);
+      setShowManualEntry(false);
+      setFormData({
+        description: "",
+        amount: "",
+        category: "essential",
+        date: new Date().toISOString().slice(0, 10),
+        type: "salary"
+      });
+    }
+  });
+
+  const handleManualSubmit = (e) => {
+    e.preventDefault();
+    if (entryType === "expense") {
+      createExpenseMutation.mutate({
+        ...formData,
+        amount: parseFloat(formData.amount),
+        month_year: formData.date.slice(0, 7)
+      });
+    } else {
+      createIncomeMutation.mutate({
+        description: formData.description,
+        amount: parseFloat(formData.amount),
+        type: formData.type,
+        is_active: true
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
@@ -194,14 +255,26 @@ export default function DailyCheckIn() {
                     className="w-full bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] text-white shadow-md h-12"
                   >
                     <Mic className="w-5 h-5 mr-2" />
-                    Registrar com Aury Flow
+                    Registrar com Voz
+                  </Button>
+
+                  <Button
+                    onClick={() => {
+                      setEntryType("expense");
+                      setShowManualEntry(true);
+                    }}
+                    variant="outline"
+                    className="w-full border-[#5FBDBD] text-[#5FBDBD] hover:bg-[#5FBDBD]/5 h-12"
+                  >
+                    <Edit3 className="w-5 h-5 mr-2" />
+                    Preencher Manualmente
                   </Button>
                   
                   <Button
                     onClick={handleComplete}
                     disabled={isCompleting}
-                    variant="outline"
-                    className="w-full border-slate-200 hover:bg-slate-50"
+                    variant="ghost"
+                    className="w-full text-slate-500 hover:text-slate-700"
                   >
                     {isCompleting ? "Carregando..." : "Continuar para o app"}
                   </Button>
@@ -238,6 +311,130 @@ export default function DailyCheckIn() {
           Check-in diário • 10 segundos para clareza financeira
         </p>
       </motion.div>
+
+      {/* Manual Entry Dialog */}
+      <Dialog open={showManualEntry} onOpenChange={setShowManualEntry}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#1B3A52]">
+              {entryType === "expense" ? "Registrar Gasto" : "Registrar Renda"}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex gap-2 mb-4">
+            <Button
+              onClick={() => setEntryType("expense")}
+              variant={entryType === "expense" ? "default" : "outline"}
+              className={entryType === "expense" ? "flex-1 bg-rose-500 hover:bg-rose-600" : "flex-1"}
+            >
+              <Receipt className="w-4 h-4 mr-2" />
+              Gasto
+            </Button>
+            <Button
+              onClick={() => setEntryType("income")}
+              variant={entryType === "income" ? "default" : "outline"}
+              className={entryType === "income" ? "flex-1 bg-emerald-500 hover:bg-emerald-600" : "flex-1"}
+            >
+              <TrendingUpIcon className="w-4 h-4 mr-2" />
+              Renda
+            </Button>
+          </div>
+
+          <form onSubmit={handleManualSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Input
+                placeholder={entryType === "expense" ? "Ex: Almoço" : "Ex: Salário"}
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Valor</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="0,00"
+                  value={formData.amount}
+                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                  required
+                />
+              </div>
+              {entryType === "expense" && (
+                <div className="space-y-2">
+                  <Label>Data</Label>
+                  <Input
+                    type="date"
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    required
+                  />
+                </div>
+              )}
+            </div>
+
+            {entryType === "expense" ? (
+              <div className="space-y-2">
+                <Label>Categoria</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) => setFormData({ ...formData, category: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fixed">Gastos Fixos</SelectItem>
+                    <SelectItem value="essential">Essenciais</SelectItem>
+                    <SelectItem value="superfluous">Supérfluos</SelectItem>
+                    <SelectItem value="emergency">Reserva</SelectItem>
+                    <SelectItem value="investment">Investimentos</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label>Tipo</Label>
+                <Select
+                  value={formData.type}
+                  onValueChange={(value) => setFormData({ ...formData, type: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="salary">Salário</SelectItem>
+                    <SelectItem value="freelance">Freelance</SelectItem>
+                    <SelectItem value="investment">Investimento</SelectItem>
+                    <SelectItem value="rental">Aluguel</SelectItem>
+                    <SelectItem value="other">Outros</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="flex gap-3 pt-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="flex-1" 
+                onClick={() => setShowManualEntry(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                type="submit" 
+                className={`flex-1 ${entryType === "expense" ? "bg-rose-500 hover:bg-rose-600" : "bg-emerald-500 hover:bg-emerald-600"}`}
+              >
+                Registrar
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
