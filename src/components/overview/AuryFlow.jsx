@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const EXPENSE_CATEGORIES = {
   fixed: "Gastos Fixos",
@@ -61,9 +62,11 @@ export default function AuryFlow() {
     mutationFn: (data) => base44.entities.Expense.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['expenses']);
+      toast.success("Gasto registrado com sucesso!");
       resetFlow();
     },
     onError: () => {
+      toast.error("Erro ao salvar gasto");
       setErrorMessage("Erro ao salvar gasto");
     }
   });
@@ -72,9 +75,11 @@ export default function AuryFlow() {
     mutationFn: (data) => base44.entities.Income.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries(['incomes']);
+      toast.success("Renda registrada com sucesso!");
       resetFlow();
     },
     onError: () => {
+      toast.error("Erro ao salvar renda");
       setErrorMessage("Erro ao salvar renda");
     }
   });
