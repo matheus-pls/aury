@@ -111,65 +111,65 @@ export default function EmergencyFund() {
     ? Math.ceil(remainingToGoal / monthlyContribution)
     : 0;
 
-  // Risk level
-  const getRiskLevel = () => {
+  // Status level
+  const getStatusLevel = () => {
     if (progressPercentage >= 100) return { 
-      level: "Protegido", 
-      color: "emerald", 
+      level: "Completa", 
+      gradient: "from-[#5FBDBD] via-[#4FA9A5] to-[#2A4A62]",
       icon: CheckCircle2, 
-      message: "Sua reserva está completa!" 
+      message: "Você construiu sua proteção. Essa reserva te dá tranquilidade." 
     };
     if (progressPercentage >= 50) return { 
-      level: "Construindo", 
-      color: "blue", 
+      level: "Crescendo", 
+      gradient: "from-[#5FBDBD] to-[#4FA9A5]",
       icon: TrendingUp, 
-      message: "Continue assim, você está no caminho certo" 
+      message: "Você está no caminho certo. Continue nesse ritmo." 
     };
     if (progressPercentage >= 25) return { 
-      level: "Iniciando", 
-      color: "amber", 
-      icon: AlertTriangle, 
-      message: "Aumente suas contribuições se possível" 
+      level: "Começando", 
+      gradient: "from-[#4FA9A5] to-[#2A4A62]",
+      icon: Shield, 
+      message: "Todo início conta. Cada quantia fortalece sua segurança." 
     };
     return { 
-      level: "Crítico", 
-      color: "red", 
-      icon: AlertTriangle, 
-      message: "Priorize construir sua reserva!" 
+      level: "Em Construção", 
+      gradient: "from-[#2A4A62] to-[#1B3A52]",
+      icon: Shield, 
+      message: "Sua caixinha está te esperando. Comece com o que puder." 
     };
   };
 
-  const risk = getRiskLevel();
-  const RiskIcon = risk.icon;
+  const status = getStatusLevel();
+  const StatusIcon = status.icon;
 
-  // Alerts
-  const alerts = [];
+  // Informational messages
+  const messages = [];
   if (currentEmergencyFund === 0) {
-    alerts.push({
-      type: "danger",
-      message: "Você ainda não tem reserva de emergência. Comece agora mesmo!"
+    messages.push({
+      type: "info",
+      message: "Sua caixinha ainda está vazia. Que tal começar com uma pequena quantia?"
     });
   } else if (monthsOfSurvival < 1) {
-    alerts.push({
-      type: "danger",
-      message: `Sua reserva cobre apenas ${monthsOfSurvival.toFixed(1)} mês. O ideal é ter no mínimo 3 meses.`
+    messages.push({
+      type: "info",
+      message: `Sua reserva já cobre ${monthsOfSurvival.toFixed(1)} mês. Continuando assim, você chega nos 3 meses recomendados.`
     });
   } else if (monthsOfSurvival < 3) {
-    alerts.push({
-      type: "warning",
-      message: `Você tem ${monthsOfSurvival.toFixed(1)} meses de reserva. Continue aumentando!`
+    messages.push({
+      type: "info",
+      message: `Você tem ${monthsOfSurvival.toFixed(1)} meses guardados. Está construindo sua segurança.`
     });
   } else if (monthsOfSurvival >= emergencyGoalMonths) {
-    alerts.push({
+    messages.push({
       type: "success",
-      message: "Parabéns! Você atingiu sua meta de reserva de emergência."
+      message: "Sua meta foi alcançada! Você tem a segurança que planejou."
     });
   }
 
   if (monthlyContribution < monthlyEssentialExpenses * 0.1 && progressPercentage < 100) {
-    alerts.push({
-      type: "warning",
-      message: "Sua contribuição mensal é baixa. Tente aumentar para acelerar sua meta."
+    messages.push({
+      type: "info",
+      message: "Aumentando um pouco a contribuição mensal, você acelera a construção da sua reserva."
     });
   }
 
@@ -239,8 +239,7 @@ export default function EmergencyFund() {
           <div className="flex gap-2">
             <Button
               onClick={() => setShowAddDialog(true)}
-              variant="outline"
-              className="border-emerald-500 text-emerald-600 hover:bg-emerald-50"
+              className="bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] hover:from-[#4FA9A5] hover:to-[#5FBDBD] shadow-md"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
               Adicionar
@@ -248,7 +247,7 @@ export default function EmergencyFund() {
             <Button
               onClick={() => setShowWithdrawDialog(true)}
               variant="outline"
-              className="border-rose-500 text-rose-600 hover:bg-rose-50"
+              className="border-slate-300 text-slate-600 hover:bg-slate-50"
             >
               <TrendingDown className="w-4 h-4 mr-2" />
               Retirar
@@ -262,35 +261,56 @@ export default function EmergencyFund() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className={`bg-gradient-to-br from-${risk.color}-500 to-${risk.color}-600 rounded-3xl p-8 text-white shadow-xl`}
+        className={`relative overflow-hidden bg-gradient-to-br ${status.gradient} rounded-3xl p-8 text-white shadow-aury-lg`}
       >
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <RiskIcon className="w-8 h-8" />
-            <div>
-              <p className="text-white/80 text-sm">Status da Caixinha</p>
-              <p className="text-2xl font-bold">{risk.level}</p>
+        {/* Decorative elements */}
+        <div className="absolute -right-12 -top-12 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute -left-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+        
+        <div className="relative z-10">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center">
+                <StatusIcon className="w-7 h-7" />
+              </div>
+              <div>
+                <p className="text-white/80 text-sm font-medium">Sua Caixinha</p>
+                <p className="text-2xl font-bold">{status.level}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-white/80 text-sm">Progresso</p>
+              <p className="text-4xl font-bold">{progressPercentage.toFixed(0)}%</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-white/80 text-sm">Progresso</p>
-            <p className="text-3xl font-bold">{progressPercentage.toFixed(0)}%</p>
+
+          <div className="space-y-4 mb-6">
+            <div className="flex justify-between items-baseline">
+              <div>
+                <p className="text-white/70 text-xs mb-1">Valor guardado</p>
+                <p className="text-3xl font-bold tabular-nums">{formatCurrency(currentEmergencyFund)}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-white/70 text-xs mb-1">Meta total</p>
+                <p className="text-xl font-semibold tabular-nums">{formatCurrency(idealEmergencyFund)}</p>
+              </div>
+            </div>
+            <div className="h-3 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(progressPercentage, 100)}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="h-full bg-white rounded-full"
+              />
+            </div>
+            <p className="text-white/70 text-sm">{emergencyGoalMonths} meses de proteção</p>
+          </div>
+
+          <div className="flex items-start gap-3 p-4 bg-white/10 backdrop-blur-sm rounded-xl">
+            <Shield className="w-5 h-5 flex-shrink-0 mt-0.5" />
+            <p className="text-white/90 text-sm leading-relaxed">{status.message}</p>
           </div>
         </div>
-
-        <div className="space-y-3 mb-6">
-          <div className="flex justify-between text-sm">
-            <span className="text-white/80">Caixinha atual</span>
-            <span className="font-semibold">{formatCurrency(currentEmergencyFund)}</span>
-          </div>
-          <Progress value={progressPercentage} className="h-3 bg-white/20" />
-          <div className="flex justify-between text-sm">
-            <span className="text-white/80">Meta de {emergencyGoalMonths} meses</span>
-            <span className="font-semibold">{formatCurrency(idealEmergencyFund)}</span>
-          </div>
-        </div>
-
-        <p className="text-white/90 text-sm">{risk.message}</p>
       </motion.div>
 
       {/* Quick Stats */}
@@ -302,11 +322,11 @@ export default function EmergencyFund() {
           className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
         >
           <div className="flex items-center gap-2 mb-3">
-            <Clock className="w-5 h-5 text-slate-400" />
-            <p className="text-sm text-slate-500">Tempo de Sobrevivência</p>
+            <Clock className="w-5 h-5 text-[#5FBDBD]" />
+            <p className="text-sm text-slate-600 font-medium">Proteção Atual</p>
           </div>
-          <p className="text-4xl font-bold text-slate-800">{monthsOfSurvival.toFixed(1)}</p>
-          <p className="text-sm text-slate-500 mt-1">meses sem renda</p>
+          <p className="text-4xl font-bold text-[#1B3A52]">{monthsOfSurvival.toFixed(1)}</p>
+          <p className="text-sm text-slate-500 mt-1">meses de tranquilidade</p>
         </motion.div>
 
         <motion.div
@@ -316,11 +336,11 @@ export default function EmergencyFund() {
           className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
         >
           <div className="flex items-center gap-2 mb-3">
-            <Target className="w-5 h-5 text-slate-400" />
-            <p className="text-sm text-slate-500">Falta para Meta</p>
+            <Target className="w-5 h-5 text-[#5FBDBD]" />
+            <p className="text-sm text-slate-600 font-medium">Falta Guardar</p>
           </div>
-          <p className="text-4xl font-bold text-slate-800 tabular-nums">{formatCurrency(remainingToGoal)}</p>
-          <p className="text-sm text-slate-500 mt-1">ainda faltam</p>
+          <p className="text-4xl font-bold text-[#1B3A52] tabular-nums">{formatCurrency(remainingToGoal)}</p>
+          <p className="text-sm text-slate-500 mt-1">para completar</p>
         </motion.div>
 
         <motion.div
@@ -330,45 +350,41 @@ export default function EmergencyFund() {
           className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
         >
           <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-5 h-5 text-slate-400" />
-            <p className="text-sm text-slate-500">Tempo até Completar</p>
+            <Zap className="w-5 h-5 text-[#5FBDBD]" />
+            <p className="text-sm text-slate-600 font-medium">No Ritmo Atual</p>
           </div>
-          <p className="text-4xl font-bold text-slate-800">
+          <p className="text-4xl font-bold text-[#1B3A52]">
             {monthsToComplete > 0 ? monthsToComplete : "—"}
           </p>
           <p className="text-sm text-slate-500 mt-1">
-            {monthsToComplete > 0 ? "meses no ritmo atual" : "meta atingida"}
+            {monthsToComplete > 0 ? "meses até completar" : "objetivo alcançado"}
           </p>
         </motion.div>
       </div>
 
-      {/* Alerts */}
-      {alerts.length > 0 && (
+      {/* Informational Messages */}
+      {messages.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="space-y-2"
+          className="space-y-3"
         >
-          {alerts.map((alert, index) => (
+          {messages.map((msg, index) => (
             <div
               key={index}
-              className={`p-4 rounded-xl border ${
-                alert.type === "success"
-                  ? "bg-emerald-50 border-emerald-200"
-                  : alert.type === "warning"
-                  ? "bg-amber-50 border-amber-200"
-                  : "bg-red-50 border-red-200"
+              className={`p-5 rounded-2xl border ${
+                msg.type === "success"
+                  ? "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200"
+                  : "bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 border-[#5FBDBD]/20"
               }`}
             >
-              <p className={`text-sm ${
-                alert.type === "success"
+              <p className={`text-sm leading-relaxed ${
+                msg.type === "success"
                   ? "text-emerald-700"
-                  : alert.type === "warning"
-                  ? "text-amber-700"
-                  : "text-red-700"
+                  : "text-[#1B3A52]"
               }`}>
-                {alert.message}
+                {msg.message}
               </p>
             </div>
           ))}
@@ -436,27 +452,26 @@ export default function EmergencyFund() {
 
                 {/* Recommendations */}
                 <div>
-                  <h3 className="font-semibold text-slate-800 mb-4">Recomendações</h3>
-                  <div className="space-y-2">
+                  <h3 className="font-semibold text-slate-800 mb-4">Orientações</h3>
+                  <div className="space-y-3">
                     {progressPercentage < 100 && (
-                      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                        <p className="text-sm text-amber-800 font-medium mb-2">📈 Para completar mais rápido</p>
-                        <p className="text-xs text-amber-700">
-                          Com um aporte adicional de {formatCurrency(remainingToGoal / 6)} por mês, 
-                          você completa sua reserva em 6 meses.
+                      <div className="bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 border border-[#5FBDBD]/20 rounded-xl p-4">
+                        <p className="text-sm text-[#1B3A52] font-medium mb-2">💫 Para acelerar</p>
+                        <p className="text-xs text-slate-700 leading-relaxed">
+                          Adicionando {formatCurrency(remainingToGoal / 6)} por mês, você completa sua caixinha em 6 meses. No seu tempo, sem pressão.
                         </p>
                       </div>
                     )}
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                      <p className="text-sm text-green-800 font-medium mb-2">💡 Dica</p>
-                      <p className="text-xs text-green-700">
-                        Mantenha sua reserva em aplicações líquidas e seguras, como CDB com liquidez diária ou Tesouro Selic.
+                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
+                      <p className="text-sm text-emerald-800 font-medium mb-2">💡 Onde guardar</p>
+                      <p className="text-xs text-emerald-700 leading-relaxed">
+                        Aplicações líquidas e seguras são ideais: CDB com liquidez diária, Tesouro Selic ou poupança.
                       </p>
                     </div>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <p className="text-sm text-blue-800 font-medium mb-2">🎯 Meta ideal</p>
-                      <p className="text-xs text-blue-700">
-                        O recomendado é ter entre 6 e 12 meses de gastos essenciais guardados.
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
+                      <p className="text-sm text-blue-800 font-medium mb-2">🎯 Quanto é o ideal</p>
+                      <p className="text-xs text-blue-700 leading-relaxed">
+                        Entre 6 e 12 meses de gastos essenciais é o recomendado para ter tranquilidade.
                       </p>
                     </div>
                   </div>
