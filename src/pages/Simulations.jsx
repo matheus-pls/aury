@@ -12,7 +12,8 @@ import {
   Heart,
   ArrowRight,
   Calendar,
-  Zap
+  Zap,
+  Hourglass
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,12 +40,12 @@ const SIMULATION_TYPES = [
     prompt: "E se eu ganhar"
   },
   {
-    id: "stop_superfluous",
-    title: "Economizar Com",
-    description: "Corte gastos específicos",
-    icon: Ban,
+    id: "cost_of_time",
+    title: "Quanto Custa seu Tempo",
+    description: "Gasto convertido em horas/dias de trabalho",
+    icon: Hourglass,
     color: "from-[#1B3A52] to-[#0A2540]",
-    prompt: "Se eu economizar com"
+    prompt: "Esse gasto custa"
   },
   {
     id: "reach_goal",
@@ -104,6 +105,12 @@ export default function Simulations() {
 
   const calculateMonthlySavings = () => {
     return calculateMonthlyIncome() - calculateCurrentMonthlyExpenses();
+  };
+
+  const calculateHourlyRate = () => {
+    const monthlyIncome = calculateMonthlyIncome();
+    // Assumindo 22 dias úteis por mês, 8 horas por dia = 176 horas
+    return monthlyIncome / 176;
   };
 
   const runSimulation = () => {
@@ -192,6 +199,67 @@ export default function Simulations() {
                 monthsAfter: monthsAfter > 100 ? "Nunca" : `${monthsAfter} meses`,
                 timeSaved: timeSaved > 0 ? `${timeSaved} meses mais rápido!` : "Sem diferença"
               };
+            }
+          }
+          break;
+
+        case "cost_of_time":
+          const expenseValue = parseFloat(simulationValue) || 0;
+          const hourlyRate = calculateHourlyRate();
+          const monthlyIncome = calculateMonthlyIncome();
+          
+          if (hourlyRate <= 0) {
+            simulationResult = {
+              title: "Não é possível calcular",
+              metrics: [
+                { label: "Renda necessária", value: "Configure sua renda primeiro" }
+              ],
+              emotional: {
+                message: "Configure sua renda mensal na aba de Configurações para usar esta simulação.",
+                impact: "low"
+              }
+            };
+          } else {
+            const hoursOfWork = expenseValue / hourlyRate;
+            const daysOfWork = hoursOfWork / 8;
+            
+            // Cálculo emocional
+            let emotionalMessage = "";
+            if (hoursOfWork < 1) {
+              emotionalMessage = `Esse gasto equivale a apenas ${Math.round(hoursOfWork * 60)} minutos do seu mês. Pequeno, mas conta.`;
+            } else if (hoursOfWork < 8) {
+              emotionalMessage = `Esse gasto custa ${hoursOfWork.toFixed(1)} horas de trabalho. Vale a pena?`;
+            } else if (daysOfWork < 7) {
+              emotionalMessage = `Esse gasto equivale a ${daysOfWork.toFixed(1)} dias completos de trabalho. Pense bem antes!`;
+            } else {
+              emotionalMessage = `Esse gasto custa ${daysOfWork.toFixed(1)} dias de trabalho. É realmente necessário?`;
+            }
+
+            simulationResult = {
+              title: `R$ ${expenseValue.toFixed(2)} em tempo de trabalho`,
+              metrics: [
+                { 
+                  label: "Horas de trabalho",
+                  value: `${hoursOfWork.toFixed(1)}h`,
+                  change: `${(hoursOfWork / 8).toFixed(1)} dias`
+                },
+                { 
+                  label: "Sua taxa horária",
+                  value: formatCurrency(hourlyRate)
+                }
+              ],
+              emotional: {
+                message: emotionalMessage,
+                impact: daysOfWork > 7 ? "high" : daysOfWork > 1 ? "medium" : "low"
+              }
+            };
+
+            // Se for 1 mês de renda
+            if (expenseValue > monthlyIncome * 0.5) {
+              simulationResult.metrics.push({
+                label: "Em relação à renda",
+                value: `${((expenseValue / monthlyIncome) * 100).toFixed(1)}% da renda`
+              });
             }
           }
           break;
@@ -435,6 +503,24 @@ export default function Simulations() {
                     </div>
                   )}
 
+                  {selectedSimulation.id === "cost_of_time" && (
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Qual é o valor do gasto?
+                      </label>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 150"
+                        value={simulationValue}
+                        onChange={(e) => setSimulationValue(e.target.value)}
+                        className="h-12 text-lg"
+                      />
+                      <p className="text-xs text-slate-500 mt-2">
+                        Digite qualquer gasto para ver quanto tempo de trabalho custa
+                      </p>
+                    </div>
+                  )}
+
                   {selectedSimulation.id === "stop_superfluous" && (
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -510,6 +596,18 @@ export default function Simulations() {
                     disabled={isSimulating || (!simulationValue && selectedSimulation.id !== "reach_goal") || (selectedSimulation.id === "reach_goal" && !selectedGoal)}
                     className="flex-1 h-12 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] text-white hover:opacity-90"
                   >
+                    {isSimulating ? (
+                      <>
+                        <Zap className="w-4 h-4 mr-2 animate-pulse" />
+                        Simulando...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Simular
+                      </>
+                    )}
+                  </Button>
                     {isSimulating ? (
                       <>
                         <Zap className="w-4 h-4 mr-2 animate-pulse" />

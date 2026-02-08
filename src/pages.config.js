@@ -58,7 +58,9 @@ import Dashboard from './pages/Dashboard';
 import EmergencyFund from './pages/EmergencyFund';
 import Expenses from './pages/Expenses';
 import FamilyMode from './pages/FamilyMode';
+import Goals from './pages/Goals';
 import Home from './pages/Home';
+import Incomes from './pages/Incomes';
 import MonthlyTrends from './pages/MonthlyTrends';
 import Movements from './pages/Movements';
 import Overview from './pages/Overview';
@@ -68,8 +70,6 @@ import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
-import Goals from './pages/Goals';
-import Incomes from './pages/Incomes';
 import __Layout from './Layout.jsx';
 
 
@@ -85,7 +85,9 @@ export const PAGES = {
     "EmergencyFund": EmergencyFund,
     "Expenses": Expenses,
     "FamilyMode": FamilyMode,
+    "Goals": Goals,
     "Home": Home,
+    "Incomes": Incomes,
     "MonthlyTrends": MonthlyTrends,
     "Movements": Movements,
     "Overview": Overview,
@@ -95,8 +97,6 @@ export const PAGES = {
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
-    "Goals": Goals,
-    "Incomes": Incomes,
 }
 
 export const pagesConfig = {
