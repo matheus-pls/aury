@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { 
   Sparkles,
-  TrendingDown,
-  Briefcase,
-  ShoppingBag,
+  Scissors,
+  TrendingUp,
+  Ban,
   Target,
   Clock,
   Heart,
@@ -26,24 +26,24 @@ const SIMULATION_TYPES = [
     id: "cut_expenses",
     title: "Cortar Gastos",
     description: "Veja como economizar mais",
-    icon: TrendingDown,
-    color: "from-rose-400 to-rose-600",
+    icon: Scissors,
+    color: "from-[#5FBDBD] to-[#4FA9A5]",
     prompt: "E se eu cortar"
   },
   {
     id: "new_job",
     title: "Trocar de Emprego",
     description: "Simule uma nova renda",
-    icon: Briefcase,
-    color: "from-blue-400 to-blue-600",
+    icon: TrendingUp,
+    color: "from-[#2A4A62] to-[#1B3A52]",
     prompt: "E se eu ganhar"
   },
   {
     id: "stop_superfluous",
     title: "Sem Supérfluos",
     description: "Desafio de 30 dias",
-    icon: ShoppingBag,
-    color: "from-amber-400 to-amber-600",
+    icon: Ban,
+    color: "from-[#1B3A52] to-[#0A2540]",
     prompt: "Se eu parar por 30 dias"
   },
   {
@@ -51,7 +51,7 @@ const SIMULATION_TYPES = [
     title: "Alcançar Meta",
     description: "Quando você chega lá?",
     icon: Target,
-    color: "from-emerald-400 to-emerald-600",
+    color: "from-[#5FBDBD] to-[#2A4A62]",
     prompt: "Quando alcanço"
   }
 ];
@@ -400,15 +400,15 @@ export default function Simulations() {
                   )}
 
                   {selectedSimulation.id === "stop_superfluous" && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                    <div className="bg-[#5FBDBD]/10 border border-[#5FBDBD]/30 rounded-xl p-6">
                       <div className="flex items-center gap-3 mb-3">
-                        <ShoppingBag className="w-6 h-6 text-amber-600" />
-                        <h3 className="font-semibold text-amber-900">Desafio de 30 dias</h3>
+                        <Ban className="w-6 h-6 text-[#5FBDBD]" />
+                        <h3 className="font-semibold text-[#1B3A52]">Desafio de 30 dias</h3>
                       </div>
-                      <p className="text-amber-800 mb-2">
+                      <p className="text-[#1B3A52] mb-2">
                         Você economizaria <strong>{formatCurrency(calculateSuperflousExpenses())}</strong> este mês
                       </p>
-                      <p className="text-sm text-amber-700">
+                      <p className="text-sm text-slate-600">
                         Seus gastos supérfluos representam {Math.round((calculateSuperflousExpenses() / calculateMonthlyIncome()) * 100)}% da sua renda
                       </p>
                     </div>

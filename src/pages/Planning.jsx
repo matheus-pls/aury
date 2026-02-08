@@ -28,7 +28,7 @@ const PLANNING_MODULES = [
     title: "Simulações",
     description: "Visualize o impacto das suas decisões financeiras",
     icon: Calculator,
-    color: "from-purple-400 to-purple-600",
+    color: "from-[#5FBDBD] to-[#2A4A62]",
     page: "Simulations"
   },
   {
