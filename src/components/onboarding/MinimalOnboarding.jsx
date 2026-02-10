@@ -56,10 +56,10 @@ export default function MinimalOnboarding() {
       queryClient.invalidateQueries(['settings']);
       
       localStorage.setItem("aury_onboarding_complete", "true");
-      navigate(createPageUrl("Overview"));
+      navigate(createPageUrl("DailyCheckIn"));
     } catch (error) {
       console.error("Error completing onboarding:", error);
-      navigate(createPageUrl("Overview"));
+      navigate(createPageUrl("DailyCheckIn"));
     }
   };
 
