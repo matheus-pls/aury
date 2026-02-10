@@ -128,7 +128,7 @@ export default function DailyCheckIn() {
       }
       queryClient.invalidateQueries(['settings']);
       setTimeout(() => {
-        navigate(createPageUrl("Overview"));
+        navigate(createPageUrl("Dashboard"));
       }, 300);
     } catch (error) {
       setIsCompleting(false);

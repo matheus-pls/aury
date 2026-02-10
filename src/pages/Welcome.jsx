@@ -10,7 +10,7 @@ export default function Welcome() {
   useEffect(() => {
     const hasCompletedOnboarding = localStorage.getItem("aury_onboarding_complete");
     if (hasCompletedOnboarding) {
-      navigate(createPageUrl("Overview"));
+      navigate(createPageUrl("DailyCheckIn"));
     }
   }, [navigate]);
 
