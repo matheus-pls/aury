@@ -194,9 +194,9 @@ export default function Dashboard() {
   // Get profile info
   const getProfileInfo = () => {
     const profiles = {
-      essential: { name: "Essencial", emoji: "🛡️", color: "from-blue-500 to-blue-600", savings: "~10%" },
-      balanced: { name: "Equilibrado", emoji: "⚖️", color: "from-[#00A8A0] to-[#008F88]", savings: "~15%" },
-      focused: { name: "Focado", emoji: "⚡", color: "from-purple-500 to-purple-600", savings: "~25%" }
+      essential: { name: "Essencial", emoji: "🛡️", color: "from-[#1B3A52] to-[#0A2540]", savings: "~10%" },
+      balanced: { name: "Equilibrado", emoji: "⚖️", color: "from-[#5FBDBD] to-[#4FA9A5]", savings: "~15%" },
+      focused: { name: "Focado", emoji: "⚡", color: "from-[#4FA9A5] to-[#1B3A52]", savings: "~25%" }
     };
     return profiles[currentSettings.risk_profile] || profiles.balanced;
   };
@@ -232,19 +232,19 @@ export default function Dashboard() {
   const tranquilityIndex = calculateTranquilityIndex();
   
   const getTranquilityStatus = () => {
-    if (tranquilityIndex >= 70) return { label: "Tranquilo", color: "from-emerald-500 to-teal-500", bgColor: "bg-emerald-50" };
-    if (tranquilityIndex >= 40) return { label: "Atenção", color: "from-amber-500 to-orange-500", bgColor: "bg-amber-50" };
-    return { label: "Risco", color: "from-rose-500 to-red-500", bgColor: "bg-rose-50" };
+    if (tranquilityIndex >= 70) return { label: "Tranquilo", color: "from-green-500 to-green-600", bgColor: "bg-green-50" };
+    if (tranquilityIndex >= 40) return { label: "Atenção", color: "from-[#1B3A52] to-[#0A2540]", bgColor: "bg-[#1B3A52]/10" };
+    return { label: "Risco", color: "from-red-500 to-red-600", bgColor: "bg-red-50" };
   };
 
   const tranquilityStatus = getTranquilityStatus();
 
   const profileInfo = getProfileInfo();
 
-  // Prepare data for charts
+  // Prepare data for charts - Aury color palette
   const categoryData = [
-    { name: "Fixos", value: expensesByCategory.fixed, color: "#5FBDBD" },
-    { name: "Essenciais", value: expensesByCategory.essential, color: "#1B3A52" },
+    { name: "Fixos", value: expensesByCategory.fixed, color: "#1B3A52" },
+    { name: "Essenciais", value: expensesByCategory.essential, color: "#5FBDBD" },
     { name: "Supérfluos", value: expensesByCategory.superfluous, color: "#7FCFCF" },
     { name: "Emergência", value: expensesByCategory.emergency, color: "#4FA9A5" },
     { name: "Investimentos", value: expensesByCategory.investment, color: "#2A4A62" }
@@ -310,7 +310,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.05 }}
-        className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${tranquilityStatus.color} text-white shadow-lg`}
+        className={`relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br ${tranquilityStatus.color} text-white shadow-xl`}
       >
         <div>
           <div className="flex items-center gap-2 mb-2">
@@ -350,7 +350,7 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-[#00A8A0] to-[#008F88] rounded-3xl p-8 text-white shadow-xl"
+        className="bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-3xl p-8 text-white shadow-xl"
       >
         <div className="flex items-start justify-between mb-6">
           <div>
@@ -471,7 +471,7 @@ export default function Dashboard() {
             <h3 className="font-semibold text-slate-800">Suas Metas</h3>
           </div>
           <Link to={createPageUrl("Goals")}>
-            <Button variant="ghost" size="sm" className="text-[#00A8A0]">
+            <Button variant="ghost" size="sm" className="text-[#5FBDBD] hover:text-[#4FA9A5]">
               Ver todas
               <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
@@ -636,25 +636,25 @@ export default function Dashboard() {
                     type="monotone" 
                     dataKey="receitas" 
                     name="Receitas"
-                    stroke="#10b981" 
-                    strokeWidth={2}
-                    dot={{ fill: '#10b981', r: 4 }}
+                    stroke="#4FA9A5" 
+                    strokeWidth={3}
+                    dot={{ fill: '#4FA9A5', r: 5 }}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="despesas" 
                     name="Despesas"
-                    stroke="#ef4444" 
-                    strokeWidth={2}
-                    dot={{ fill: '#ef4444', r: 4 }}
+                    stroke="#1B3A52" 
+                    strokeWidth={3}
+                    dot={{ fill: '#1B3A52', r: 5 }}
                   />
                   <Line 
                     type="monotone" 
                     dataKey="saldo" 
                     name="Saldo"
                     stroke="#5FBDBD" 
-                    strokeWidth={2}
-                    dot={{ fill: '#5FBDBD', r: 4 }}
+                    strokeWidth={3}
+                    dot={{ fill: '#5FBDBD', r: 5 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
