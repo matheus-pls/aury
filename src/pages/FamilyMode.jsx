@@ -366,7 +366,7 @@ export default function FamilyMode() {
             Família
           </h2>
           <p className="text-slate-500 mb-6 leading-relaxed">
-            Finanças compartilhadas com clareza e equilíbrio
+            Planejar juntos reduz conflitos e cria mais tranquilidade
           </p>
           <Button
             onClick={() => setIsCreateGroupOpen(true)}
@@ -443,7 +443,7 @@ export default function FamilyMode() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-[#1B3A52]">{activeGroup.name}</h1>
-              <p className="text-sm text-slate-500">Finanças compartilhadas com clareza</p>
+              <p className="text-sm text-slate-500">Vocês estão no mesmo time</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -487,8 +487,8 @@ export default function FamilyMode() {
               </h2>
               <p className="text-white/80 text-base leading-relaxed">
                 {sharedGoals.length > 0 
-                  ? `${sharedGoals.length} ${sharedGoals.length === 1 ? 'objetivo' : 'objetivos'} construindo o futuro juntos`
-                  : "Organizem as finanças com clareza e cooperação"
+                  ? `${sharedGoals.length} ${sharedGoals.length === 1 ? 'sonho' : 'sonhos'} que vocês estão construindo juntos`
+                  : "Cada pequeno ajuste ajuda todo mundo"
                 }
               </p>
             </div>
@@ -532,7 +532,7 @@ export default function FamilyMode() {
               {formatCurrency(totalSharedExpenses)}
             </p>
             <p className="text-sm text-slate-600 leading-relaxed">
-              Transparência para todos, sem julgamentos
+              O que vocês gastaram juntos esse mês
             </p>
           </CardContent>
         </Card>
@@ -577,14 +577,14 @@ export default function FamilyMode() {
                       </div>
                       <Progress value={progress} className="h-2 bg-white" />
                       <p className="text-xs text-emerald-700 font-medium">
-                        Juntos faltam {formatCurrency(remaining)}
+                        Vocês ainda precisam de {formatCurrency(remaining)}
                       </p>
                     </button>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">Comecem com um sonho em comum</p>
+              <p className="text-sm text-slate-500">Que tal definir um objetivo juntos?</p>
             )}
           </CardContent>
         </Card>
@@ -614,8 +614,8 @@ export default function FamilyMode() {
         <CardContent>
           <p className="text-sm text-slate-600 mb-4 leading-relaxed">
             {activeGroup.members?.length === 1 
-              ? 'Você está começando. Convide mais pessoas!' 
-              : `${activeGroup.members?.length} pessoas construindo juntas`
+              ? 'Convide alguém pra começar o time' 
+              : `Vocês são ${activeGroup.members?.length}. Todo mundo conta.`
             }
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -658,8 +658,8 @@ export default function FamilyMode() {
       {/* Distribuição dos Gastos */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-[#1B3A52] text-lg">Como Estão Gastando</h3>
-          <p className="text-xs text-slate-500">Visão clara, sem cobranças</p>
+          <h3 className="font-semibold text-[#1B3A52] text-lg">Pra onde foi o dinheiro</h3>
+          <p className="text-xs text-slate-500">Sem julgamento, só clareza</p>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {Object.entries(EXPENSE_CATEGORIES).map(([key, config]) => {
@@ -698,9 +698,9 @@ export default function FamilyMode() {
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mx-auto mb-4">
                 <TrendingDown className="w-8 h-8 text-slate-400" />
               </div>
-              <h4 className="font-semibold text-[#1B3A52] mb-2">Tudo tranquilo por aqui</h4>
+              <h4 className="font-semibold text-[#1B3A52] mb-2">Nada registrado ainda</h4>
               <p className="text-sm text-slate-500 leading-relaxed">
-                Registre o primeiro gasto compartilhado e acompanhem juntos
+                Quando alguém adicionar um gasto, aparece aqui pra todo mundo ver
               </p>
             </CardContent>
           </Card>
@@ -765,7 +765,7 @@ export default function FamilyMode() {
           <div className="space-y-5 mt-4">
             <div className="p-4 bg-gradient-to-br from-violet-50 to-purple-50 rounded-xl border border-violet-100">
               <p className="text-sm text-slate-700 leading-relaxed">
-                Adicione o email de quem você quer incluir no grupo. Vocês compartilharão gastos e metas, sempre com transparência.
+                Chame quem você quer no time. Juntos, vocês veem tudo: gastos, metas e progresso.
               </p>
             </div>
             <div className="space-y-2">
@@ -864,7 +864,7 @@ export default function FamilyMode() {
 
             <div className="p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
               <p className="text-xs text-slate-600 leading-relaxed">
-                Este gasto será visível para todos os membros do grupo, mantendo a transparência financeira.
+                Todo mundo vai ver esse gasto. Assim ninguém fica no escuro.
               </p>
             </div>
 
@@ -953,7 +953,7 @@ export default function FamilyMode() {
                 Contribuição de Cada Um
               </Label>
               <p className="text-xs text-slate-600 leading-relaxed mb-3">
-                Não é obrigação, é um combinado. Definam juntos quanto cada um pode contribuir.
+                Não é cobrança. É um acordo de quanto cada um consegue colocar.
               </p>
               {activeGroup.members?.map(email => (
                 <div key={email} className="flex items-center gap-3 p-3 bg-white rounded-lg">
@@ -1053,7 +1053,7 @@ export default function FamilyMode() {
                   className="h-3"
                 />
                 <p className="text-xs text-slate-500 text-center">
-                  Faltam {formatCurrency(selectedGoal.target_amount - (selectedGoal.current_amount || 0))}
+                  Ainda faltam {formatCurrency(selectedGoal.target_amount - (selectedGoal.current_amount || 0))} pra chegar lá
                 </p>
               </div>
 
@@ -1061,7 +1061,7 @@ export default function FamilyMode() {
               <div className="space-y-3">
                 <Label className="flex items-center gap-2 text-[#1B3A52]">
                   <Users className="w-4 h-4" />
-                  Contribuições dos Membros
+                  Quanto cada um colocou
                 </Label>
                 <div className="space-y-2">
                   {activeGroup.members?.map(email => {
@@ -1101,7 +1101,7 @@ export default function FamilyMode() {
               <div className="space-y-3 p-4 bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl border border-[#5FBDBD]/20">
                 <Label htmlFor="contribution" className="flex items-center gap-2 text-[#1B3A52]">
                   <Coins className="w-4 h-4" />
-                  Ajustar Contribuição
+                  Colocar ou tirar dinheiro
                 </Label>
                 <div className="flex gap-2">
                   <Input
@@ -1196,7 +1196,7 @@ export default function FamilyMode() {
                 Contribuição de Cada Um
               </Label>
               <p className="text-xs text-slate-600 leading-relaxed mb-3">
-                Ajuste os percentuais de contribuição de cada membro.
+                Conversem e ajustem quanto cada um vai colocar.
               </p>
               {activeGroup.members?.map(email => (
                 <div key={email} className="flex items-center gap-3 p-3 bg-white rounded-lg">
