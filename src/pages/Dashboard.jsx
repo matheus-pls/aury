@@ -301,8 +301,8 @@ export default function Dashboard() {
     <div className="space-y-6 pb-8">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-3xl font-bold text-[#1B3A52]">Dashboard Financeiro</h1>
-        <p className="text-slate-600 mt-1">Visão completa da sua saúde financeira</p>
+        <h1 className="text-3xl font-bold text-[#1B3A52]">Sua Saúde Financeira</h1>
+        <p className="text-slate-600 mt-1">Um panorama do que importa</p>
       </div>
 
       {/* Tranquilidade Financeira */}
@@ -406,7 +406,7 @@ export default function Dashboard() {
               </div>
               <h3 className="font-semibold text-slate-800">Novo Gasto</h3>
             </div>
-            <p className="text-sm text-slate-500">Registrar uma despesa</p>
+            <p className="text-sm text-slate-500">Anotar um gasto</p>
           </motion.div>
         </Link>
 
@@ -425,7 +425,7 @@ export default function Dashboard() {
               </div>
               <h3 className="font-semibold text-slate-800">Nova Renda</h3>
             </div>
-            <p className="text-sm text-slate-500">Adicionar fonte de renda</p>
+            <p className="text-sm text-slate-500">Registrar entrada</p>
           </motion.div>
         </Link>
       </div>
@@ -479,8 +479,8 @@ export default function Dashboard() {
         </div>
         <p className="text-sm text-slate-500">
           {goals.length === 0 
-            ? "Você ainda não tem metas. Crie sua primeira meta!"
-            : `${goals.length} ${goals.length === 1 ? 'meta ativa' : 'metas ativas'}`
+            ? "Nenhuma meta ainda. Que tal começar?"
+            : `${goals.length} ${goals.length === 1 ? 'meta em andamento' : 'metas em andamento'}`
           }
         </p>
       </motion.div>
@@ -538,7 +538,7 @@ export default function Dashboard() {
                 <PieChart className="w-5 h-5 text-[#5FBDBD]" />
                 <CardTitle className="text-[#1B3A52]">Gastos por Categoria</CardTitle>
               </div>
-              <CardDescription>Distribuição dos seus gastos mensais</CardDescription>
+              <CardDescription>Para onde seu dinheiro está indo</CardDescription>
             </CardHeader>
             <CardContent>
               {categoryData.length > 0 ? (
@@ -589,7 +589,7 @@ export default function Dashboard() {
                 <div className="h-64 flex items-center justify-center text-slate-400">
                   <div className="text-center">
                     <PieChart className="w-12 h-12 mx-auto mb-2 opacity-30" />
-                    <p className="text-sm">Nenhum gasto registrado</p>
+                    <p className="text-sm">Ainda sem gastos este mês</p>
                   </div>
                 </div>
               )}
@@ -609,7 +609,7 @@ export default function Dashboard() {
                 <BarChart3 className="w-5 h-5 text-[#5FBDBD]" />
                 <CardTitle className="text-[#1B3A52]">Receitas vs Despesas</CardTitle>
               </div>
-              <CardDescription>Evolução dos últimos 6 meses</CardDescription>
+              <CardDescription>Como você está se saindo</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>
@@ -676,7 +676,7 @@ export default function Dashboard() {
                 <Target className="w-5 h-5 text-[#5FBDBD]" />
                 <CardTitle className="text-[#1B3A52]">Progresso das Metas</CardTitle>
               </div>
-              <CardDescription>Acompanhe suas metas financeiras</CardDescription>
+              <CardDescription>O que você está construindo</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -738,9 +738,9 @@ export default function Dashboard() {
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-800 mb-1">Comece cadastrando sua renda</h4>
+              <h4 className="font-medium text-blue-800 mb-1">Por onde começar?</h4>
               <p className="text-sm text-blue-600">
-                Para aproveitar todos os recursos e visualizações, cadastre suas fontes de renda primeiro.
+                Adicione sua renda primeiro. Não precisa ser exato, a gente ajusta junto depois.
               </p>
             </div>
           </div>
