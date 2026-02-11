@@ -232,9 +232,9 @@ export default function Dashboard() {
   const tranquilityIndex = calculateTranquilityIndex();
   
   const getTranquilityStatus = () => {
-    if (tranquilityIndex >= 70) return { label: "Você está bem", color: "from-green-500 to-green-600", bgColor: "bg-green-50" };
-    if (tranquilityIndex >= 40) return { label: "Dá pra ajustar", color: "from-[#1B3A52] to-[#0A2540]", bgColor: "bg-[#1B3A52]/10" };
-    return { label: "Vamos com calma", color: "from-red-500 to-red-600", bgColor: "bg-red-50" };
+    if (tranquilityIndex >= 70) return { label: "Tranquilo", color: "from-green-500 to-green-600", bgColor: "bg-green-50" };
+    if (tranquilityIndex >= 40) return { label: "Atenção", color: "from-[#1B3A52] to-[#0A2540]", bgColor: "bg-[#1B3A52]/10" };
+    return { label: "Risco", color: "from-red-500 to-red-600", bgColor: "bg-red-50" };
   };
 
   const tranquilityStatus = getTranquilityStatus();

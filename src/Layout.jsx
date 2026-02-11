@@ -190,8 +190,8 @@ export default function Layout({ children, currentPageName }) {
           {/* Footer */}
           <div className="p-4 border-t border-slate-100">
             <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4">
-              <p className="text-xs text-slate-500 mb-1">Você não está sozinho nisso</p>
-              <p className="text-sm font-semibold text-[#1B3A52]">Aury está contigo</p>
+              <p className="text-xs text-slate-500 mb-1">Controle. Clareza. Confiança.</p>
+              <p className="text-sm font-semibold text-[#1B3A52]">Seu aliado financeiro</p>
             </div>
           </div>
         </div>

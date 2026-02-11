@@ -110,9 +110,9 @@ export default function Overview() {
   const tranquilityIndex = calculateTranquilityIndex();
   
   const getTranquilityStatus = () => {
-    if (tranquilityIndex >= 70) return { label: "Você está bem", color: "from-emerald-500 to-teal-500", textColor: "text-emerald-700", bgColor: "bg-emerald-50" };
-    if (tranquilityIndex >= 40) return { label: "Dá pra ajustar", color: "from-amber-500 to-orange-500", textColor: "text-amber-700", bgColor: "bg-amber-50" };
-    return { label: "Vamos com calma", color: "from-rose-500 to-red-500", textColor: "text-rose-700", bgColor: "bg-rose-50" };
+    if (tranquilityIndex >= 70) return { label: "Tranquilo", color: "from-emerald-500 to-teal-500", textColor: "text-emerald-700", bgColor: "bg-emerald-50" };
+    if (tranquilityIndex >= 40) return { label: "Atenção", color: "from-amber-500 to-orange-500", textColor: "text-amber-700", bgColor: "bg-amber-50" };
+    return { label: "Risco", color: "from-rose-500 to-red-500", textColor: "text-rose-700", bgColor: "bg-rose-50" };
   };
 
   const tranquilityStatus = getTranquilityStatus();
@@ -199,17 +199,17 @@ export default function Overview() {
   if ((spentPercentage > 85 || tranquilityIndex < 40) && totalIncome > 0) {
     alerts.push({
       type: "action",
-      message: `Esse mês tá mais apertado, né? Vamos ver juntos como reorganizar. O Modo Mês Apertado ajuda você nisso.`,
+      message: `Este mês está pedindo mais atenção. O Modo Mês Apertado pode ajudar você a reorganizar tudo com calma.`,
       icon: Shield,
       action: {
-        label: "Vamos dar uma olhada",
+        label: "Reorganizar Finanças",
         page: "TightMonth"
       }
     });
   } else if (spentPercentage > 90) {
     alerts.push({
       type: "danger",
-      message: "Tá chegando perto do limite. Mas calma, ainda dá tempo de ajustar.",
+      message: "Seu orçamento está perto do limite. Ainda dá tempo de ajustar.",
       icon: AlertCircle
     });
   }
@@ -218,14 +218,14 @@ export default function Overview() {
     const monthsToSafety = emergencyGoal > 0 ? Math.ceil(emergencyGoal / (totalIncome * 0.15)) : 0;
     alerts.push({
       type: "warning",
-      message: `Sua caixinha ainda é pequena, mas cada pouquinho conta. ${monthsToSafety > 0 ? `Guardando 15% por mês, você chega lá em ${monthsToSafety} meses. É mais perto do que parece.` : 'Continue no seu ritmo.'}`,
+      message: `Sua reserva ainda está crescendo. ${monthsToSafety > 0 ? `Com pequenos passos de 15% ao mês, você chega lá em ${monthsToSafety} meses.` : 'Continue construindo sua segurança aos poucos.'}`,
       icon: Shield
     });
   }
   if (totalIncome === 0) {
     alerts.push({
       type: "info",
-      message: "Bora começar? Me conta suas fontes de renda que a gente organiza isso junto.",
+      message: "Vamos começar! Adicione suas fontes de renda para o Aury te ajudar melhor.",
       icon: Info
     });
   }
@@ -236,8 +236,8 @@ export default function Overview() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">E aí, como estamos?</h1>
-        <p className="text-slate-500 mt-1">O resumo que você precisa, sem enrolação</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Visão Geral</h1>
+        <p className="text-slate-500 mt-1">Um olhar claro sobre suas finanças</p>
       </motion.div>
 
       {/* Método Aury - Compacto e Elegante */}
@@ -270,7 +270,7 @@ export default function Overview() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Heart className="w-4 h-4 text-white/90" />
-            <p className="text-white/80 text-xs font-medium">Como você está</p>
+            <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
           </div>
           <div className="flex items-baseline gap-2">
             <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
@@ -388,7 +388,7 @@ export default function Overview() {
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{emergencyProgress.toFixed(0)}%</p>
               <Progress value={emergencyProgress} className="h-2 mb-2" />
               <p className="text-xs text-slate-500">
-                {emergencyProgress < 100 ? `Cada pouquinho conta. Você já tá ${emergencyProgress.toFixed(0)}% mais tranquilo` : 'Você construiu sua rede de segurança'}
+                {emergencyProgress < 100 ? `Um passo de cada vez. Você está ${emergencyProgress.toFixed(0)}% mais seguro` : 'Você construiu sua proteção'}
               </p>
             </CardContent>
           </Card>
@@ -409,7 +409,7 @@ export default function Overview() {
               </div>
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{goals.length}</p>
               <p className="text-xs text-slate-500">
-                {goals.length === 0 ? 'Tem algo que você quer alcançar?' : `${goals.length} sonho${goals.length > 1 ? 's' : ''} caminhando`}
+                {goals.length === 0 ? 'O que você quer conquistar?' : `${goals.length} sonho${goals.length > 1 ? 's' : ''} em andamento`}
               </p>
             </CardContent>
           </Card>
