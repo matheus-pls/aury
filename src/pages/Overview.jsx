@@ -199,7 +199,7 @@ export default function Overview() {
   if ((spentPercentage > 85 || tranquilityIndex < 40) && totalIncome > 0) {
     alerts.push({
       type: "action",
-      message: `Este mês está pedindo mais atenção. O Modo Mês Apertado pode ajudar você a reorganizar tudo com calma.`,
+      message: `Esse mês tá pedindo mais cuidado. Quer que eu te ajude a reorganizar?`,
       icon: Shield,
       action: {
         label: "Reorganizar Finanças",
@@ -209,7 +209,7 @@ export default function Overview() {
   } else if (spentPercentage > 90) {
     alerts.push({
       type: "danger",
-      message: "Seu orçamento está perto do limite. Ainda dá tempo de ajustar.",
+      message: "Você tá bem perto do limite. Mas ainda dá tempo de ajustar.",
       icon: AlertCircle
     });
   }
@@ -218,14 +218,14 @@ export default function Overview() {
     const monthsToSafety = emergencyGoal > 0 ? Math.ceil(emergencyGoal / (totalIncome * 0.15)) : 0;
     alerts.push({
       type: "warning",
-      message: `Sua reserva ainda está crescendo. ${monthsToSafety > 0 ? `Com pequenos passos de 15% ao mês, você chega lá em ${monthsToSafety} meses.` : 'Continue construindo sua segurança aos poucos.'}`,
+      message: `Seu colchão tá crescendo. ${monthsToSafety > 0 ? `Se você guardar 15% por mês, em ${monthsToSafety} meses você chega lá.` : 'Continue guardando aos poucos.'}`,
       icon: Shield
     });
   }
   if (totalIncome === 0) {
     alerts.push({
       type: "info",
-      message: "Vamos começar! Adicione suas fontes de renda para o Aury te ajudar melhor.",
+      message: "Vamos começar? Me conta quanto entra por mês que eu te ajudo a organizar.",
       icon: Info
     });
   }
@@ -236,8 +236,8 @@ export default function Overview() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Visão Geral</h1>
-        <p className="text-slate-500 mt-1">Um olhar claro sobre suas finanças</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Como você está?</h1>
+        <p className="text-slate-500 mt-1">Veja de forma simples como andam as coisas</p>
       </motion.div>
 
       {/* Método Aury - Compacto e Elegante */}
@@ -293,12 +293,16 @@ export default function Overview() {
       >
         <div className="flex items-start justify-between mb-6">
           <div>
-            <p className="text-white/90 text-sm mb-2">Disponível este mês</p>
-            <h2 className="text-5xl font-bold">{formatCurrency(availableBalance)}</h2>
+            <p className="text-white/90 text-sm mb-2">
+              {availableBalance > 0 ? "Você ainda tem" : availableBalance < 0 ? "Você passou" : "Está no zero"}
+            </p>
+            <h2 className="text-5xl font-bold">{formatCurrency(Math.abs(availableBalance))}</h2>
             <p className="text-white/70 text-xs mt-2">
               {availableBalance > 0 
-                ? `Você tem ${formatCurrency(availableBalance)} para o resto do mês`
-                : "Este mês precisou de mais atenção, e está tudo bem"}
+                ? "Isso é o que sobrou pra você até o fim do mês"
+                : availableBalance < 0
+                ? "Tá tudo bem. A gente ajusta no próximo mês"
+                : "Você usou exatamente o que tinha disponível"}
             </p>
           </div>
           <div className="p-3 bg-white/10 rounded-2xl">
@@ -319,8 +323,13 @@ export default function Overview() {
 
         <div className="mt-6">
           <div className="flex justify-between text-xs text-white/90 mb-2">
-            <span>Utilizado: {spentPercentage.toFixed(0)}%</span>
-            <span>{spentPercentage <= 100 ? 'No caminho certo' : 'Ajustes necessários'}</span>
+            <span>
+              {spentPercentage <= 70 ? "Você tá controlando bem" : 
+               spentPercentage <= 90 ? "Já gastou a maior parte" : 
+               spentPercentage <= 100 ? "Quase no limite" : 
+               "Passou do previsto"}
+            </span>
+            <span className="font-semibold">{spentPercentage.toFixed(0)}%</span>
           </div>
           <div className="h-2.5 bg-white/20 rounded-full overflow-hidden">
             <motion.div
@@ -388,7 +397,10 @@ export default function Overview() {
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{emergencyProgress.toFixed(0)}%</p>
               <Progress value={emergencyProgress} className="h-2 mb-2" />
               <p className="text-xs text-slate-500">
-                {emergencyProgress < 100 ? `Um passo de cada vez. Você está ${emergencyProgress.toFixed(0)}% mais seguro` : 'Você construiu sua proteção'}
+                {emergencyProgress < 30 ? "Você tá começando a construir" :
+                 emergencyProgress < 70 ? "Tá crescendo. Continue" :
+                 emergencyProgress < 100 ? "Tá quase seguro" :
+                 "Você se protegeu"}
               </p>
             </CardContent>
           </Card>
@@ -409,7 +421,9 @@ export default function Overview() {
               </div>
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{goals.length}</p>
               <p className="text-xs text-slate-500">
-                {goals.length === 0 ? 'O que você quer conquistar?' : `${goals.length} sonho${goals.length > 1 ? 's' : ''} em andamento`}
+                {goals.length === 0 ? 'Que tal definir um objetivo?' : 
+                 goals.length === 1 ? 'Um sonho que você tá perseguindo' :
+                 `${goals.length} coisas que você quer conquistar`}
               </p>
             </CardContent>
           </Card>
@@ -430,7 +444,9 @@ export default function Overview() {
               </div>
               <p className="text-3xl font-bold text-[#1B3A52] mb-2">{formatCurrency(totalExpenses)}</p>
               <p className="text-xs text-slate-500">
-                {expenses.length} movimentação{expenses.length !== 1 ? 'ões' : ''} registrada{expenses.length !== 1 ? 's' : ''}
+                {expenses.length === 0 ? "Nenhum gasto anotado ainda" :
+                 expenses.length === 1 ? "Um gasto registrado" :
+                 `${expenses.length} gastos que você anotou`}
               </p>
             </CardContent>
           </Card>
@@ -439,7 +455,7 @@ export default function Overview() {
 
       {/* Quick Actions */}
       <div>
-        <h3 className="font-semibold text-[#1B3A52] text-lg mb-4">Ações Rápidas</h3>
+        <h3 className="font-semibold text-[#1B3A52] text-lg mb-4">O que você quer fazer agora?</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
