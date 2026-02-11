@@ -301,8 +301,8 @@ export default function Dashboard() {
     <div className="space-y-6 pb-8">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-3xl font-bold text-[#1B3A52]">Sua Saúde Financeira</h1>
-        <p className="text-slate-600 mt-1">Um panorama do que importa</p>
+        <h1 className="text-3xl font-bold text-[#1B3A52]">Como está seu mês agora?</h1>
+        <p className="text-slate-600 mt-1">Aqui você vê se está no controle ou precisa ajustar</p>
       </div>
 
       {/* Tranquilidade Financeira */}
@@ -315,7 +315,7 @@ export default function Dashboard() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Heart className="w-4 h-4 text-white/90" />
-            <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
+            <p className="text-white/80 text-xs font-medium">Você está aqui</p>
           </div>
           <div className="flex items-baseline gap-2">
             <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
@@ -354,7 +354,9 @@ export default function Dashboard() {
       >
         <div className="flex items-start justify-between mb-6">
           <div>
-            <p className="text-white/80 text-sm mb-2">Saldo do Mês</p>
+            <p className="text-white/80 text-sm mb-2">
+              {availableBalance > 0 ? "Sobrou esse mês" : availableBalance < 0 ? "Você passou do limite" : "Está no zero a zero"}
+            </p>
             <h2 className="text-5xl font-bold">{formatCurrency(availableBalance)}</h2>
           </div>
           <div className="p-3 bg-white/10 rounded-2xl">
@@ -376,7 +378,13 @@ export default function Dashboard() {
         {/* Progress bar */}
         <div className="mt-6">
           <div className="flex justify-between text-xs text-white/70 mb-2">
-            <span>Você gastou {spentPercentage.toFixed(0)}% da sua renda</span>
+            <span>
+              {spentPercentage <= 70 ? "Você está indo bem" : 
+               spentPercentage <= 90 ? "Já gastou bastante" : 
+               spentPercentage <= 100 ? "Cuidado, tá no limite" : 
+               "Passou do que entrou"}
+            </span>
+            <span className="font-semibold">{spentPercentage.toFixed(0)}% gasto</span>
           </div>
           <div className="h-2 bg-white/20 rounded-full overflow-hidden">
             <motion.div
@@ -390,44 +398,47 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-2 gap-4">
-        <Link to={createPageUrl("Expenses")}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2.5 bg-rose-50 rounded-xl">
-                <Plus className="w-5 h-5 text-rose-500" />
+      <div className="mb-4">
+        <h3 className="text-sm font-medium text-slate-500 mb-3">O que você quer fazer agora?</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <Link to={createPageUrl("Expenses")}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2.5 bg-rose-50 rounded-xl">
+                  <Plus className="w-5 h-5 text-rose-500" />
+                </div>
+                <h3 className="font-semibold text-slate-800">Gastei</h3>
               </div>
-              <h3 className="font-semibold text-slate-800">Novo Gasto</h3>
-            </div>
-            <p className="text-sm text-slate-500">Anotar um gasto</p>
-          </motion.div>
-        </Link>
+              <p className="text-sm text-slate-500">Registrar uma saída</p>
+            </motion.div>
+          </Link>
 
-        <Link to={createPageUrl("Incomes")}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-center gap-3 mb-3">
-              <div className="p-2.5 bg-emerald-50 rounded-xl">
-                <Plus className="w-5 h-5 text-emerald-500" />
+          <Link to={createPageUrl("Incomes")}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2.5 bg-emerald-50 rounded-xl">
+                  <Plus className="w-5 h-5 text-emerald-500" />
+                </div>
+                <h3 className="font-semibold text-slate-800">Recebi</h3>
               </div>
-              <h3 className="font-semibold text-slate-800">Nova Renda</h3>
-            </div>
-            <p className="text-sm text-slate-500">Registrar entrada</p>
-          </motion.div>
-        </Link>
+              <p className="text-sm text-slate-500">Registrar uma entrada</p>
+            </motion.div>
+          </Link>
+        </div>
       </div>
 
       {/* Emergency Fund */}
@@ -443,9 +454,12 @@ export default function Dashboard() {
               <Shield className="w-5 h-5 text-emerald-500" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-800">Reserva de Emergência</h3>
+              <h3 className="font-semibold text-slate-800">Seu colchão de segurança</h3>
               <p className="text-sm text-slate-500">
-                {formatCurrency(totalEmergencyFund)} de {formatCurrency(emergencyGoal)}
+                {emergencyProgress < 30 ? "Ainda tá começando" : 
+                 emergencyProgress < 70 ? "Você já tem uma base" : 
+                 emergencyProgress < 100 ? "Tá quase lá!" : 
+                 "Protegido"}
               </p>
             </div>
           </div>
@@ -479,8 +493,10 @@ export default function Dashboard() {
         </div>
         <p className="text-sm text-slate-500">
           {goals.length === 0 
-            ? "Nenhuma meta ainda. Que tal começar?"
-            : `${goals.length} ${goals.length === 1 ? 'meta em andamento' : 'metas em andamento'}`
+            ? "Você ainda não definiu nenhum sonho pra ir atrás"
+            : goals.length === 1 
+              ? "Você tem 1 objetivo que está construindo" 
+              : `Você tá correndo atrás de ${goals.length} coisas ao mesmo tempo`
           }
         </p>
       </motion.div>
@@ -538,7 +554,7 @@ export default function Dashboard() {
                 <PieChart className="w-5 h-5 text-[#5FBDBD]" />
                 <CardTitle className="text-[#1B3A52]">Gastos por Categoria</CardTitle>
               </div>
-              <CardDescription>Para onde seu dinheiro está indo</CardDescription>
+              <CardDescription>Pra onde seu dinheiro foi esse mês</CardDescription>
             </CardHeader>
             <CardContent>
               {categoryData.length > 0 ? (
@@ -619,7 +635,7 @@ export default function Dashboard() {
                 <BarChart3 className="w-5 h-5 text-[#5FBDBD]" />
                 <CardTitle className="text-[#1B3A52]">Receitas vs Despesas</CardTitle>
               </div>
-              <CardDescription>Como você está se saindo</CardDescription>
+              <CardDescription>Você está gastando mais ou menos que antes?</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>
@@ -686,7 +702,7 @@ export default function Dashboard() {
                 <Target className="w-5 h-5 text-[#5FBDBD]" />
                 <CardTitle className="text-[#1B3A52]">Progresso das Metas</CardTitle>
               </div>
-              <CardDescription>O que você está construindo</CardDescription>
+              <CardDescription>Seus sonhos tão chegando?</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
@@ -776,9 +792,9 @@ export default function Dashboard() {
           <div className="flex items-start gap-3">
             <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-800 mb-1">Por onde começar?</h4>
+              <h4 className="font-medium text-blue-800 mb-1">Vamos começar do começo</h4>
               <p className="text-sm text-blue-600">
-                Adicione sua renda primeiro. Não precisa ser exato, a gente ajusta junto depois.
+                Primeiro me conta: quanto entra por mês? Não precisa ser exato, depois a gente ajusta.
               </p>
             </div>
           </div>
