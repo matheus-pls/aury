@@ -559,7 +559,13 @@ export default function Dashboard() {
                         ))}
                       </Pie>
                       <Tooltip 
-                        formatter={(value) => formatCurrency(value)}
+                        formatter={(value, name, props) => {
+                          const percentage = totalExpenses > 0 ? ((value / totalExpenses) * 100).toFixed(1) : 0;
+                          return [
+                            `${formatCurrency(value)} (${percentage}%)`,
+                            props.name
+                          ];
+                        }}
                         contentStyle={{ 
                           backgroundColor: 'white', 
                           border: '1px solid #e2e8f0',
@@ -569,20 +575,24 @@ export default function Dashboard() {
                     </RechartsPieChart>
                   </ResponsiveContainer>
                   <div className="grid grid-cols-2 gap-3 mt-4">
-                    {categoryData.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
-                          style={{ backgroundColor: item.color }}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-slate-600 truncate">{item.name}</p>
-                          <p className="text-sm font-semibold text-[#1B3A52]">
-                            {formatCurrency(item.value)}
-                          </p>
+                    {categoryData.map((item, idx) => {
+                      const percentage = totalExpenses > 0 ? ((item.value / totalExpenses) * 100).toFixed(1) : 0;
+                      return (
+                        <div key={idx} className="flex items-center gap-2">
+                          <div 
+                            className="w-3 h-3 rounded-full" 
+                            style={{ backgroundColor: item.color }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-slate-600 truncate">{item.name}</p>
+                            <p className="text-sm font-bold text-[#1B3A52]">
+                              {formatCurrency(item.value)}
+                            </p>
+                            <p className="text-xs text-slate-500">{percentage}% do total</p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </>
               ) : (
@@ -695,14 +705,28 @@ export default function Dashboard() {
                     tick={{ fill: '#64748b', fontSize: 12 }}
                   />
                   <Tooltip 
-                    formatter={(value, name) => {
-                      if (name === 'progress') return `${value}%`;
-                      return formatCurrency(value);
-                    }}
-                    contentStyle={{ 
-                      backgroundColor: 'white', 
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px'
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-white border border-slate-200 rounded-lg p-3 shadow-lg">
+                            <p className="font-semibold text-slate-800 mb-2">{data.name}</p>
+                            <p className="text-sm text-slate-600">
+                              Progresso: <span className="font-bold text-[#5FBDBD]">{data.progress}%</span>
+                            </p>
+                            <p className="text-sm text-slate-600 mt-1">
+                              Economizado: <span className="font-bold text-[#1B3A52]">{formatCurrency(data.current)}</span>
+                            </p>
+                            <p className="text-sm text-slate-600">
+                              Meta: <span className="font-semibold text-slate-700">{formatCurrency(data.target)}</span>
+                            </p>
+                            <p className="text-xs text-slate-500 mt-1 pt-1 border-t border-slate-200">
+                              Faltam {formatCurrency(data.target - data.current)}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
                     }}
                   />
                   <Bar 
@@ -714,11 +738,25 @@ export default function Dashboard() {
               </ResponsiveContainer>
               <div className="mt-4 grid gap-2">
                 {goalsProgressData.map((goal, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-xs">
-                    <span className="text-slate-600">{goal.name}</span>
-                    <span className="font-semibold text-[#1B3A52]">
-                      {formatCurrency(goal.current)} / {formatCurrency(goal.target)}
-                    </span>
+                  <div key={idx} className="p-3 bg-slate-50 rounded-lg">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm font-medium text-slate-700">{goal.name}</span>
+                      <span className="text-xs font-bold text-[#5FBDBD] px-2 py-1 bg-white rounded-full">
+                        {goal.progress}%
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-slate-500">Economizado</span>
+                      <span className="font-bold text-[#1B3A52]">
+                        {formatCurrency(goal.current)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs mt-0.5">
+                      <span className="text-slate-500">Falta</span>
+                      <span className="font-semibold text-slate-600">
+                        {formatCurrency(goal.target - goal.current)}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
