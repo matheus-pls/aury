@@ -18,7 +18,7 @@ const PLANNING_MODULES = [
   {
     id: "auto",
     title: "Planejamento Automático",
-    description: "Seu plano financeiro mensal completo e automatizado",
+    description: "Deixa que eu monto seu plano do mês pra você",
     icon: Sparkles,
     color: "from-[#5FBDBD] to-[#4FA9A5]",
     page: "AutoPlanning"
@@ -26,7 +26,7 @@ const PLANNING_MODULES = [
   {
     id: "simulations",
     title: "Simulações",
-    description: "Visualize o impacto das suas decisões financeiras",
+    description: "E se eu cortasse isso? E se eu ganhasse mais?",
     icon: Calculator,
     color: "from-[#5FBDBD] to-[#2A4A62]",
     page: "Simulations"
@@ -34,7 +34,7 @@ const PLANNING_MODULES = [
   {
     id: "tight_month",
     title: "Mês Apertado",
-    description: "Plano de sobrevivência financeira com empatia",
+    description: "Quando tá difícil, eu te ajudo a priorizar",
     icon: Heart,
     color: "from-[#1B3A52] to-[#0A2540]",
     page: "TightMonth"
@@ -42,7 +42,7 @@ const PLANNING_MODULES = [
   {
     id: "emergency",
     title: "Caixinha",
-    description: "Sua segurança para imprevistos",
+    description: "Construa seu colchão de segurança aos poucos",
     icon: Shield,
     color: "from-[#2A4A62] to-[#1B3A52]",
     page: "EmergencyFund"
@@ -58,8 +58,8 @@ export default function Planning() {
         animate={{ opacity: 1, y: 0 }}
       >
         <BackButton to={createPageUrl("Overview")} className="mb-4" />
-        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Planejamento</h1>
-        <p className="text-slate-500 mt-1">Organize suas finanças de forma inteligente</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Como você quer se organizar?</h1>
+        <p className="text-slate-500 mt-1">Escolha o que faz sentido pro seu momento</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

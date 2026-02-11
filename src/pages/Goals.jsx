@@ -247,8 +247,8 @@ export default function Goals() {
         <BackButton to={createPageUrl("Overview")} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Metas Financeiras</h1>
-            <p className="text-slate-500 mt-1">Acompanhe e alcance seus objetivos</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">O que você quer conquistar?</h1>
+            <p className="text-slate-500 mt-1">Defina e acompanhe o que é importante pra você</p>
           </div>
           <Button 
             onClick={() => handleOpenDialog()}
