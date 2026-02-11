@@ -69,7 +69,7 @@ export default function DailyCheckIn() {
      color: "from-green-500 to-green-600",
      textColor: "text-green-600",
      bgColor: "bg-green-50",
-     message: "Sua situação financeira está estável"
+     message: "Tá tudo certo por aqui"
    };
 
    // Check if overspent (spent more than income)
@@ -80,7 +80,7 @@ export default function DailyCheckIn() {
        color: "from-red-500 to-red-600",
        textColor: "text-red-600",
        bgColor: "bg-red-50",
-       message: "Você ultrapassou seu orçamento"
+       message: "Vamos ajustar isso juntos"
      };
    } else if (spendingPercentage > 85) {
      status = {
@@ -89,7 +89,7 @@ export default function DailyCheckIn() {
        color: "from-red-500 to-red-600",
        textColor: "text-red-600",
        bgColor: "bg-red-50",
-       message: "Atenção aos gastos deste mês"
+       message: "Vamos com calma até o fim do mês"
      };
    } else if (spendingPercentage > 70) {
      status = {
@@ -98,7 +98,7 @@ export default function DailyCheckIn() {
        color: "from-[#1B3A52] to-[#0A2540]",
        textColor: "text-[#1B3A52]",
        bgColor: "bg-[#1B3A52]/10",
-       message: "Fique atento ao seu orçamento"
+       message: "Hora de ir com mais cuidado"
      };
    }
 
@@ -227,7 +227,7 @@ export default function DailyCheckIn() {
              />
            </motion.div>
            <h1 className="text-2xl font-bold text-[#1B3A52] mb-2">{getGreeting().text}! {getGreeting().emoji}</h1>
-           <p className="text-slate-500">Seu check-in financeiro de hoje</p>
+           <p className="text-slate-500">Como estão suas finanças hoje?</p>
          </div>
 
          {/* Main Card */}
@@ -353,7 +353,7 @@ export default function DailyCheckIn() {
 
         {/* Footer */}
         <p className="text-center text-xs text-slate-400">
-          Check-in diário • 10 segundos para clareza financeira
+         Seu momento diário de clareza • 10 segundos
         </p>
       </motion.div>
 

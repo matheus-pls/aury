@@ -103,9 +103,9 @@ export default function MinimalOnboarding() {
             {step === 3 && "Tudo pronto!"}
           </h1>
           <p className="text-slate-500">
-            {step === 1 && "Vamos começar simples"}
-            {step === 2 && "Só mais uma informação"}
-            {step === 3 && "Sua jornada começa agora"}
+           {step === 1 && "Não precisa ser perfeito, só sincero"}
+           {step === 2 && "Última pergunta, prometo"}
+           {step === 3 && "Vamos caminhar juntos"}
           </p>
         </div>
 
@@ -131,7 +131,7 @@ export default function MinimalOnboarding() {
                   className="text-2xl font-bold h-14 border-slate-200 focus:border-[#5FBDBD]"
                 />
                 <p className="text-xs text-slate-500">
-                  Pode ser aproximado. Você ajusta depois.
+                 Um valor aproximado já ajuda. A gente ajusta depois.
                 </p>
               </div>
 
@@ -167,7 +167,7 @@ export default function MinimalOnboarding() {
                   className="text-2xl font-bold h-14 border-slate-200 focus:border-[#5FBDBD]"
                 />
                 <p className="text-xs text-slate-500">
-                  Aluguel, internet, contas... Se não souber, deixe em branco.
+                 Aluguel, contas fixas... Se não souber agora, sem problema.
                 </p>
               </div>
 
@@ -204,7 +204,7 @@ export default function MinimalOnboarding() {
                   Está tudo pronto!
                 </h3>
                 <p className="text-slate-600 leading-relaxed">
-                  Aury já calculou tudo para você. Vamos descobrir sua tranquilidade financeira.
+                 Preparei tudo com base no que você me contou. Vamos juntos.
                 </p>
               </div>
 
