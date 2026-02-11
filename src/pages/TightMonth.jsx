@@ -110,8 +110,8 @@ export default function TightMonth() {
             <Heart className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Mês Apertado</h1>
-            <p className="text-slate-500 text-sm">Esse mês é sobre equilíbrio, não perfeição</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Modo Apertado</h1>
+            <p className="text-slate-500 text-sm">Agora o foco é o essencial</p>
           </div>
         </div>
       </motion.div>
@@ -127,7 +127,7 @@ export default function TightMonth() {
         <div className="relative">
           <div className="flex items-center gap-2 mb-4">
             <Heart className="w-5 h-5" />
-            <p className="text-white/90 text-sm">Você está fazendo o melhor com o que tem</p>
+            <p className="text-white/90 text-sm">Vamos passar por isso juntos</p>
           </div>
           
           <div className="text-center mb-6">
@@ -160,9 +160,9 @@ export default function TightMonth() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-amber-900 mb-1">Esse gasto pode comprometer o mês</p>
+              <p className="font-semibold text-amber-900 mb-1">Vamos com calma até o fim do mês</p>
               <p className="text-sm text-amber-700 leading-relaxed">
-                Ainda dá tempo de ajustar. Se você reduzir {formatCurrency(potentialSavings * 0.5)} em gastos reduzíveis, passa o mês sem se endividar.
+                Se conseguir reduzir {formatCurrency(potentialSavings * 0.5)}, você fecha o mês tranquilo.
               </p>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function TightMonth() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
               <Shield className="w-4 h-4 text-[#1B3A52]" />
-              Inadiáveis
+              O que não dá pra cortar
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -203,7 +203,7 @@ export default function TightMonth() {
           <CardHeader className="pb-3">
             <CardTitle className="text-base text-amber-900 flex items-center gap-2">
               <TrendingDown className="w-4 h-4 text-amber-600" />
-              Reduzíveis
+              Onde dá pra diminuir
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -224,7 +224,7 @@ export default function TightMonth() {
             </div>
             <div className="mt-3 pt-3 border-t border-amber-200">
               <p className="text-xs text-amber-700">
-                💡 Se reduzir em 40%, economiza {formatCurrency(reducibleExpenses * 0.4)}
+                💡 Cortando pela metade: +{formatCurrency(reducibleExpenses * 0.4)} no bolso
               </p>
             </div>
           </CardContent>
@@ -236,7 +236,7 @@ export default function TightMonth() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base text-rose-900 flex items-center gap-2">
                 <Zap className="w-4 h-4 text-rose-600" />
-                Cortáveis
+                O que pode esperar
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -251,7 +251,7 @@ export default function TightMonth() {
                         <span className="text-rose-800">{item.label}</span>
                       </div>
                       <span className="font-semibold text-rose-900">
-                        Economiza {formatCurrency(item.savings)}
+                        +{formatCurrency(item.savings)} se pausar
                       </span>
                     </div>
                   );
@@ -273,7 +273,7 @@ export default function TightMonth() {
           onClick={() => setShowDetails(!showDetails)}
           className="w-full p-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
         >
-          <span className="font-semibold text-[#1B3A52]">Plano de sobrevivência completo</span>
+          <span className="font-semibold text-[#1B3A52]">Como passar o mês</span>
           {showDetails ? (
             <ChevronUp className="w-5 h-5 text-slate-400" />
           ) : (
@@ -291,20 +291,20 @@ export default function TightMonth() {
             >
               <div className="p-6 space-y-5">
                 <div className="bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl p-4 border border-[#5FBDBD]/20">
-                  <h4 className="font-semibold text-[#1B3A52] mb-3">🎯 Objetivo do mês</h4>
-                  <ul className="space-y-2 text-sm text-slate-700">
-                    <li>• Não se endividar</li>
-                    <li>• Pagar o essencial</li>
-                    <li>• Atravessar o mês com dignidade</li>
-                  </ul>
+                 <h4 className="font-semibold text-[#1B3A52] mb-3">O que importa agora</h4>
+                 <ul className="space-y-2 text-sm text-slate-700">
+                   <li>• Fechar o mês sem dívida</li>
+                   <li>• Pagar só o necessário</li>
+                   <li>• Sobreviver sem culpa</li>
+                 </ul>
                 </div>
 
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">💪 Vai passar</h4>
-                  <p className="text-sm text-blue-700 leading-relaxed">
-                    Esse mês é atípico. Com ajustes simples nos gastos reduzíveis, 
-                    você passa sem se endividar e mantém sua tranquilidade.
-                  </p>
+                 <h4 className="font-semibold text-blue-900 mb-2">Esse mês pede cuidado, não cobrança</h4>
+                 <p className="text-sm text-blue-700 leading-relaxed">
+                   Não é fracasso. É um momento que exige estratégia. 
+                   Com alguns cortes nos supérfluos, você chega lá.
+                 </p>
                 </div>
               </div>
             </motion.div>
