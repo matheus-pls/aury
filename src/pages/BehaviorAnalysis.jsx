@@ -167,18 +167,18 @@ export default function BehaviorAnalysis() {
     const increaseAmount = currentMonthSpending - lastMonthSpending;
     insights.push({
       type: 'warning',
-      title: 'Seus gastos cresceram',
-      message: `Neste mês, você gastou ${spendingTrend.toFixed(0)}% a mais que no anterior (${formatCurrency(increaseAmount)}).`,
-      action: `Reduza ${formatCurrency(increaseAmount * 0.4)} nos próximos 15 dias para voltar ao ritmo anterior.`,
-      impact: `Estabiliza sua tranquilidade financeira`
+      title: 'Seus gastos subiram',
+      message: `Esse mês você gastou ${spendingTrend.toFixed(0)}% a mais que o anterior.`,
+      action: `Se conseguir cortar ${formatCurrency(increaseAmount * 0.4)} nos próximos 15 dias, volta ao normal.`,
+      impact: `Volta ao ritmo anterior`
     });
   } else if (spendingTrend < -15 && lastMonthSpending > 0) {
     insights.push({
       type: 'positive',
-      title: 'Você melhorou este mês',
+      title: 'Você melhorou',
       message: `Seus gastos caíram ${Math.abs(spendingTrend).toFixed(0)}% comparado ao mês passado.`,
-      action: `Mantenha esse controle e você economizará ${formatCurrency(Math.abs(currentMonthSpending - lastMonthSpending) * 12)} por ano.`,
-      impact: `Tranquilidade em alta`
+      action: `Mantendo isso, você economiza ${formatCurrency(Math.abs(currentMonthSpending - lastMonthSpending) * 12)} em um ano.`,
+      impact: `Você está no caminho certo`
     });
   }
 
@@ -250,10 +250,10 @@ export default function BehaviorAnalysis() {
   if (insights.length === 0) {
     insights.push({
       type: 'positive',
-      title: 'Você está equilibrado',
-      message: 'Seu comportamento financeiro está consistente e saudável.',
-      action: 'Continue registrando para identificar novas oportunidades de economia.',
-      impact: 'Tranquilidade mantida'
+      title: 'Tá tudo certo',
+      message: 'Seu comportamento está equilibrado.',
+      action: 'Continue assim. Não precisa mudar nada agora.',
+      impact: 'Você está bem'
     });
   }
 
@@ -311,12 +311,12 @@ export default function BehaviorAnalysis() {
       >
         <BackButton to={createPageUrl("Analysis")} />
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-2xl flex items-center justify-center shadow-aury">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#667eea] to-[#764ba2] rounded-2xl flex items-center justify-center shadow-lg">
             <Activity className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Comportamento Financeiro</h1>
-            <p className="text-slate-500 text-sm">Hábitos e padrões dos últimos {selectedPeriod} meses</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Como você se comporta</h1>
+            <p className="text-slate-500 text-sm">Seus hábitos dos últimos {selectedPeriod} meses</p>
           </div>
           <Select value={selectedPeriod.toString()} onValueChange={(val) => setSelectedPeriod(parseInt(val))}>
             <SelectTrigger className="w-40 border-slate-200">
@@ -341,7 +341,7 @@ export default function BehaviorAnalysis() {
               initial={{ opacity: 0, x: 100 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -100 }}
-              className="rounded-3xl p-8 shadow-aury bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white relative overflow-hidden"
+              className="rounded-3xl p-8 shadow-xl bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white relative overflow-hidden"
             >
               {/* Decorative Elements */}
               <div className="absolute -right-12 -top-12 w-48 h-48 bg-white/5 rounded-full blur-3xl" />

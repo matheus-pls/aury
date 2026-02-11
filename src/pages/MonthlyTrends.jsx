@@ -104,12 +104,12 @@ export default function MonthlyTrends() {
       >
         <BackButton to={createPageUrl("Analysis")} />
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-[#2A4A62] to-[#1B3A52] rounded-2xl flex items-center justify-center shadow-aury">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#f093fb] to-[#f5576c] rounded-2xl flex items-center justify-center shadow-lg">
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Tendências Mensais</h1>
-            <p className="text-slate-500 text-sm">Evolução dos últimos 6 meses</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Estou melhorando?</h1>
+            <p className="text-slate-500 text-sm">Sua trajetória dos últimos 6 meses</p>
           </div>
         </div>
       </motion.div>
@@ -119,8 +119,8 @@ export default function MonthlyTrends() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 0.1 }}
-        className={`rounded-2xl p-6 text-white shadow-aury ${
-          trend > 0 ? 'bg-gradient-to-br from-amber-500 to-orange-600' : 'bg-gradient-to-br from-emerald-500 to-green-600'
+        className={`rounded-2xl p-6 text-white shadow-lg ${
+          trend > 0 ? 'bg-gradient-to-br from-rose-500 to-pink-600' : 'bg-gradient-to-br from-emerald-500 to-teal-600'
         }`}
       >
         <div className="flex items-center justify-between">
@@ -220,10 +220,10 @@ export default function MonthlyTrends() {
             <h3 className="font-semibold text-[#1B3A52] mb-2">💡 Insight</h3>
             <p className="text-sm text-slate-600 leading-relaxed">
               {trend > 15 
-                ? `Se mantiver esse ritmo, seus gastos aumentarão ${(trend * 3).toFixed(0)}% em 3 meses. Considere revisar suas categorias de gastos.`
+                ? `Nesse ritmo, seus gastos sobem ${(trend * 3).toFixed(0)}% em 3 meses. Vale revisar onde cortar.`
                 : trend < -10
-                ? `Excelente! Mantendo esse controle, você pode economizar ${formatCurrency(Math.abs(currentMonthTotal - lastMonthTotal) * 12)} em um ano.`
-                : `Seus gastos estão estáveis. Continue monitorando para manter o equilíbrio.`}
+                ? `Você tá bem! Mantendo isso, economiza ${formatCurrency(Math.abs(currentMonthTotal - lastMonthTotal) * 12)} no ano.`
+                : `Seus gastos estão estáveis. Tá tudo certo.`}
             </p>
           </CardContent>
         </Card>

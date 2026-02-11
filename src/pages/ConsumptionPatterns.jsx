@@ -122,12 +122,12 @@ export default function ConsumptionPatterns() {
       >
         <BackButton to={createPageUrl("Analysis")} />
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-[#4FA9A5] to-[#2A4A62] rounded-2xl flex items-center justify-center shadow-aury">
+          <div className="w-12 h-12 bg-gradient-to-br from-[#4facfe] to-[#00f2fe] rounded-2xl flex items-center justify-center shadow-lg">
             <Calendar className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Padrões de Consumo</h1>
-            <p className="text-slate-500 text-sm">Últimos 3 meses analisados</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Quando eu gasto mais</h1>
+            <p className="text-slate-500 text-sm">Seus padrões de timing</p>
           </div>
         </div>
       </motion.div>
@@ -147,7 +147,7 @@ export default function ConsumptionPatterns() {
                 <XAxis dataKey="day" stroke="#64748b" fontSize={12} />
                 <YAxis stroke="#64748b" fontSize={12} tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`} />
                 <Tooltip formatter={(value) => formatCurrency(value)} />
-                <Bar dataKey="total" fill="#5FBDBD" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="total" fill="#4facfe" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -157,7 +157,7 @@ export default function ConsumptionPatterns() {
       {/* Recurring Patterns */}
       {recurringPatterns.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-[#1B3A52]">Gastos que se repetem</h3>
+          <h3 className="text-lg font-semibold text-[#1B3A52]">O que sempre volta</h3>
           {recurringPatterns.map((pattern, index) => (
             <motion.div
               key={index}
@@ -202,14 +202,14 @@ export default function ConsumptionPatterns() {
                   <AlertCircle className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-amber-900 mb-2">Gastos pequenos frequentes</h3>
+                  <h3 className="font-semibold text-amber-900 mb-2">Pequenos gastos somam</h3>
                   <p className="text-sm text-amber-800 mb-3">
-                    {smallExpensesPercent.toFixed(0)}% dos seus gastos são abaixo de R$ 50, totalizando <strong>{formatCurrency(smallExpensesTotal)}</strong>
+                    {smallExpensesPercent.toFixed(0)}% dos seus gastos são pequenos (até R$ 50), mas somam <strong>{formatCurrency(smallExpensesTotal)}</strong>
                   </p>
                   <div className="bg-white/70 rounded-lg p-3 border border-amber-200">
-                    <p className="text-xs font-medium text-amber-900 mb-1">💡 Insight</p>
+                    <p className="text-xs font-medium text-amber-900 mb-1">💡 O que fazer</p>
                     <p className="text-sm text-amber-800">
-                      Pequenos gastos se acumulam. Reduza {smallExpenses.length} gastos pequenos por mês e economize até {formatCurrency(smallExpensesTotal * 0.3)}.
+                      Cortando metade desses pequenos gastos, você economiza {formatCurrency(smallExpensesTotal * 0.5)} por mês.
                     </p>
                   </div>
                 </div>
