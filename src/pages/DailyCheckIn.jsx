@@ -69,36 +69,36 @@ export default function DailyCheckIn() {
      color: "from-green-500 to-green-600",
      textColor: "text-green-600",
      bgColor: "bg-green-50",
-     message: "Sua situação financeira está estável"
+     message: "Respira fundo. Tá tudo certo por enquanto"
    };
 
    // Check if overspent (spent more than income)
    if (remaining < 0) {
      status = {
-       label: "Risco",
+       label: "Vamos com calma",
        icon: AlertTriangle,
        color: "from-red-500 to-red-600",
        textColor: "text-red-600",
        bgColor: "bg-red-50",
-       message: "Você ultrapassou seu orçamento"
+       message: "Esse mês está pesado. Não é fracasso, é real"
      };
    } else if (spendingPercentage > 85) {
      status = {
-       label: "Risco",
+       label: "Atenção",
        icon: AlertTriangle,
        color: "from-red-500 to-red-600",
        textColor: "text-red-600",
        bgColor: "bg-red-50",
-       message: "Atenção aos gastos deste mês"
+       message: "Tá apertado. Vamos segurar um pouco nos próximos dias"
      };
    } else if (spendingPercentage > 70) {
      status = {
-       label: "Atenção",
+       label: "Dá pra ajustar",
        icon: TrendingUp,
        color: "from-[#1B3A52] to-[#0A2540]",
        textColor: "text-[#1B3A52]",
        bgColor: "bg-[#1B3A52]/10",
-       message: "Fique atento ao seu orçamento"
+       message: "Algumas coisas dá pra segurar ainda"
      };
    }
 
@@ -227,7 +227,7 @@ export default function DailyCheckIn() {
              />
            </motion.div>
            <h1 className="text-2xl font-bold text-[#1B3A52] mb-2">{getGreeting().text}! {getGreeting().emoji}</h1>
-           <p className="text-slate-500">Seu check-in financeiro de hoje</p>
+           <p className="text-slate-500">Como está o seu bolso hoje?</p>
          </div>
 
          {/* Main Card */}
@@ -301,7 +301,7 @@ export default function DailyCheckIn() {
                     variant="ghost"
                     className="w-full text-slate-500 hover:text-slate-700"
                   >
-                    {isCompleting ? "Carregando..." : "Continuar para o app"}
+                    {isCompleting ? "Carregando..." : "Ver meu resumo completo"}
                   </Button>
                 </motion.div>
               ) : (
@@ -353,7 +353,7 @@ export default function DailyCheckIn() {
 
         {/* Footer */}
         <p className="text-center text-xs text-slate-400">
-          Check-in diário • 10 segundos para clareza financeira
+          10 segundos por dia • Isso já faz diferença
         </p>
       </motion.div>
 
