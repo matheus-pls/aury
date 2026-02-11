@@ -6,6 +6,7 @@ import {
   Sparkles,
   Scissors,
   TrendingUp,
+  TrendingDown,
   Ban,
   Target,
   Clock,
