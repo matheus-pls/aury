@@ -24,36 +24,36 @@ import { createPageUrl } from "@/utils";
 
 const SIMULATION_TYPES = [
   {
-    id: "cut_expenses",
-    title: "Economizar Mais",
-    description: "O que muda se você ajustar gastos",
-    icon: Scissors,
-    color: "from-[#5FBDBD] to-[#4FA9A5]",
-    prompt: "E se eu economizar"
-  },
-  {
-    id: "new_job",
-    title: "Trocar de Emprego",
-    description: "Simule uma nova renda",
-    icon: TrendingUp,
-    color: "from-[#2A4A62] to-[#1B3A52]",
-    prompt: "E se eu ganhar"
-  },
-  {
     id: "cost_of_time",
-    title: "Quanto Custa seu Tempo",
-    description: "Gasto convertido em horas/dias de trabalho",
-    icon: Hourglass,
-    color: "from-[#1B3A52] to-[#0A2540]",
-    prompt: "Esse gasto custa"
+    title: "Quanto vale meu tempo",
+    description: "Converte um gasto em horas de trabalho",
+    icon: Clock,
+    color: "from-[#667eea] to-[#764ba2]",
+    prompt: "Isso custa"
   },
   {
-    id: "reach_goal",
-    title: "Alcançar Meta",
-    description: "Quando você chega lá?",
-    icon: Target,
-    color: "from-[#5FBDBD] to-[#2A4A62]",
-    prompt: "Quando alcanço"
+    id: "cut_specific",
+    title: "Cortar um gasto",
+    description: "O impacto de eliminar algo específico",
+    icon: Ban,
+    color: "from-[#f093fb] to-[#f5576c]",
+    prompt: "Se eu parar de gastar"
+  },
+  {
+    id: "reduce_category",
+    title: "Reduzir uma categoria",
+    description: "O que muda se você gastar menos em algo",
+    icon: TrendingDown,
+    color: "from-[#4facfe] to-[#00f2fe]",
+    prompt: "Se eu reduzir"
+  },
+  {
+    id: "new_income",
+    title: "Ganhar mais",
+    description: "Como uma renda maior muda tudo",
+    icon: TrendingUp,
+    color: "from-[#43e97b] to-[#38f9d7]",
+    prompt: "Se eu ganhar"
   }
 ];
 
@@ -127,6 +127,234 @@ export default function Simulations() {
       let simulationResult = {};
 
       switch (selectedSimulation.id) {
+        case "cost_of_time":
+          const expenseValue = parseFloat(simulationValue) || 0;
+          const hourlyRate = calculateHourlyRate();
+          const monthlyIncome = calculateMonthlyIncome();
+          
+          if (hourlyRate <= 0) {
+            simulationResult = {
+              title: "Configure sua renda",
+              metrics: [
+                { label: "O que fazer", value: "Cadastre sua renda mensal primeiro" }
+              ],
+              emotional: {
+                message: "Sem isso, não consigo calcular quanto vale sua hora.",
+                impact: "low"
+              }
+            };
+          } else {
+            const hoursOfWork = expenseValue / hourlyRate;
+            const daysOfWork = hoursOfWork / 8;
+            const monthsOfWork = daysOfWork / 22; // dias úteis médios
+            
+            let emotionalMessage = "";
+            let timeDescription = "";
+            
+            if (hoursOfWork < 1) {
+              timeDescription = `${Math.round(hoursOfWork * 60)} minutos`;
+              emotionalMessage = `É pouco. Mas tudo conta no final do mês.`;
+            } else if (hoursOfWork < 8) {
+              timeDescription = `${hoursOfWork.toFixed(1)} horas`;
+              emotionalMessage = `Menos de um dia de trabalho. Vale a pena?`;
+            } else if (daysOfWork < 22) {
+              timeDescription = `${daysOfWork.toFixed(1)} dias`;
+              emotionalMessage = daysOfWork > 7 
+                ? `Mais de uma semana inteira trabalhando só pra isso.`
+                : `${Math.ceil(daysOfWork)} dias de trabalho. Pense bem.`;
+            } else {
+              timeDescription = `${monthsOfWork.toFixed(1)} meses`;
+              emotionalMessage = `Você trabalha ${Math.ceil(monthsOfWork)} meses inteiros pra pagar isso.`;
+            }
+
+            simulationResult = {
+              title: `R$ ${expenseValue.toFixed(2)} = ${timeDescription} trabalhando`,
+              metrics: [
+                { 
+                  label: "Tempo de trabalho necessário",
+                  value: timeDescription,
+                  change: `${hoursOfWork.toFixed(1)} horas no total`
+                },
+                { 
+                  label: "Sua hora vale",
+                  value: formatCurrency(hourlyRate)
+                }
+              ],
+              emotional: {
+                message: emotionalMessage,
+                impact: daysOfWork > 7 ? "high" : daysOfWork > 3 ? "medium" : "low"
+              }
+            };
+
+            if (expenseValue > monthlyIncome * 0.5) {
+              simulationResult.metrics.push({
+                label: "Em relação à sua renda",
+                value: `${((expenseValue / monthlyIncome) * 100).toFixed(0)}% do salário`
+              });
+            }
+          }
+          break;
+
+        case "cut_specific":
+          const cutAmount = parseFloat(simulationValue) || 0;
+          const annualSavings = cutAmount * 12;
+          const asPercentOfIncome = currentIncome > 0 ? (cutAmount / currentIncome) * 100 : 0;
+          
+          simulationResult = {
+            title: `Cortando R$ ${cutAmount.toFixed(2)}/mês`,
+            metrics: [
+              { 
+                label: "Você economiza por mês", 
+                value: formatCurrency(cutAmount),
+                change: `${asPercentOfIncome.toFixed(1)}% da sua renda`
+              },
+              { 
+                label: "Em 1 ano você tem", 
+                value: formatCurrency(annualSavings)
+              },
+              { 
+                label: "Sua nova economia mensal", 
+                value: formatCurrency(currentSavings + cutAmount),
+                change: `antes: ${formatCurrency(currentSavings)}`
+              }
+            ],
+            emotional: {
+              message: cutAmount > currentIncome * 0.1
+                ? `Isso faz diferença real. Vale o esforço.`
+                : cutAmount > 0
+                ? `Pode parecer pouco, mas somando dá ${formatCurrency(annualSavings)} por ano.`
+                : `Coloque um valor pra ver o impacto`,
+              impact: cutAmount > currentIncome * 0.15 ? "high" : cutAmount > currentIncome * 0.05 ? "medium" : "low"
+            }
+          };
+
+          if (selectedGoal && activeGoals.length > 0 && cutAmount > 0) {
+            const goal = activeGoals.find(g => g.id === selectedGoal);
+            if (goal) {
+              const remaining = goal.target_amount - (goal.current_amount || 0);
+              const monthsBefore = currentSavings > 0 ? Math.ceil(remaining / currentSavings) : 999;
+              const monthsAfter = (currentSavings + cutAmount) > 0 ? Math.ceil(remaining / (currentSavings + cutAmount)) : 999;
+              const timeSaved = monthsBefore - monthsAfter;
+              
+              simulationResult.goalImpact = {
+                goalTitle: goal.title,
+                monthsBefore: monthsBefore > 100 ? "Nunca" : `${monthsBefore} meses`,
+                monthsAfter: monthsAfter > 100 ? "Nunca" : `${monthsAfter} meses`,
+                timeSaved: timeSaved > 0 ? `${timeSaved} meses mais rápido` : "Sem mudança"
+              };
+            }
+          }
+          break;
+
+        case "reduce_category":
+          const reductionPercent = parseFloat(simulationValue) || 0;
+          const categoryExpenses = calculateSuperflousExpenses();
+          const reductionAmount = categoryExpenses * (reductionPercent / 100);
+          const newMonthlyExpenses = currentExpenses - reductionAmount;
+          const newMonthlySavings = currentIncome - newMonthlyExpenses;
+          
+          simulationResult = {
+            title: `Cortando ${reductionPercent}% dos supérfluos`,
+            metrics: [
+              { 
+                label: "Você economiza por mês", 
+                value: formatCurrency(reductionAmount),
+                change: `de ${formatCurrency(categoryExpenses)} em supérfluos`
+              },
+              { 
+                label: "Nova economia mensal total", 
+                value: formatCurrency(newMonthlySavings),
+                change: `antes: ${formatCurrency(currentSavings)}`
+              },
+              { 
+                label: "Em 1 ano você junta", 
+                value: formatCurrency(reductionAmount * 12)
+              }
+            ],
+            emotional: {
+              message: reductionPercent >= 50
+                ? `Cortar metade dos supérfluos é desafiador, mas possível.`
+                : reductionPercent >= 30
+                ? `Uma redução equilibrada. Dá pra manter sem sofrer.`
+                : reductionPercent > 0
+                ? `Pequenos cortes já ajudam. Comece por aqui.`
+                : `Digite uma % pra ver quanto economiza`,
+              impact: reductionPercent >= 40 ? "high" : reductionPercent >= 20 ? "medium" : "low"
+            }
+          };
+
+          if (selectedGoal && activeGoals.length > 0 && reductionAmount > 0) {
+            const goal = activeGoals.find(g => g.id === selectedGoal);
+            if (goal) {
+              const remaining = goal.target_amount - (goal.current_amount || 0);
+              const monthsBefore = currentSavings > 0 ? Math.ceil(remaining / currentSavings) : 999;
+              const monthsAfter = newMonthlySavings > 0 ? Math.ceil(remaining / newMonthlySavings) : 999;
+              const timeSaved = monthsBefore - monthsAfter;
+              
+              simulationResult.goalImpact = {
+                goalTitle: goal.title,
+                monthsBefore: monthsBefore > 100 ? "Nunca" : `${monthsBefore} meses`,
+                monthsAfter: monthsAfter > 100 ? "Nunca" : `${monthsAfter} meses`,
+                timeSaved: timeSaved > 0 ? `${timeSaved} meses mais rápido` : "Sem mudança"
+              };
+            }
+          }
+          break;
+
+        case "new_income":
+          const newIncome = parseFloat(simulationValue) || 0;
+          const incomeIncrease = newIncome - currentIncome;
+          const newSavingsWithIncome = newIncome - currentExpenses;
+          const increasePercent = currentIncome > 0 ? (incomeIncrease / currentIncome) * 100 : 0;
+          
+          simulationResult = {
+            title: `Ganhando R$ ${newIncome.toFixed(2)}/mês`,
+            metrics: [
+              { 
+                label: "Aumento na renda", 
+                value: formatCurrency(incomeIncrease),
+                change: `+${increasePercent.toFixed(0)}%`
+              },
+              { 
+                label: "Nova economia mensal", 
+                value: formatCurrency(newSavingsWithIncome),
+                change: `antes: ${formatCurrency(currentSavings)}`
+              },
+              { 
+                label: "Em 1 ano você junta", 
+                value: formatCurrency(newSavingsWithIncome * 12)
+              }
+            ],
+            emotional: {
+              message: increasePercent > 30
+                ? `Isso muda tudo. Pode transformar sua vida.`
+                : increasePercent > 15
+                ? `Um salto bom. Faz diferença real no longo prazo.`
+                : increasePercent > 0
+                ? `Toda renda extra ajuda. Já é um avanço.`
+                : `Coloque o novo salário pra ver o impacto`,
+              impact: increasePercent > 30 ? "high" : increasePercent > 15 ? "medium" : "low"
+            }
+          };
+
+          if (selectedGoal && activeGoals.length > 0 && newSavingsWithIncome > currentSavings) {
+            const goal = activeGoals.find(g => g.id === selectedGoal);
+            if (goal) {
+              const remaining = goal.target_amount - (goal.current_amount || 0);
+              const monthsBefore = currentSavings > 0 ? Math.ceil(remaining / currentSavings) : 999;
+              const monthsAfter = newSavingsWithIncome > 0 ? Math.ceil(remaining / newSavingsWithIncome) : 999;
+              const timeSaved = monthsBefore - monthsAfter;
+              
+              simulationResult.goalImpact = {
+                goalTitle: goal.title,
+                monthsBefore: monthsBefore > 100 ? "Nunca" : `${monthsBefore} meses`,
+                monthsAfter: monthsAfter > 100 ? "Nunca" : `${monthsAfter} meses`,
+                timeSaved: timeSaved > 0 ? `${timeSaved} meses mais rápido` : "Sem mudança"
+              };
+            }
+          }
+          break;
+
         case "cut_expenses":
           const cutAmount = parseFloat(simulationValue) || 0;
           const newExpenses = currentExpenses - cutAmount;
@@ -165,7 +393,7 @@ export default function Simulations() {
           }
           break;
 
-        case "new_job":
+        case "old_cut_expenses":
           const newIncome = parseFloat(simulationValue) || 0;
           const incomeIncrease = newIncome - currentIncome;
           const newSavingsJob = newIncome - currentExpenses;
@@ -203,7 +431,7 @@ export default function Simulations() {
           }
           break;
 
-        case "cost_of_time":
+        case "old_new_job":
           const expenseValue = parseFloat(simulationValue) || 0;
           const hourlyRate = calculateHourlyRate();
           const monthlyIncome = calculateMonthlyIncome();
@@ -264,7 +492,7 @@ export default function Simulations() {
           }
           break;
 
-        case "stop_superfluous":
+        case "old_cost_of_time":
           let savingsAmount = 0;
           const numericMatch = simulationValue.match(/[\d.,]+/);
           
@@ -317,7 +545,7 @@ export default function Simulations() {
           }
           break;
 
-        case "reach_goal":
+        case "old_stop_superfluous":
           if (selectedGoal && activeGoals.length > 0) {
             const goal = activeGoals.find(g => g.id === selectedGoal);
             if (goal) {
@@ -400,7 +628,7 @@ export default function Simulations() {
           </div>
           <div>
             <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Simulações</h1>
-            <p className="text-slate-500">Veja como pequenas mudanças fazem diferença</p>
+            <p className="text-slate-500">Veja em números o que muda na prática</p>
           </div>
         </div>
       </motion.div>
@@ -467,79 +695,79 @@ export default function Simulations() {
                 </div>
 
                 <div className="space-y-6">
-                  {selectedSimulation.id === "cut_expenses" && (
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Quanto você quer cortar dos gastos mensais?
-                      </label>
-                      <Input
-                        type="number"
-                        placeholder="Ex: 500"
-                        value={simulationValue}
-                        onChange={(e) => setSimulationValue(e.target.value)}
-                        className="h-12 text-lg"
-                      />
-                      <p className="text-xs text-slate-500 mt-2">
-                        Gasto atual: {formatCurrency(calculateCurrentMonthlyExpenses())}
-                      </p>
-                    </div>
-                  )}
-
-                  {selectedSimulation.id === "new_job" && (
-                    <div>
-                      <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Qual seria sua nova renda mensal?
-                      </label>
-                      <Input
-                        type="number"
-                        placeholder="Ex: 8000"
-                        value={simulationValue}
-                        onChange={(e) => setSimulationValue(e.target.value)}
-                        className="h-12 text-lg"
-                      />
-                      <p className="text-xs text-slate-500 mt-2">
-                        Renda atual: {formatCurrency(calculateMonthlyIncome())}
-                      </p>
-                    </div>
-                  )}
-
                   {selectedSimulation.id === "cost_of_time" && (
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Qual é o valor do gasto?
+                        Quanto é o gasto?
                       </label>
                       <Input
                         type="number"
-                        placeholder="Ex: 150"
+                        placeholder="Ex: 350"
                         value={simulationValue}
                         onChange={(e) => setSimulationValue(e.target.value)}
                         className="h-12 text-lg"
                       />
                       <p className="text-xs text-slate-500 mt-2">
-                        Digite qualquer gasto para ver quanto tempo de trabalho custa
+                        Vou converter em horas/dias de trabalho
                       </p>
                     </div>
                   )}
 
-                  {selectedSimulation.id === "stop_superfluous" && (
+                  {selectedSimulation.id === "cut_specific" && (
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
-                        Quanto você quer economizar ou qual gasto quer cortar?
+                        Quanto é esse gasto mensal?
                       </label>
                       <Input
-                        type="text"
-                        placeholder="Ex: 500 ou 'Netflix e Spotify'"
+                        type="number"
+                        placeholder="Ex: 80"
                         value={simulationValue}
                         onChange={(e) => setSimulationValue(e.target.value)}
                         className="h-12 text-lg"
                       />
                       <p className="text-xs text-slate-500 mt-2">
-                        Digite um valor em R$ ou o nome de gastos que deseja eliminar
+                        Ex: assinatura, delivery recorrente, hábito específico
                       </p>
                     </div>
                   )}
 
-                  {activeGoals.length > 0 && selectedSimulation.id !== "reach_goal" && (
+                  {selectedSimulation.id === "reduce_category" && (
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Quanto % você quer cortar dos supérfluos?
+                      </label>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 30"
+                        value={simulationValue}
+                        onChange={(e) => setSimulationValue(e.target.value)}
+                        className="h-12 text-lg"
+                      />
+                      <p className="text-xs text-slate-500 mt-2">
+                        Você gasta {formatCurrency(calculateSuperflousExpenses())} em supérfluos este mês
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedSimulation.id === "new_income" && (
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
+                        Qual seria o novo salário?
+                      </label>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 7500"
+                        value={simulationValue}
+                        onChange={(e) => setSimulationValue(e.target.value)}
+                        className="h-12 text-lg"
+                      />
+                      <p className="text-xs text-slate-500 mt-2">
+                        Sua renda atual: {formatCurrency(calculateMonthlyIncome())}
+                      </p>
+                    </div>
+                  )}
+
+                  {activeGoals.length > 0 && selectedSimulation.id !== "cost_of_time" && (
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-2">
                         Vincular a uma meta (opcional)
@@ -593,7 +821,7 @@ export default function Simulations() {
                   </Button>
                   <Button
                     onClick={runSimulation}
-                    disabled={isSimulating || (!simulationValue && selectedSimulation.id !== "reach_goal") || (selectedSimulation.id === "reach_goal" && !selectedGoal)}
+                    disabled={isSimulating || !simulationValue}
                     className="flex-1 h-12 bg-gradient-to-r from-[#5FBDBD] to-[#4FA9A5] text-white hover:opacity-90"
                   >
                     {isSimulating ? (
