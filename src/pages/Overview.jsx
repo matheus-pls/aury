@@ -38,6 +38,10 @@ import {
 } from "@/components/ui/select";
 import AuryFlow from "../components/overview/AuryFlow";
 import { toast } from "sonner";
+import UpgradeBanner from "@/components/UpgradeBanner";
+import UpgradeModal from "@/components/UpgradeModal";
+import PremiumBadge from "@/components/PremiumBadge";
+import { Crown, Lock } from "lucide-react";
 
 export default function Overview() {
   const currentMonth = new Date().toISOString().slice(0, 7);
@@ -117,11 +121,25 @@ export default function Overview() {
 
   const tranquilityStatus = getTranquilityStatus();
 
+  const [user, setUser] = React.useState(null);
+  const [showUpgradeModal, setShowUpgradeModal] = React.useState(false);
+  const [upgradeFeature, setUpgradeFeature] = React.useState("");
+
+  React.useEffect(() => {
+    base44.auth.me().then(setUser).catch(() => {});
+  }, []);
+  const isPremium = user?.is_premium || false;
+
+  const handlePremiumAction = (featureName) => {
+    setUpgradeFeature(featureName);
+    setShowUpgradeModal(true);
+  };
+
   const quickActions = [
     { label: "Registrar Gasto", icon: Receipt, action: "expense", color: "from-[#5FBDBD] to-[#4FA9A5]" },
     { label: "Adicionar Renda", icon: TrendingUp, action: "income", color: "from-[#2A4A62] to-[#1B3A52]" },
     { label: "Criar Meta", icon: Target, action: "goal", color: "from-[#1B3A52] to-[#0A2540]" },
-    { label: "Ver Análises", icon: Sparkles, page: "BehaviorAnalysis", color: "from-[#5FBDBD] to-[#2A4A62]" }
+    { label: "Ver Análises", icon: Sparkles, page: "Analysis", color: "from-[#5FBDBD] to-[#2A4A62]", premium: true }
   ];
 
   const [quickActionDialog, setQuickActionDialog] = React.useState(null);
@@ -166,6 +184,10 @@ export default function Overview() {
   });
 
   const handleQuickAction = (action) => {
+    if (action.premium && !isPremium) {
+      handlePremiumAction(action.label);
+      return;
+    }
     if (action.page) {
       window.location.href = createPageUrl(action.page);
     } else if (action.action === "goal") {
@@ -257,32 +279,86 @@ export default function Overview() {
         </div>
       </motion.div>
 
-      {/* Aury Flow - Entrada Rápida Inteligente */}
-      <AuryFlow />
+      {/* Upgrade Banner para usuários free */}
+      {!isPremium && <UpgradeBanner message="Desbloqueie Simulações, Análises e muito mais com o Premium" />}
 
-      {/* Índice de Tranquilidade Financeira - Compacto e Premium */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.1 }}
-        className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury"
-      >
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Heart className="w-4 h-4 text-white/90" />
-            <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
+      {/* Aury Flow - bloqueado para free */}
+      {isPremium ? <AuryFlow /> : (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          onClick={() => handlePremiumAction("Aury Flow (entrada por voz)")}
+          className="cursor-pointer"
+        >
+          <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-[#5FBDBD]/40 bg-gradient-to-br from-[#5FBDBD]/5 to-[#1B3A52]/5 p-6 flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-slate-200 to-slate-300 rounded-xl flex items-center justify-center opacity-60">
+              <Sparkles className="w-6 h-6 text-slate-400" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1">
+                <h3 className="font-bold text-slate-500">Aury Flow</h3>
+                <Lock className="w-3.5 h-3.5 text-amber-500" />
+              </div>
+              <p className="text-sm text-slate-400">Registre gastos por voz, foto ou texto — Premium</p>
+            </div>
+            <button className="px-3 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-md">
+              <Crown className="w-3 h-3 inline mr-1" />
+              Premium
+            </button>
           </div>
-          <div className="flex items-baseline gap-2">
-            <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
-            <span className="text-lg font-light text-white/80">/100</span>
-            <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">
-              {tranquilityStatus.label}
-            </span>
+        </motion.div>
+      )}
+
+      {/* Índice de Tranquilidade Financeira */}
+      {isPremium ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          className="relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] text-white shadow-aury"
+        >
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Heart className="w-4 h-4 text-white/90" />
+              <p className="text-white/80 text-xs font-medium">Tranquilidade Financeira</p>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-4xl font-bold">{tranquilityIndex}</h2>
+              <span className="text-lg font-light text-white/80">/100</span>
+              <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-white/20">
+                {tranquilityStatus.label}
+              </span>
+            </div>
           </div>
-        </div>
-        {/* Decorative gradient */}
-        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
-      </motion.div>
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/5 rounded-full blur-2xl" />
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.1 }}
+          onClick={() => handlePremiumAction("Índice de Tranquilidade")}
+          className="cursor-pointer relative overflow-hidden rounded-2xl p-6 bg-gradient-to-br from-slate-200 to-slate-300 text-slate-500 select-none"
+        >
+          <div className="absolute inset-0 backdrop-blur-[2px]" />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-2">
+              <Heart className="w-4 h-4" />
+              <p className="text-xs font-medium">Tranquilidade Financeira</p>
+              <PremiumBadge className="ml-auto" />
+            </div>
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-4xl font-bold blur-sm">72</h2>
+              <span className="text-lg font-light">/100</span>
+              <span className="ml-2 text-sm font-semibold px-3 py-1 rounded-full bg-slate-400/30 blur-sm">
+                Tranquilo
+              </span>
+            </div>
+            <p className="text-sm mt-3 font-semibold text-slate-600">Toque para desbloquear →</p>
+          </div>
+        </motion.div>
+      )}
 
       {/* Main Balance */}
       <motion.div
@@ -459,6 +535,7 @@ export default function Overview() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
+            const isLocked = action.premium && !isPremium;
             return (
               <motion.div
                 key={index}
@@ -470,12 +547,13 @@ export default function Overview() {
                 className="group"
                 onClick={() => handleQuickAction(action)}
               >
-                <Card className="cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/50 bg-white">
+                <Card className={`cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/50 bg-white relative ${isLocked ? 'opacity-80' : ''}`}>
                   <CardContent className="p-6 text-center">
-                    <div className={`w-14 h-14 bg-gradient-to-br ${action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-md`}>
-                      <Icon className="w-7 h-7 text-white" />
+                    <div className={`w-14 h-14 bg-gradient-to-br ${isLocked ? 'from-slate-200 to-slate-300' : action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-md`}>
+                      {isLocked ? <Lock className="w-7 h-7 text-slate-400" /> : <Icon className="w-7 h-7 text-white" />}
                     </div>
                     <p className="font-semibold text-[#1B3A52] text-sm">{action.label}</p>
+                    {isLocked && <Crown className="w-3.5 h-3.5 text-amber-500 mx-auto mt-1" />}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -551,6 +629,8 @@ export default function Overview() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} feature={upgradeFeature} />
 
       {/* Quick Income Dialog */}
       <Dialog open={quickActionDialog === "income"} onOpenChange={() => setQuickActionDialog(null)}>
