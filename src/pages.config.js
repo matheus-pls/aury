@@ -70,6 +70,7 @@ import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
+import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
@@ -97,6 +98,7 @@ export const PAGES = {
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
+    "Landing": Landing,
 }
 
 export const pagesConfig = {
