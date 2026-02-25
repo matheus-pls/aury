@@ -38,7 +38,7 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => base44.auth.me()
   });
 
-  const isPremium = user?.is_premium || false;
+  const isPremium = true; // user?.is_premium || false;
 
   const { data: familyGroups = [] } = useQuery({
     queryKey: ['user-family-groups', user?.email],

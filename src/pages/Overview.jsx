@@ -128,7 +128,7 @@ export default function Overview() {
   React.useEffect(() => {
     base44.auth.me().then(setUser).catch(() => {});
   }, []);
-  const isPremium = user?.is_premium || false;
+  const isPremium = true; // user?.is_premium || false;
 
   const handlePremiumAction = (featureName) => {
     setUpgradeFeature(featureName);

@@ -59,7 +59,7 @@ export default function Analysis() {
   const [lockedFeature, setLockedFeature] = useState("");
 
   useEffect(() => {
-    base44.auth.me().then(u => setIsPremium(u?.is_premium || false)).catch(() => {});
+    base44.auth.me().then(u => setIsPremium(true /* u?.is_premium || false */)).catch(() => {});
   }, []);
 
   const handleSection = (section) => {
