@@ -52,7 +52,9 @@ import AutoPlanning from './pages/AutoPlanning';
 import BehaviorAnalysis from './pages/BehaviorAnalysis';
 import CategoryDistribution from './pages/CategoryDistribution';
 import ConsumptionPatterns from './pages/ConsumptionPatterns';
+import DailyCheckIn from './pages/DailyCheckIn';
 import DailyMode from './pages/DailyMode';
+import Dashboard from './pages/Dashboard';
 import EmergencyFund from './pages/EmergencyFund';
 import Expenses from './pages/Expenses';
 import FamilyMode from './pages/FamilyMode';
@@ -61,15 +63,13 @@ import Home from './pages/Home';
 import Incomes from './pages/Incomes';
 import MonthlyTrends from './pages/MonthlyTrends';
 import Movements from './pages/Movements';
+import Overview from './pages/Overview';
 import Planning from './pages/Planning';
 import Settings from './pages/Settings';
 import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
-import Overview from './pages/Overview';
-import DailyCheckIn from './pages/DailyCheckIn';
-import Dashboard from './pages/Dashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -79,7 +79,9 @@ export const PAGES = {
     "BehaviorAnalysis": BehaviorAnalysis,
     "CategoryDistribution": CategoryDistribution,
     "ConsumptionPatterns": ConsumptionPatterns,
+    "DailyCheckIn": DailyCheckIn,
     "DailyMode": DailyMode,
+    "Dashboard": Dashboard,
     "EmergencyFund": EmergencyFund,
     "Expenses": Expenses,
     "FamilyMode": FamilyMode,
@@ -88,15 +90,13 @@ export const PAGES = {
     "Incomes": Incomes,
     "MonthlyTrends": MonthlyTrends,
     "Movements": Movements,
+    "Overview": Overview,
     "Planning": Planning,
     "Settings": Settings,
     "Simulations": Simulations,
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
-    "Overview": Overview,
-    "DailyCheckIn": DailyCheckIn,
-    "Dashboard": Dashboard,
 }
 
 export const pagesConfig = {
