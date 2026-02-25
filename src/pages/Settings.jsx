@@ -6,9 +6,7 @@ import { createPageUrl } from "@/utils";
 import { 
   Settings as SettingsIcon, 
   Save, 
-  RotateCcw,
   Percent,
-  Shield,
   Bell,
   User,
   ChevronRight,
@@ -18,21 +16,13 @@ import {
   HelpCircle,
   Instagram,
   MessageCircle,
-  ExternalLink
+  ExternalLink,
+  Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import BackButton from "@/components/BackButton";
 
@@ -40,22 +30,53 @@ const RISK_PROFILES = {
   essential: {
     label: "Essencial",
     emoji: "🛡️",
-    description: "Para quem prefere ir com calma - Poupa ~10%",
+    description: "Para quem prefere ir com calma — Poupa ~10%",
     distribution: { fixed: 50, essential: 25, superfluous: 15, emergency: 7, investment: 3 }
   },
   balanced: {
     label: "Equilibrado",
     emoji: "⚖️",
-    description: "Organização sem abrir mão da vida - Poupa ~15%",
+    description: "Organização sem abrir mão da vida — Poupa ~15%",
     distribution: { fixed: 50, essential: 20, superfluous: 15, emergency: 10, investment: 5 }
   },
   focused: {
     label: "Focado",
     emoji: "⚡",
-    description: "Para quem quer avançar mais rápido - Poupa ~25%",
+    description: "Para quem quer avançar mais rápido — Poupa ~25%",
     distribution: { fixed: 50, essential: 15, superfluous: 10, emergency: 15, investment: 10 }
   }
 };
+
+const DISTRIBUTION_ITEMS = [
+  { key: "fixed_percentage",      label: "Gastos Fixos",           sub: "Aluguel, contas, empréstimos",          color: "bg-[#1B3A52]",   track: "[&>span]:bg-[#1B3A52]" },
+  { key: "essential_percentage",  label: "Essenciais Variáveis",   sub: "Alimentação, transporte, saúde",        color: "bg-[#5FBDBD]",   track: "[&>span]:bg-[#5FBDBD]" },
+  { key: "superfluous_percentage",label: "Supérfluos",             sub: "Lazer, entretenimento, compras",        color: "bg-amber-500",   track: "[&>span]:bg-amber-500" },
+  { key: "emergency_percentage",  label: "Reserva de Emergência",  sub: "Fundo para imprevistos",                color: "bg-emerald-500", track: "[&>span]:bg-emerald-500" },
+  { key: "investment_percentage", label: "Investimentos",          sub: "Poupança, ações, fundos",               color: "bg-violet-500",  track: "[&>span]:bg-violet-500" },
+];
+
+// Section wrapper with luxurious styling
+function Section({ icon: Icon, iconGradient, title, description, children, delay = 0 }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay }}
+      className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden"
+    >
+      <div className="px-7 pt-7 pb-5 border-b border-slate-50 flex items-center gap-4">
+        <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${iconGradient} flex items-center justify-center shadow-md flex-shrink-0`}>
+          <Icon className="w-5 h-5 text-white" />
+        </div>
+        <div>
+          <h2 className="font-bold text-[#1B3A52] text-lg leading-tight">{title}</h2>
+          {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
+        </div>
+      </div>
+      <div className="px-7 py-6">{children}</div>
+    </motion.div>
+  );
+}
 
 export default function Settings() {
   const queryClient = useQueryClient();
@@ -74,18 +95,12 @@ export default function Settings() {
 
   const [hasChanges, setHasChanges] = useState(false);
 
-  // Fetch total income
   const { data: incomes = [] } = useQuery({
     queryKey: ['incomes'],
-    queryFn: async () => {
-      const result = await base44.entities.Income.list();
-      return result || [];
-    }
+    queryFn: async () => (await base44.entities.Income.list()) || []
   });
 
-  const totalIncome = incomes
-    .filter(income => income.is_active)
-    .reduce((sum, income) => sum + (income.amount || 0), 0);
+  const totalIncome = incomes.filter(i => i.is_active).reduce((s, i) => s + (i.amount || 0), 0);
 
   const { data: existingSettings, isLoading } = useQuery({
     queryKey: ['settings'],
@@ -113,28 +128,17 @@ export default function Settings() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.UserSettings.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['settings']);
-      toast.success("Configurações salvas com sucesso!");
-      setHasChanges(false);
-    }
+    onSuccess: () => { queryClient.invalidateQueries(['settings']); toast.success("Configurações salvas!"); setHasChanges(false); }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.UserSettings.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['settings']);
-      toast.success("Configurações atualizadas!");
-      setHasChanges(false);
-    }
+    onSuccess: () => { queryClient.invalidateQueries(['settings']); toast.success("Configurações atualizadas!"); setHasChanges(false); }
   });
 
   const handleSave = () => {
-    if (existingSettings) {
-      updateMutation.mutate({ id: existingSettings.id, data: settings });
-    } else {
-      createMutation.mutate(settings);
-    }
+    if (existingSettings) updateMutation.mutate({ id: existingSettings.id, data: settings });
+    else createMutation.mutate(settings);
   };
 
   const handlePercentageChange = (key, value) => {
@@ -143,447 +147,276 @@ export default function Settings() {
   };
 
   const handleRiskProfileChange = (profile) => {
-    const distribution = RISK_PROFILES[profile].distribution;
-    setSettings(prev => ({
-      ...prev,
-      risk_profile: profile,
-      fixed_percentage: distribution.fixed,
-      essential_percentage: distribution.essential,
-      superfluous_percentage: distribution.superfluous,
-      emergency_percentage: distribution.emergency,
-      investment_percentage: distribution.investment
-    }));
+    const d = RISK_PROFILES[profile].distribution;
+    setSettings(prev => ({ ...prev, risk_profile: profile, fixed_percentage: d.fixed, essential_percentage: d.essential, superfluous_percentage: d.superfluous, emergency_percentage: d.emergency, investment_percentage: d.investment }));
     setHasChanges(true);
   };
 
-  const totalPercentage = 
-    settings.fixed_percentage + 
-    settings.essential_percentage + 
-    settings.superfluous_percentage + 
-    settings.emergency_percentage + 
-    settings.investment_percentage;
-
+  const totalPercentage = settings.fixed_percentage + settings.essential_percentage + settings.superfluous_percentage + settings.emergency_percentage + settings.investment_percentage;
   const isValidDistribution = totalPercentage === 100;
 
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
+  const fmt = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
   if (isLoading) {
     return (
-      <div className="space-y-6 animate-pulse">
-        <div className="h-8 bg-slate-200 rounded w-1/4" />
-        <div className="h-64 bg-slate-200 rounded-xl" />
-        <div className="h-64 bg-slate-200 rounded-xl" />
+      <div className="space-y-5 animate-pulse max-w-3xl mx-auto">
+        <div className="h-10 bg-slate-100 rounded-2xl w-1/3" />
+        <div className="h-52 bg-slate-100 rounded-3xl" />
+        <div className="h-72 bg-slate-100 rounded-3xl" />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 pb-8 max-w-3xl mx-auto">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-4"
-      >
+    <div className="space-y-6 pb-10 max-w-3xl mx-auto">
+
+      {/* ── Header ── */}
+      <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <BackButton to={createPageUrl("Overview")} />
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] flex items-center justify-center shadow-lg shadow-[#5FBDBD]/20">
+              <SettingsIcon className="w-7 h-7 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Configurações</h1>
+              <p className="text-slate-500 text-sm mt-0.5">Personalize sua experiência financeira</p>
+            </div>
+          </div>
+
+          {hasChanges && (
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+              <Button
+                onClick={handleSave}
+                disabled={!isValidDistribution || createMutation.isPending || updateMutation.isPending}
+                className="h-10 px-5 bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20 hover:opacity-90 transition-opacity"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Salvar
+              </Button>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+
+      {/* ── Perfil de Risco ── */}
+      <Section icon={User} iconGradient="from-violet-500 to-purple-600" title="Perfil de Risco" description="Escolha seu perfil — ajustaremos a distribuição automaticamente" delay={0.05}>
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-4 mb-5 flex gap-3">
+          <Sparkles className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-amber-800">
+            Ao selecionar um perfil, todos os percentuais são ajustados automaticamente. Você pode personalizar depois.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {Object.entries(RISK_PROFILES).map(([key, profile]) => {
+            const active = settings.risk_profile === key;
+            return (
+              <button
+                key={key}
+                onClick={() => handleRiskProfileChange(key)}
+                className={`relative p-5 rounded-2xl border-2 text-left transition-all duration-200 ${
+                  active
+                    ? 'border-[#5FBDBD] bg-gradient-to-br from-[#5FBDBD]/8 to-[#1B3A52]/5 shadow-lg shadow-[#5FBDBD]/10'
+                    : 'border-slate-100 bg-slate-50 hover:border-slate-200 hover:bg-white'
+                }`}
+              >
+                {active && (
+                  <span className="absolute top-3 right-3 w-2 h-2 bg-[#5FBDBD] rounded-full shadow-sm" />
+                )}
+                <div className="text-2xl mb-2">{profile.emoji}</div>
+                <p className={`font-bold text-base mb-1 ${active ? 'text-[#1B3A52]' : 'text-slate-600'}`}>
+                  {profile.label}
+                </p>
+                <p className="text-xs text-slate-500 leading-relaxed">{profile.description}</p>
+              </button>
+            );
+          })}
+        </div>
+      </Section>
+
+      {/* ── Distribuição da Renda ── */}
+      <Section icon={Percent} iconGradient="from-[#5FBDBD] to-[#1B3A52]" title="Distribuição da Renda" description="Defina quanto da sua renda vai para cada categoria" delay={0.1}>
+
+        {/* Total badge */}
+        <div className="flex justify-end mb-5">
+          <span className={`text-sm font-semibold px-4 py-1.5 rounded-full border ${
+            isValidDistribution
+              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+              : 'bg-red-50 text-red-700 border-red-200'
+          }`}>
+            Total: {totalPercentage}%
+          </span>
+        </div>
+
+        {!isValidDistribution && (
+          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl mb-5">
+            <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            <p className="text-sm text-amber-700">A soma deve ser exatamente 100%</p>
+          </div>
+        )}
+
+        {/* Visual distribution bar */}
+        <div className="flex h-2 rounded-full overflow-hidden mb-7 gap-px">
+          {DISTRIBUTION_ITEMS.map((item) => (
+            <div
+              key={item.key}
+              className={`${item.color} transition-all duration-300`}
+              style={{ width: `${settings[item.key]}%` }}
+            />
+          ))}
+        </div>
+
+        <div className="space-y-7">
+          {DISTRIBUTION_ITEMS.map((item) => (
+            <div key={item.key} className="space-y-2">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
+                  <Label className="font-semibold text-slate-700">{item.label}</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-base font-bold text-[#1B3A52]">{settings[item.key]}%</span>
+                  {totalIncome > 0 && (
+                    <span className="text-xs text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">
+                      {fmt((totalIncome * settings[item.key]) / 100)}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <Slider
+                value={[settings[item.key]]}
+                onValueChange={([value]) => handlePercentageChange(item.key, value)}
+                max={100}
+                step={1}
+                className={item.track}
+              />
+              <p className="text-xs text-slate-400">{item.sub}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── Notificações ── */}
+      <Section icon={Bell} iconGradient="from-blue-500 to-indigo-600" title="Notificações" description="Configure alertas e lembretes inteligentes" delay={0.15}>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Configurações</h1>
-            <p className="text-slate-500 mt-1">Personalize suas preferências financeiras</p>
+            <p className="font-semibold text-slate-700">Alertas de limite</p>
+            <p className="text-sm text-slate-500 mt-0.5">Avisos quando ultrapassar limites de categoria</p>
           </div>
-        {hasChanges && (
-          <Button 
-            onClick={handleSave}
-            className="bg-[#5FBDBD] hover:bg-[#4FA9A5]"
-            disabled={!isValidDistribution || createMutation.isPending || updateMutation.isPending}
-          >
-            <Save className="w-4 h-4 mr-2" />
-            Salvar
-          </Button>
-        )}
+          <Switch
+            checked={settings.notifications_enabled}
+            onCheckedChange={(checked) => {
+              setSettings(prev => ({ ...prev, notifications_enabled: checked }));
+              setHasChanges(true);
+            }}
+          />
         </div>
-        </motion.div>
+      </Section>
 
-      {/* Risk Profile */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5 text-[#00A8A0]" />
-              Perfil de Risco
-            </CardTitle>
-            <CardDescription>
-              Escolha seu perfil e ajustaremos automaticamente a distribuição
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4">
-              <p className="text-sm text-amber-800">
-                💡 <strong>Dica:</strong> Ao selecionar um perfil, todas as porcentagens abaixo serão ajustadas automaticamente. Você pode personalizá-las depois se quiser.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {Object.entries(RISK_PROFILES).map(([key, profile]) => (
-                <button
-                  key={key}
-                  onClick={() => handleRiskProfileChange(key)}
-                  className={`p-5 rounded-xl border-2 text-left transition-all ${
-                    settings.risk_profile === key
-                      ? 'border-[#00A8A0] bg-[#00A8A0]/5 shadow-md'
-                      : 'border-slate-200 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-2xl">{profile.emoji}</span>
-                    <p className={`font-semibold text-lg ${
-                      settings.risk_profile === key ? 'text-[#00A8A0]' : 'text-slate-700'
-                    }`}>
-                      {profile.label}
-                    </p>
-                  </div>
-                  <p className="text-sm text-slate-600 leading-relaxed">{profile.description}</p>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Distribution */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Percent className="w-5 h-5 text-[#00A8A0]" />
-                  Distribuição da Renda
-                </CardTitle>
-                <CardDescription>
-                  Ajuste as porcentagens para cada categoria
-                </CardDescription>
-              </div>
-              <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                isValidDistribution 
-                  ? 'bg-emerald-100 text-emerald-700' 
-                  : 'bg-red-100 text-red-700'
-              }`}>
-                Total: {totalPercentage}%
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {!isValidDistribution && (
-              <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                <AlertCircle className="w-4 h-4 text-amber-600" />
-                <p className="text-sm text-amber-700">
-                  A soma das porcentagens deve ser igual a 100%
-                </p>
-              </div>
-            )}
-
-            {/* Fixed */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label>Gastos Fixos</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-slate-700">{settings.fixed_percentage}%</span>
-                  {totalIncome > 0 && (
-                    <span className="text-xs text-slate-500">
-                      ({formatCurrency((totalIncome * settings.fixed_percentage) / 100)})
-                    </span>
-                  )}
-                </div>
-              </div>
-              <Slider
-                value={[settings.fixed_percentage]}
-                onValueChange={([value]) => handlePercentageChange('fixed_percentage', value)}
-                max={100}
-                step={1}
-                className="[&>span]:bg-[#0A1A3A]"
-              />
-              <p className="text-xs text-slate-500">Aluguel, contas fixas, empréstimos</p>
-            </div>
-
-            {/* Essential */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label>Essenciais Variáveis</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-slate-700">{settings.essential_percentage}%</span>
-                  {totalIncome > 0 && (
-                    <span className="text-xs text-slate-500">
-                      ({formatCurrency((totalIncome * settings.essential_percentage) / 100)})
-                    </span>
-                  )}
-                </div>
-              </div>
-              <Slider
-                value={[settings.essential_percentage]}
-                onValueChange={([value]) => handlePercentageChange('essential_percentage', value)}
-                max={100}
-                step={1}
-                className="[&>span]:bg-[#00A8A0]"
-              />
-              <p className="text-xs text-slate-500">Alimentação, transporte, saúde</p>
-            </div>
-
-            {/* Superfluous */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label>Supérfluos</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-slate-700">{settings.superfluous_percentage}%</span>
-                  {totalIncome > 0 && (
-                    <span className="text-xs text-slate-500">
-                      ({formatCurrency((totalIncome * settings.superfluous_percentage) / 100)})
-                    </span>
-                  )}
-                </div>
-              </div>
-              <Slider
-                value={[settings.superfluous_percentage]}
-                onValueChange={([value]) => handlePercentageChange('superfluous_percentage', value)}
-                max={100}
-                step={1}
-                className="[&>span]:bg-amber-500"
-              />
-              <p className="text-xs text-slate-500">Lazer, entretenimento, compras não essenciais</p>
-            </div>
-
-            {/* Emergency */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label>Reserva de Emergência</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-slate-700">{settings.emergency_percentage}%</span>
-                  {totalIncome > 0 && (
-                    <span className="text-xs text-slate-500">
-                      ({formatCurrency((totalIncome * settings.emergency_percentage) / 100)})
-                    </span>
-                  )}
-                </div>
-              </div>
-              <Slider
-                value={[settings.emergency_percentage]}
-                onValueChange={([value]) => handlePercentageChange('emergency_percentage', value)}
-                max={100}
-                step={1}
-                className="[&>span]:bg-green-500"
-              />
-              <p className="text-xs text-slate-500">Fundo para imprevistos</p>
-            </div>
-
-            {/* Investment */}
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <Label>Investimentos</Label>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-slate-700">{settings.investment_percentage}%</span>
-                  {totalIncome > 0 && (
-                    <span className="text-xs text-slate-500">
-                      ({formatCurrency((totalIncome * settings.investment_percentage) / 100)})
-                    </span>
-                  )}
-                </div>
-              </div>
-              <Slider
-                value={[settings.investment_percentage]}
-                onValueChange={([value]) => handlePercentageChange('investment_percentage', value)}
-                max={100}
-                step={1}
-                className="[&>span]:bg-violet-500"
-              />
-              <p className="text-xs text-slate-500">Poupança, ações, fundos</p>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-
-
-      {/* Notifications */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Bell className="w-5 h-5 text-[#00A8A0]" />
-              Notificações
-            </CardTitle>
-            <CardDescription>
-              Configure alertas e lembretes
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium text-slate-700">Alertas de limite</p>
-                <p className="text-sm text-slate-500">Receba avisos quando ultrapassar limites</p>
-              </div>
-              <Switch
-                checked={settings.notifications_enabled}
-                onCheckedChange={(checked) => {
-                  setSettings(prev => ({ ...prev, notifications_enabled: checked }));
-                  setHasChanges(true);
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Social & Support */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35 }}
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle>Compartilhar e Suporte</CardTitle>
-            <CardDescription>
-              Conecte-se, compartilhe e obtenha ajuda
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {/* Convidar Amigos */}
-            <button
-              onClick={() => {
-                const shareText = "Estou usando o Aury para organizar minhas finanças! É incrível, experimente: " + window.location.origin;
+      {/* ── Compartilhar e Suporte ── */}
+      <Section icon={Share2} iconGradient="from-[#5FBDBD] to-teal-600" title="Compartilhar e Suporte" description="Conecte-se, compartilhe e obtenha ajuda" delay={0.2}>
+        <div className="space-y-2">
+          {[
+            {
+              label: "Convidar Amigos",
+              sub: "Compartilhe o Aury",
+              icon: Share2,
+              gradient: "from-[#5FBDBD] to-[#4FA9A5]",
+              hoverBorder: "hover:border-[#5FBDBD]/50",
+              hoverIcon: "group-hover:text-[#5FBDBD]",
+              onClick: () => {
+                const text = "Estou usando o Aury para organizar minhas finanças! Experimente: " + window.location.origin;
                 if (navigator.share) {
-                  navigator.share({
-                    title: 'Aury - Seu Aliado Financeiro',
-                    text: shareText,
-                    url: window.location.origin
-                  }).then(() => {
-                    toast.success("Obrigado por compartilhar!");
-                  }).catch(() => {});
+                  navigator.share({ title: 'Aury', text, url: window.location.origin }).catch(() => {});
                 } else {
-                  navigator.clipboard.writeText(shareText);
-                  toast.success("Link copiado! Compartilhe com seus amigos");
+                  navigator.clipboard.writeText(text);
+                  toast.success("Link copiado!");
                 }
-              }}
-              className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-[#5FBDBD] hover:bg-slate-50 transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-lg">
-                  <Share2 className="w-5 h-5 text-white" />
+              }
+            },
+            {
+              label: "Avaliar o App",
+              sub: "Deixe sua opinião",
+              icon: Star,
+              gradient: "from-amber-400 to-orange-500",
+              hoverBorder: "hover:border-amber-300",
+              hoverIcon: "group-hover:text-amber-500",
+              href: "https://www.google.com/search?q=avalie+nosso+app",
+              external: true
+            },
+            {
+              label: "Ajuda & Suporte",
+              sub: "Entre em contato conosco",
+              icon: HelpCircle,
+              gradient: "from-blue-400 to-blue-600",
+              hoverBorder: "hover:border-blue-300",
+              hoverIcon: "group-hover:text-blue-500",
+              href: "mailto:suporte@aury.app?subject=Preciso de ajuda com o Aury"
+            }
+          ].map((item, i) => {
+            const Icon = item.icon;
+            const inner = (
+              <div className={`w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white ${item.hoverBorder} transition-all group cursor-pointer`}>
+                <div className="flex items-center gap-4">
+                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-sm`}>
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="font-semibold text-slate-700">{item.label}</p>
+                    <p className="text-xs text-slate-500">{item.sub}</p>
+                  </div>
                 </div>
-                <div className="text-left">
-                  <p className="font-medium text-slate-700">Convidar Amigos</p>
-                  <p className="text-xs text-slate-500">Compartilhe o Aury</p>
-                </div>
+                {item.external
+                  ? <ExternalLink className={`w-4 h-4 text-slate-300 ${item.hoverIcon} transition-colors`} />
+                  : <ChevronRight className={`w-4 h-4 text-slate-300 ${item.hoverIcon} transition-colors`} />
+                }
               </div>
-              <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-[#5FBDBD] transition-colors" />
-            </button>
+            );
+            if (item.onClick) return <button key={i} onClick={item.onClick} className="w-full">{inner}</button>;
+            return <a key={i} href={item.href} target={item.external ? "_blank" : undefined} rel="noopener noreferrer">{inner}</a>;
+          })}
+        </div>
+      </Section>
 
-            {/* Avaliar App */}
-            <a
-              href="https://www.google.com/search?q=avalie+nosso+app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-slate-50 transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg">
-                  <Star className="w-5 h-5 text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-slate-700">Avaliar o App</p>
-                  <p className="text-xs text-slate-500">Deixe sua opinião</p>
-                </div>
-              </div>
-              <ExternalLink className="w-5 h-5 text-slate-400 group-hover:text-amber-500 transition-colors" />
-            </a>
+      {/* ── Redes Sociais ── */}
+      <Section icon={Instagram} iconGradient="from-pink-500 to-purple-600" title="Redes Sociais" description="Siga-nos e fique por dentro das novidades" delay={0.25}>
+        <div className="grid grid-cols-2 gap-3">
+          <a
+            href="https://instagram.com/auryapp"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-pink-100 bg-gradient-to-br from-pink-50 to-purple-50 hover:border-pink-300 hover:shadow-md transition-all group"
+          >
+            <Instagram className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
+            <span className="font-semibold text-pink-700">Instagram</span>
+          </a>
+          <a
+            href="https://wa.me/5511999999999?text=Olá,%20vim%20do%20app%20Aury!"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-green-100 bg-gradient-to-br from-green-50 to-emerald-50 hover:border-green-300 hover:shadow-md transition-all group"
+          >
+            <MessageCircle className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />
+            <span className="font-semibold text-green-700">WhatsApp</span>
+          </a>
+        </div>
+      </Section>
 
-            {/* Ajuda */}
-            <a
-              href="mailto:suporte@aury.app?subject=Preciso de ajuda com o Aury"
-              className="w-full flex items-center justify-between p-4 rounded-xl border border-slate-200 hover:border-blue-400 hover:bg-slate-50 transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg">
-                  <HelpCircle className="w-5 h-5 text-white" />
-                </div>
-                <div className="text-left">
-                  <p className="font-medium text-slate-700">Ajuda & Suporte</p>
-                  <p className="text-xs text-slate-500">Entre em contato</p>
-                </div>
-              </div>
-              <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-blue-500 transition-colors" />
-            </a>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Redes Sociais */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <Card>
-          <CardHeader>
-            <CardTitle>Redes Sociais</CardTitle>
-            <CardDescription>
-              Siga-nos e fique por dentro
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3">
-              <a
-                href="https://instagram.com/auryapp"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-pink-200 hover:border-pink-400 bg-gradient-to-br from-pink-50 to-purple-50 hover:shadow-md transition-all group"
-              >
-                <Instagram className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
-                <span className="font-medium text-pink-700">Instagram</span>
-              </a>
-              
-              <a
-                href="https://wa.me/5511999999999?text=Olá,%20vim%20do%20app%20Aury!"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-green-200 hover:border-green-400 bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-md transition-all group"
-              >
-                <MessageCircle className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />
-                <span className="font-medium text-green-700">WhatsApp</span>
-              </a>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Save Button (Mobile) */}
+      {/* ── Mobile Save ── */}
       {hasChanges && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="fixed bottom-4 left-4 right-4 lg:hidden"
+          className="fixed bottom-4 left-4 right-4 lg:hidden z-50"
         >
-          <Button 
+          <Button
             onClick={handleSave}
-            className="w-full bg-[#00A8A0] hover:bg-[#008F88] shadow-lg"
+            className="w-full h-14 bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-2xl shadow-[#5FBDBD]/30 rounded-2xl text-base"
             disabled={!isValidDistribution || createMutation.isPending || updateMutation.isPending}
           >
-            <Save className="w-4 h-4 mr-2" />
+            <Save className="w-5 h-5 mr-2" />
             Salvar Alterações
           </Button>
         </motion.div>
