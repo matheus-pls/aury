@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Sparkles,
   TrendingUp,
-  Heart
+  Heart,
+  Lock
 } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
@@ -37,6 +38,8 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => base44.auth.me()
   });
 
+  const isPremium = user?.is_premium || false;
+
   const { data: familyGroups = [] } = useQuery({
     queryKey: ['user-family-groups', user?.email],
     queryFn: async () => {
@@ -52,20 +55,20 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const baseNav = [
       { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
-      { name: "Planejamento", page: "Planning", icon: Sparkles },
+      { name: "Planejamento", page: "Planning", icon: Sparkles, premium: true },
       { name: "Movimentações", page: "Movements", icon: Wallet },
       { name: "Metas", page: "Goals", icon: Target },
-      { name: "Análises", page: "Analysis", icon: TrendingUp },
+      { name: "Análises", page: "Analysis", icon: TrendingUp, premium: true },
     ];
 
-    if (familyGroups.length > 0) {
-      baseNav.push({ name: "Família", page: "FamilyMode", icon: Heart });
+    if (familyGroups.length > 0 && isPremium) {
+      baseNav.push({ name: "Família", page: "FamilyMode", icon: Heart, premium: true });
     }
 
     baseNav.push({ name: "Configurações", page: "Settings", icon: Settings });
 
     setNavigation(baseNav);
-  }, [familyGroups.length]);
+  }, [familyGroups.length, isPremium]);
 
   useEffect(() => {
     setSidebarOpen(false);
@@ -145,9 +148,11 @@ export default function Layout({ children, currentPageName }) {
                 alt="Aury" 
                 className="h-10"
               />
-              <div className="absolute -top-1.5 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-md">
-                ✨ Premium
-              </div>
+              {isPremium && (
+                <div className="absolute -top-1.5 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-md">
+                  ✨ Premium
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <div className="hidden lg:block">
@@ -167,12 +172,13 @@ export default function Layout({ children, currentPageName }) {
             {navigation.map((item) => {
               const isActive = currentPageName === item.page;
               const Icon = item.icon;
+              const isLocked = item.premium && !isPremium;
               return (
                 <Link
                   key={item.page}
                   to={createPageUrl(item.page)}
                   className={`
-                    flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
+                    flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative
                     ${isActive 
                       ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20' 
                       : 'text-slate-600 hover:bg-slate-50 hover:text-[#1B3A52]'
@@ -181,7 +187,12 @@ export default function Layout({ children, currentPageName }) {
                 >
                   <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span className="font-medium">{item.name}</span>
-                  {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                  {isLocked && (
+                    <span className="ml-auto">
+                      <Lock className="w-3.5 h-3.5 text-amber-500" />
+                    </span>
+                  )}
+                  {isActive && !isLocked && <ChevronRight className="w-4 h-4 ml-auto" />}
                 </Link>
               );
             })}
