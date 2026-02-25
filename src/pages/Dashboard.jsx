@@ -22,6 +22,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import ProfileSelector from "@/components/onboarding/ProfileSelector";
+import UpgradeBanner from "@/components/UpgradeBanner";
+import FeatureLockedCard from "@/components/FeatureLockedCard";
+import { Crown } from "lucide-react";
 import {
   LineChart,
   Line,
