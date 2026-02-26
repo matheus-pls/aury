@@ -71,8 +71,19 @@ export default function NotificationCenter() {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const markAllAsRead = () => {
+    notifications.filter(n => !n.read).forEach(n => markAsReadMutation.mutate(n.id));
+  };
+
+  const handleOpenChange = (open) => {
+    setIsOpen(open);
+    if (open && unreadCount > 0) {
+      markAllAsRead();
+    }
+  };
+
   const handleNotificationClick = (notification) => {
-    markAsReadMutation.mutate(notification.id);
+    if (!notification.read) markAsReadMutation.mutate(notification.id);
     if (notification.action_url) {
       window.location.href = notification.action_url;
       setIsOpen(false);
@@ -96,7 +107,7 @@ export default function NotificationCenter() {
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant="ghost"
@@ -200,11 +211,7 @@ export default function NotificationCenter() {
               variant="ghost"
               size="sm"
               className="w-full text-xs text-slate-600"
-              onClick={() => {
-                notifications.filter(n => !n.read).forEach(n => {
-                  markAsReadMutation.mutate(n.id);
-                });
-              }}
+              onClick={markAllAsRead}
             >
               <CheckCircle2 className="w-3 h-3 mr-2" />
               Marcar todas como lidas
