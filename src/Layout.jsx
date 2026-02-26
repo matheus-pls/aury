@@ -61,7 +61,7 @@ export default function Layout({ children, currentPageName }) {
       { name: "Análises", page: "Analysis", icon: TrendingUp, premium: true },
     ];
 
-    if (familyGroups.length > 0 && isPremium) {
+    if (isPremium) {
       baseNav.push({ name: "Família", page: "FamilyMode", icon: Heart, premium: true });
     }
 
