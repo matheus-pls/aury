@@ -17,6 +17,7 @@ import {
   Lock
 } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
+import { useTheme } from "@/components/ThemeToggle";
 import NotificationGenerator from "@/components/NotificationGenerator";
 import { motion, AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";

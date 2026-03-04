@@ -25,6 +25,7 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import BackButton from "@/components/BackButton";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const RISK_PROFILES = {
   essential: {
