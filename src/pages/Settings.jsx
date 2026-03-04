@@ -299,8 +299,13 @@ export default function Settings() {
         </div>
       </Section>
 
+      {/* ── Aparência ── */}
+      <Section icon={SettingsIcon} iconGradient="from-indigo-500 to-violet-600" title="Aparência" description="Personalize o visual do aplicativo" delay={0.15}>
+        <ThemeToggle />
+      </Section>
+
       {/* ── Notificações ── */}
-      <Section icon={Bell} iconGradient="from-blue-500 to-indigo-600" title="Notificações" description="Configure alertas e lembretes inteligentes" delay={0.15}>
+      <Section icon={Bell} iconGradient="from-blue-500 to-indigo-600" title="Notificações" description="Configure alertas e lembretes inteligentes" delay={0.2}>
         <div className="flex items-center justify-between">
           <div>
             <p className="font-semibold text-slate-700">Alertas de limite</p>

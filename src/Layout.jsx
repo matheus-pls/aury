@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function Layout({ children, currentPageName }) {
+  useTheme(); // apply saved theme on mount
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navigation, setNavigation] = useState([
     { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
