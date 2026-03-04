@@ -25,7 +25,6 @@ import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import BackButton from "@/components/BackButton";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const RISK_PROFILES = {
   essential: {
@@ -299,13 +298,8 @@ export default function Settings() {
         </div>
       </Section>
 
-      {/* ── Aparência ── */}
-      <Section icon={SettingsIcon} iconGradient="from-indigo-500 to-violet-600" title="Aparência" description="Personalize o visual do aplicativo" delay={0.15}>
-        <ThemeToggle />
-      </Section>
-
       {/* ── Notificações ── */}
-      <Section icon={Bell} iconGradient="from-blue-500 to-indigo-600" title="Notificações" description="Configure alertas e lembretes inteligentes" delay={0.2}>
+      <Section icon={Bell} iconGradient="from-blue-500 to-indigo-600" title="Notificações" description="Configure alertas e lembretes inteligentes" delay={0.15}>
         <div className="flex items-center justify-between">
           <div>
             <p className="font-semibold text-slate-700">Alertas de limite</p>
