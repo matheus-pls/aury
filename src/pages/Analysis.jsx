@@ -54,15 +54,16 @@ const ANALYSIS_SECTIONS = [
 ];
 
 export default function Analysis() {
-  const [isPremium, setIsPremium] = useState(false);
+  const [isPremium, setIsPremium] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [lockedFeature, setLockedFeature] = useState("");
 
   useEffect(() => {
-    base44.auth.me().then(u => setIsPremium(true /* u?.is_premium || false */)).catch(() => {});
+    base44.auth.me().then(u => setIsPremium(true /* u?.is_premium || false */)).catch(() => setIsPremium(true));
   }, []);
 
   const handleSection = (section) => {
+    if (isPremium === null) return;
     if (!isPremium) {
       setLockedFeature(section.title);
       setShowModal(true);
