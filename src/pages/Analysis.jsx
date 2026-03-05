@@ -94,7 +94,7 @@ export default function Analysis() {
 
 
       {/* Upgrade Banner se free */}
-      {!isPremium && (
+      {isPremium === false && (
         <UpgradeBanner message="Análises avançadas são exclusivas do plano Premium. Desbloqueie para entender seus padrões financeiros." />
       )}
 
