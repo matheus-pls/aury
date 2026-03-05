@@ -104,7 +104,7 @@ export default function Analysis() {
         <div className="grid grid-cols-1 gap-3">
           {ANALYSIS_SECTIONS.map((section, index) => {
             const Icon = section.icon;
-            const isLocked = !isPremium;
+            const isLocked = isPremium === false;
             return (
               <motion.div
                 key={section.id}
