@@ -57,15 +57,16 @@ const PLANNING_MODULES = [
 ];
 
 export default function Planning() {
-  const [isPremium, setIsPremium] = useState(false);
+  const [isPremium, setIsPremium] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [lockedFeature, setLockedFeature] = useState("");
 
   useEffect(() => {
-    base44.auth.me().then(u => setIsPremium(true /* u?.is_premium || false */)).catch(() => {});
+    base44.auth.me().then(u => setIsPremium(true /* u?.is_premium || false */)).catch(() => setIsPremium(true));
   }, []);
 
   const handleClick = (module) => {
+    if (isPremium === null) return;
     if (module.premium && !isPremium) {
       setLockedFeature(module.title);
       setShowModal(true);
