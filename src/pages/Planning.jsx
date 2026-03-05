@@ -83,7 +83,7 @@ export default function Planning() {
         <p className="text-slate-500 mt-1">Escolha o que faz sentido pro seu momento</p>
       </motion.div>
 
-      {!isPremium && (
+      {isPremium === false && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}>
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 flex items-center gap-3">
             <Crown className="w-5 h-5 text-amber-600 flex-shrink-0" />
