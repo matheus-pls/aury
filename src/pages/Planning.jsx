@@ -97,7 +97,7 @@ export default function Planning() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {PLANNING_MODULES.map((module, index) => {
           const Icon = module.icon;
-          const isLocked = module.premium && !isPremium;
+          const isLocked = module.premium && isPremium === false;
           return (
             <motion.div
               key={module.id}
