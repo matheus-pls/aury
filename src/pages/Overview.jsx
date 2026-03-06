@@ -71,6 +71,15 @@ export default function Overview() {
     }
   });
 
+  // Redirect to DailyCheckIn if not done today
+  React.useEffect(() => {
+    if (settingsLoading) return;
+    const today = new Date().toISOString().split('T')[0];
+    if (!settings?.last_checkin_date || settings.last_checkin_date !== today) {
+      navigate(createPageUrl("DailyCheckIn"));
+    }
+  }, [settings, settingsLoading]);
+
 
 
   const totalIncome = incomes.reduce((sum, i) => sum + (i.amount || 0), 0);
