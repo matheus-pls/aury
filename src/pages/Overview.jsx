@@ -46,6 +46,7 @@ import { Crown, Lock } from "lucide-react";
 export default function Overview() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const { data: incomes = [] } = useQuery({
     queryKey: ['incomes'],
