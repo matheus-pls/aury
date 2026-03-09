@@ -71,6 +71,7 @@ import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
+import MonthlyReport from './pages/MonthlyReport';
 import __Layout from './Layout.jsx';
 
 
@@ -99,6 +100,7 @@ export const PAGES = {
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
+    "MonthlyReport": MonthlyReport,
 }
 
 export const pagesConfig = {
