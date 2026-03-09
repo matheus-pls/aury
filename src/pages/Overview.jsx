@@ -149,7 +149,8 @@ export default function Overview() {
     { label: "Registrar Gasto", icon: Receipt, action: "expense", color: "from-[#5FBDBD] to-[#4FA9A5]" },
     { label: "Adicionar Renda", icon: TrendingUp, action: "income", color: "from-[#2A4A62] to-[#1B3A52]" },
     { label: "Criar Meta", icon: Target, action: "goal", color: "from-[#1B3A52] to-[#0A2540]" },
-    { label: "Ver Análises", icon: Sparkles, page: "Analysis", color: "from-[#5FBDBD] to-[#2A4A62]", premium: true }
+    { label: "Ver Análises", icon: Sparkles, page: "Analysis", color: "from-[#5FBDBD] to-[#2A4A62]", premium: true },
+    { label: "Resumo Mensal", icon: FileText, page: "MonthlyReport", color: "from-[#4FA9A5] to-[#1B3A52]" }
   ];
 
   const [quickActionDialog, setQuickActionDialog] = React.useState(null);
