@@ -62,6 +62,7 @@ import Goals from './pages/Goals';
 import Home from './pages/Home';
 import Incomes from './pages/Incomes';
 import Landing from './pages/Landing';
+import MonthlyReport from './pages/MonthlyReport';
 import MonthlyTrends from './pages/MonthlyTrends';
 import Movements from './pages/Movements';
 import Overview from './pages/Overview';
@@ -71,7 +72,6 @@ import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
 import Welcome from './pages/Welcome';
-import MonthlyReport from './pages/MonthlyReport';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +91,7 @@ export const PAGES = {
     "Home": Home,
     "Incomes": Incomes,
     "Landing": Landing,
+    "MonthlyReport": MonthlyReport,
     "MonthlyTrends": MonthlyTrends,
     "Movements": Movements,
     "Overview": Overview,
@@ -100,7 +101,6 @@ export const PAGES = {
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
     "Welcome": Welcome,
-    "MonthlyReport": MonthlyReport,
 }
 
 export const pagesConfig = {

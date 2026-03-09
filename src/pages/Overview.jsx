@@ -544,7 +544,7 @@ export default function Overview() {
       {/* Quick Actions */}
       <div>
         <h3 className="font-semibold text-[#1B3A52] text-lg mb-4">O que você quer fazer agora?</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
             const isLocked = action.premium && !isPremium;
