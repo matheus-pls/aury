@@ -365,8 +365,7 @@ export default function CoupleMode() {
     acc[cat] = sharedExpenses.filter(e => e.category === cat).reduce((s, e) => s + (e.amount || 0), 0);
     return acc;
   }, {});
-  const partner = activeGroup.members?.find(m => m !== user?.email);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const partner = activeGroup?.members?.find(m => m !== user?.email);
 
   return (
     <div className="space-y-6 pb-8">
