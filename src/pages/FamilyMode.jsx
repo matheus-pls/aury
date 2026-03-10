@@ -349,6 +349,7 @@ export default function CoupleMode() {
     return acc;
   }, {});
   const partner = activeGroup.members?.find(m => m !== user?.email);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   return (
     <div className="space-y-6 pb-8">
