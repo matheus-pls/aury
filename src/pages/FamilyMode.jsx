@@ -56,6 +56,7 @@ export default function CoupleMode() {
   const [isCreateGroupOpen, setIsCreateGroupOpen] = useState(false);
   const [isEditNameOpen, setIsEditNameOpen] = useState(false);
   const [editGroupName, setEditGroupName] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
