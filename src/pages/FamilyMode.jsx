@@ -188,6 +188,19 @@ export default function CoupleMode() {
     onSuccess: () => queryClient.invalidateQueries(['shared-expenses'])
   });
 
+  const updateGroupNameMutation = useMutation({
+    mutationFn: ({ groupId, name }) => base44.entities.FamilyGroup.update(groupId, { name }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['family-groups']);
+      setIsEditNameOpen(false);
+    }
+  });
+
+  const handleEditName = () => {
+    if (!editGroupName.trim()) return;
+    updateGroupNameMutation.mutate({ groupId: activeGroup.id, name: editGroupName.trim() });
+  };
+
   const removeMemberMutation = useMutation({
     mutationFn: ({ groupId, members }) =>
       base44.entities.FamilyGroup.update(groupId, { members }),
