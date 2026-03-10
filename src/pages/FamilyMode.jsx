@@ -378,7 +378,12 @@ export default function CoupleMode() {
               <Heart className="w-7 h-7 text-white fill-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-[#1B3A52]">{activeGroup.name}</h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl font-bold text-[#1B3A52]">{activeGroup.name}</h1>
+                <button onClick={() => { setEditGroupName(activeGroup.name); setIsEditNameOpen(true); }} className="p-1 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
+                  <Pencil className="w-4 h-4" />
+                </button>
+              </div>
               <p className="text-sm text-slate-500">Vocês dois, no mesmo caminho 💕</p>
             </div>
           </div>
