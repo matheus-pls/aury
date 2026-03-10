@@ -843,6 +843,35 @@ export default function CoupleMode() {
         </DialogContent>
       </Dialog>
 
+      {/* Dialog: Editar Nome */}
+      <Dialog open={isEditNameOpen} onOpenChange={setIsEditNameOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-[#1B3A52] flex items-center gap-2">
+              <Pencil className="w-5 h-5 text-rose-500" /> Mudar nome do casal
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label className="text-[#1B3A52]">Novo nome</Label>
+              <Input
+                placeholder="Ex: Família Martuchele ❤️"
+                value={editGroupName}
+                onChange={(e) => setEditGroupName(e.target.value)}
+                className="border-slate-200 focus:border-rose-400 h-11"
+                onKeyDown={(e) => e.key === 'Enter' && handleEditName()}
+              />
+            </div>
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1 h-11" onClick={() => setIsEditNameOpen(false)}>Cancelar</Button>
+              <Button className="flex-1 bg-gradient-to-r from-rose-400 to-pink-500 text-white h-11" onClick={handleEditName} disabled={!editGroupName.trim() || updateGroupNameMutation.isPending}>
+                {updateGroupNameMutation.isPending ? "Salvando..." : "Salvar"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Dialog: Editar Sonho */}
       <Dialog open={isEditGoalOpen} onOpenChange={setIsEditGoalOpen}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
