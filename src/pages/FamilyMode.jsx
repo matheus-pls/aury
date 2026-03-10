@@ -185,6 +185,20 @@ export default function CoupleMode() {
     onSuccess: () => queryClient.invalidateQueries(['shared-expenses'])
   });
 
+  const removeMemberMutation = useMutation({
+    mutationFn: ({ groupId, members }) =>
+      base44.entities.FamilyGroup.update(groupId, { members }),
+    onSuccess: () => queryClient.invalidateQueries(['family-groups'])
+  });
+
+  const handleRemoveMember = (email) => {
+    if (email === user?.email) return;
+    if (window.confirm(`Remover ${getMemberName(email)} do Modo Casal?`)) {
+      const updatedMembers = activeGroup.members.filter(m => m !== email);
+      removeMemberMutation.mutate({ groupId: activeGroup.id, members: updatedMembers });
+    }
+  };
+
   const handleCreateGroup = () => {
     createGroupMutation.mutate({ name: groupName, admin_email: user.email, members: [user.email], active: true });
   };
