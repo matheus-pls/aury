@@ -582,8 +582,12 @@ export default function CoupleMode() {
       {/* Histórico */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-[#1B3A52] text-lg">Histórico de Gastos</h3>
-          <p className="text-xs text-slate-500">{sharedExpenses.length} {sharedExpenses.length === 1 ? 'registro' : 'registros'}</p>
+          <h3 className="font-semibold text-[#1B3A52] text-lg">
+            {selectedCategory ? `${EXPENSE_CATEGORIES[selectedCategory].label}` : 'Histórico de Gastos'}
+          </h3>
+          <p className="text-xs text-slate-500">
+            {(selectedCategory ? sharedExpenses.filter(e => e.category === selectedCategory) : sharedExpenses).length} registros
+          </p>
         </div>
         {sharedExpenses.length === 0 ? (
           <Card className="border-rose-100">
