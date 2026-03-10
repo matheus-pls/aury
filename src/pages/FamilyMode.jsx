@@ -549,24 +549,31 @@ export default function CoupleMode() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-semibold text-[#1B3A52] text-lg">Pra onde foi o dinheiro</h3>
-          <p className="text-xs text-slate-500">Sem julgamento, só clareza</p>
+          {selectedCategory && (
+            <button onClick={() => setSelectedCategory(null)} className="text-xs text-rose-500 font-medium hover:underline">
+              Ver todos
+            </button>
+          )}
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           {Object.entries(EXPENSE_CATEGORIES).map(([key, config]) => {
             const Icon = config.icon;
             const categoryTotal = expensesByCategory[key];
             const percentage = totalSharedExpenses > 0 ? (categoryTotal / totalSharedExpenses) * 100 : 0;
+            const isSelected = selectedCategory === key;
             return (
-              <Card key={key} className="border-slate-100 hover:shadow-md transition-all group">
-                <CardContent className="p-5 text-center">
-                  <div className={`w-12 h-12 bg-gradient-to-br ${config.color} rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md group-hover:scale-110 transition-transform`}>
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <p className="text-xs text-slate-600 font-medium mb-1">{config.label}</p>
-                  <p className="text-sm font-bold text-[#1B3A52]">{formatCurrency(categoryTotal)}</p>
-                  {percentage > 0 && <p className="text-xs text-slate-400">{percentage.toFixed(0)}%</p>}
-                </CardContent>
-              </Card>
+              <button key={key} onClick={() => setSelectedCategory(isSelected ? null : key)} className="text-left w-full">
+                <Card className={`border-2 transition-all group hover:shadow-md ${isSelected ? 'border-rose-400 shadow-md bg-rose-50' : 'border-slate-100'}`}>
+                  <CardContent className="p-5 text-center">
+                    <div className={`w-12 h-12 bg-gradient-to-br ${config.color} rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md group-hover:scale-110 transition-transform ${isSelected ? 'scale-110' : ''}`}>
+                      <Icon className="w-6 h-6 text-white" />
+                    </div>
+                    <p className="text-xs text-slate-600 font-medium mb-1">{config.label}</p>
+                    <p className="text-sm font-bold text-[#1B3A52]">{formatCurrency(categoryTotal)}</p>
+                    {percentage > 0 && <p className="text-xs text-slate-400">{percentage.toFixed(0)}%</p>}
+                  </CardContent>
+                </Card>
+              </button>
             );
           })}
         </div>
