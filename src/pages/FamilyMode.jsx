@@ -525,6 +525,16 @@ export default function CoupleMode() {
                       <p className="text-sm font-bold text-[#1B3A52] truncate">{getMemberName(email)}</p>
                       <span className="text-xs px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-medium">{isMe ? "Você" : "Parceiro(a)"}</span>
                     </div>
+                    {!isMe && email !== activeGroup.admin_email && (
+                      <Button variant="ghost" size="icon" onClick={() => handleRemoveMember(email)} className="h-7 w-7 hover:bg-rose-100 opacity-60 hover:opacity-100 transition-all">
+                        <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                      </Button>
+                    )}
+                    {!isMe && email === activeGroup.admin_email && user?.email !== activeGroup.admin_email && (
+                      <Button variant="ghost" size="icon" onClick={() => handleRemoveMember(email)} className="h-7 w-7 hover:bg-rose-100 opacity-60 hover:opacity-100 transition-all">
+                        <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                      </Button>
+                    )}
                   </div>
                   {memberExpenses > 0 && (
                     <div className="pt-3 border-t border-rose-100">
