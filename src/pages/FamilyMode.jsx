@@ -599,7 +599,7 @@ export default function CoupleMode() {
           </Card>
         ) : (
           <div className="space-y-2">
-            {sharedExpenses.slice(0, 10).map(expense => {
+            {(selectedCategory ? sharedExpenses.filter(e => e.category === selectedCategory) : sharedExpenses).slice(0, 10).map(expense => {
               const categoryConfig = EXPENSE_CATEGORIES[expense.category];
               const Icon = categoryConfig.icon;
               const isCurrentUser = user?.email === expense.paid_by;
