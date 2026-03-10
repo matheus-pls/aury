@@ -62,7 +62,7 @@ export default function Layout({ children, currentPageName }) {
     ];
 
     if (isPremium) {
-      baseNav.push({ name: "Família", page: "FamilyMode", icon: Heart, premium: true });
+      baseNav.push({ name: "Modo Casal", page: "FamilyMode", icon: Heart, premium: true });
     }
 
     baseNav.push({ name: "Configurações", page: "Settings", icon: Settings });
