@@ -291,9 +291,9 @@ export default function Overview() {
               <Shield className="w-5 h-5 text-emerald-500" />
             </div>
             <div>
-              <h3 className="font-semibold text-foreground">Seu colchão de segurança</h3>
+              <h3 className="font-semibold text-foreground">Reserva de Emergência</h3>
               <p className="text-sm text-muted-foreground">
-                {emergencyProgress < 30 ? "Ainda tá começando" : emergencyProgress < 70 ? "Você já tem uma base" : emergencyProgress < 100 ? "Tá quase lá!" : "Protegido"}
+                {emergencyProgress < 30 ? "Ainda tá começando" : emergencyProgress < 70 ? "Você já tem uma base" : emergencyProgress < 100 ? "Tá quase lá!" : "Você está protegido"}
               </p>
             </div>
           </div>
