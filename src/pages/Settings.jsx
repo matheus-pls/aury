@@ -302,6 +302,23 @@ export default function Settings() {
         </div>
       </Section>
 
+      {/* ── Aparência ── */}
+      <Section icon={Moon} iconGradient="from-slate-600 to-slate-800" title="Aparência" description="Escolha entre tema claro ou escuro" delay={0.12}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {theme === "dark" ? <Moon className="w-5 h-5 text-slate-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
+            <div>
+              <p className="font-semibold text-slate-700">Tema escuro</p>
+              <p className="text-sm text-slate-500 mt-0.5">{theme === "dark" ? "Modo escuro ativado" : "Modo claro ativado"}</p>
+            </div>
+          </div>
+          <Switch
+            checked={theme === "dark"}
+            onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+          />
+        </div>
+      </Section>
+
       {/* ── Notificações ── */}
       <Section icon={Bell} iconGradient="from-blue-500 to-indigo-600" title="Notificações" description="Configure alertas e lembretes inteligentes" delay={0.15}>
         <div className="flex items-center justify-between">
