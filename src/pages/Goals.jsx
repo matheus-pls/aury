@@ -55,9 +55,9 @@ const GOAL_CATEGORIES = {
 };
 
 const PRIORITIES = {
-  low: { label: "Baixa", color: "bg-slate-100 text-slate-600" },
-  medium: { label: "Média", color: "bg-amber-100 text-amber-600" },
-  high: { label: "Alta", color: "bg-red-100 text-red-600" }
+  low: { label: "Baixa", color: "bg-muted text-muted-foreground" },
+  medium: { label: "Média", color: "bg-amber-500/15 text-amber-500" },
+  high: { label: "Alta", color: "bg-red-500/15 text-red-500" }
 };
 
 export default function Goals() {
@@ -247,8 +247,8 @@ export default function Goals() {
         <BackButton to={createPageUrl("Overview")} />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">O que você quer conquistar?</h1>
-            <p className="text-slate-500 mt-1">Defina e acompanhe o que é importante pra você</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">O que você quer conquistar?</h1>
+            <p className="text-muted-foreground mt-1">Defina e acompanhe o que é importante pra você</p>
           </div>
           <Button 
             onClick={() => handleOpenDialog()}
@@ -265,42 +265,42 @@ export default function Goals() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-5 shadow-sm border border-border"
         >
-          <p className="text-sm text-slate-500 mb-1">Total das Metas</p>
-          <p className="text-2xl font-bold text-slate-800">{formatCurrency(totalTarget)}</p>
+          <p className="text-sm text-muted-foreground mb-1">Total das Metas</p>
+          <p className="text-2xl font-bold text-foreground">{formatCurrency(totalTarget)}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-5 shadow-sm border border-border"
         >
-          <p className="text-sm text-slate-500 mb-1">Já Economizado</p>
-          <p className="text-2xl font-bold text-[#00A8A0]">{formatCurrency(totalCurrent)}</p>
+          <p className="text-sm text-muted-foreground mb-1">Já Economizado</p>
+          <p className="text-2xl font-bold text-[#5FBDBD]">{formatCurrency(totalCurrent)}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-5 shadow-sm border border-border"
         >
-          <p className="text-sm text-slate-500 mb-1">Falta Economizar</p>
+          <p className="text-sm text-muted-foreground mb-1">Falta Economizar</p>
           <p className="text-2xl font-bold text-amber-600">{formatCurrency(totalTarget - totalCurrent)}</p>
         </motion.div>
       </div>
 
       {/* Active Goals */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-800">Metas em Andamento</h2>
+        <h2 className="text-lg font-semibold text-foreground">Metas em Andamento</h2>
         
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[1, 2, 3, 4].map(i => (
-              <div key={i} className="bg-white rounded-xl p-5 animate-pulse">
-                <div className="h-4 bg-slate-200 rounded w-1/2 mb-4" />
-                <div className="h-3 bg-slate-200 rounded w-full mb-2" />
-                <div className="h-8 bg-slate-200 rounded w-full" />
+              <div key={i} className="bg-card rounded-xl p-5 animate-pulse">
+                <div className="h-4 bg-muted rounded w-1/2 mb-4" />
+                <div className="h-3 bg-muted rounded w-full mb-2" />
+                <div className="h-8 bg-muted rounded w-full" />
               </div>
             ))}
           </div>
@@ -308,15 +308,15 @@ export default function Goals() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl p-8 text-center border border-slate-100"
+            className="bg-card rounded-2xl p-8 text-center border border-border"
           >
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Target className="w-8 h-8 text-slate-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Target className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Nenhuma meta ativa
             </h3>
-            <p className="text-slate-500 mb-4">
+            <p className="text-muted-foreground mb-4">
               Defina suas metas financeiras e comece a economizar
             </p>
             <Button 
@@ -346,7 +346,7 @@ export default function Goals() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+                    className="bg-card rounded-2xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
@@ -355,9 +355,9 @@ export default function Goals() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-slate-800">{goal.title}</h3>
+                            <h3 className="font-semibold text-foreground">{goal.title}</h3>
                             {goal.category === 'travel' && goal.travel_active && (
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 flex items-center gap-1">
+                              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 flex items-center gap-1">
                                 <Plane className="w-3 h-3" />
                                 Ativa
                               </span>
@@ -410,30 +410,30 @@ export default function Goals() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-end">
                         <div>
-                          <p className="text-xs text-slate-500">Economizado</p>
-                          <p className="text-xl font-bold text-[#00A8A0]">
+                          <p className="text-xs text-muted-foreground">Economizado</p>
+                          <p className="text-xl font-bold text-[#5FBDBD]">
                             {formatCurrency(goal.current_amount || 0)}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-slate-500">Meta</p>
-                          <p className="text-lg font-semibold text-slate-600">
+                          <p className="text-xs text-muted-foreground">Meta</p>
+                          <p className="text-lg font-semibold text-muted-foreground">
                             {formatCurrency(goal.target_amount)}
                           </p>
                         </div>
                       </div>
 
                       <div className="space-y-1">
-                        <div className="flex justify-between text-xs text-slate-500">
+                        <div className="flex justify-between text-xs text-muted-foreground">
                           <span>Progresso</span>
                           <span>{progress.toFixed(0)}%</span>
                         </div>
                         <Progress value={progress} className="h-2" />
                       </div>
 
-                      <div className="flex justify-between pt-2 border-t border-slate-100">
-                        {daysRemaining !== null && (
-                          <div className="flex items-center gap-1 text-xs text-slate-500">
+                      <div className="flex justify-between pt-2 border-t border-border">
+                         {daysRemaining !== null && (
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Calendar className="w-3 h-3" />
                             <span>{daysRemaining > 0 ? `${daysRemaining} dias restantes` : 'Prazo expirado'}</span>
                           </div>
@@ -456,7 +456,7 @@ export default function Goals() {
       {/* Completed Goals */}
       {completedGoals.length > 0 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-slate-800">Metas Concluídas 🎉</h2>
+          <h2 className="text-lg font-semibold text-foreground">Metas Concluídas 🎉</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {completedGoals.map((goal) => {
               const categoryConfig = GOAL_CATEGORIES[goal.category];
@@ -467,14 +467,14 @@ export default function Goals() {
                   key={goal.id}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-200"
+                  className="bg-emerald-500/10 rounded-xl p-4 border border-emerald-500/30"
                 >
                   <div className="flex items-center gap-3">
                     <div className="p-2 rounded-lg bg-emerald-500">
                       <CheckCircle2 className="w-4 h-4 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium text-slate-800">{goal.title}</h3>
+                      <h3 className="font-medium text-foreground">{goal.title}</h3>
                       <p className="text-sm text-emerald-600 font-semibold">
                         {formatCurrency(goal.target_amount)}
                       </p>
@@ -504,7 +504,7 @@ export default function Goals() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-[#1B3A52] font-semibold">
+              <Label className="flex items-center gap-2 text-foreground font-semibold">
                 <Target className="w-4 h-4 text-[#5FBDBD]" />
                 Categoria *
               </Label>
@@ -527,7 +527,7 @@ export default function Goals() {
                   ))}
                 </SelectContent>
               </Select>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 A categoria ajuda a organizar e priorizar suas metas
               </p>
             </div>
@@ -598,8 +598,8 @@ export default function Goals() {
             </div>
 
             {formData.category === 'travel' && (
-              <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="font-medium text-blue-800 flex items-center gap-2">
+              <div className="space-y-4 p-4 bg-blue-500/10 rounded-lg border border-blue-500/30">
+                <h4 className="font-medium text-blue-400 flex items-center gap-2">
                   <Plane className="w-4 h-4" />
                   Configurações da Viagem
                 </h4>
@@ -688,8 +688,8 @@ export default function Goals() {
             <DialogTitle>Adicionar Dinheiro</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
-            <p className="text-sm text-slate-600">
-              Adicionar à meta: <span className="font-semibold">{selectedGoalForMoney?.title}</span>
+            <p className="text-sm text-muted-foreground">
+              Adicionar à meta: <span className="font-semibold text-foreground">{selectedGoalForMoney?.title}</span>
             </p>
             <div className="space-y-2">
               <Label htmlFor="addAmount">Valor</Label>
