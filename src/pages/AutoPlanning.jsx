@@ -179,40 +179,40 @@ export default function AutoPlanning() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-4 border border-border"
         >
-          <p className="text-xs text-slate-500 mb-1">Renda</p>
-          <p className="text-xl font-bold text-[#1B3A52] tabular-nums">{formatCurrency(totalIncome)}</p>
+          <p className="text-xs text-muted-foreground mb-1">Renda</p>
+          <p className="text-xl font-bold text-foreground tabular-nums">{formatCurrency(totalIncome)}</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-4 border border-border"
         >
-          <p className="text-xs text-slate-500 mb-1">Já Gasto</p>
-          <p className="text-xl font-bold text-rose-600 tabular-nums">{formatCurrency(totalSpent)}</p>
+          <p className="text-xs text-muted-foreground mb-1">Já Gasto</p>
+          <p className="text-xl font-bold text-rose-400 tabular-nums">{formatCurrency(totalSpent)}</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-4 border border-border"
         >
-          <p className="text-xs text-slate-500 mb-1">Economia</p>
-          <p className="text-xl font-bold text-emerald-600 tabular-nums">{formatCurrency(monthlySavings)}</p>
+          <p className="text-xs text-muted-foreground mb-1">Economia</p>
+          <p className="text-xl font-bold text-emerald-400 tabular-nums">{formatCurrency(monthlySavings)}</p>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="bg-white rounded-xl p-4 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-4 border border-border"
         >
-          <p className="text-xs text-slate-500 mb-1">Dias Restantes</p>
-          <p className="text-xl font-bold text-[#1B3A52]">{daysRemaining}</p>
+          <p className="text-xs text-muted-foreground mb-1">Dias Restantes</p>
+          <p className="text-xl font-bold text-foreground">{daysRemaining}</p>
         </motion.div>
       </div>
 
