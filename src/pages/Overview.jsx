@@ -270,8 +270,8 @@ export default function Overview() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Como você está?</h1>
-        <p className="text-slate-500 mt-1">Veja de forma simples como andam as coisas</p>
+        <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Como você está?</h1>
+        <p className="text-muted-foreground mt-1">Veja de forma simples como andam as coisas</p>
       </motion.div>
 
       {/* Método Aury - Compacto e Elegante */}
@@ -285,8 +285,8 @@ export default function Overview() {
             <Sparkles className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-[#1B3A52] text-sm">Método Aury</h3>
-            <p className="text-xs text-slate-600">Segurança • Clareza • Ação</p>
+            <h3 className="font-bold text-foreground text-sm">Método Aury</h3>
+            <p className="text-xs text-muted-foreground">Segurança • Clareza • Ação</p>
           </div>
         </div>
       </motion.div>
@@ -304,15 +304,15 @@ export default function Overview() {
           className="cursor-pointer"
         >
           <div className="relative overflow-hidden rounded-2xl border-2 border-dashed border-[#5FBDBD]/40 bg-gradient-to-br from-[#5FBDBD]/5 to-[#1B3A52]/5 p-6 flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-slate-200 to-slate-300 rounded-xl flex items-center justify-center opacity-60">
-              <Sparkles className="w-6 h-6 text-slate-400" />
+            <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center opacity-60">
+              <Sparkles className="w-6 h-6 text-muted-foreground" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h3 className="font-bold text-slate-500">Aury Flow</h3>
+                <h3 className="font-bold text-muted-foreground">Aury Flow</h3>
                 <Lock className="w-3.5 h-3.5 text-amber-500" />
               </div>
-              <p className="text-sm text-slate-400">Registre gastos por voz, foto ou texto — Premium</p>
+              <p className="text-sm text-muted-foreground">Registre gastos por voz, foto ou texto — Premium</p>
             </div>
             <button className="px-3 py-1.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-md">
               <Crown className="w-3 h-3 inline mr-1" />
@@ -437,9 +437,9 @@ export default function Overview() {
             const Icon = alert.icon;
             const colors = {
               action: "bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 border-[#5FBDBD] text-[#1B3A52]",
-              danger: "bg-red-50 border-red-200 text-red-900",
-              warning: "bg-amber-50 border-amber-200 text-amber-900",
-              info: "bg-blue-50 border-blue-200 text-blue-900"
+              danger: "bg-red-500/10 border-red-500/30 text-red-400",
+              warning: "bg-amber-500/10 border-amber-500/30 text-amber-400",
+              info: "bg-blue-500/10 border-blue-500/30 text-blue-400"
             };
             return (
               <motion.div
@@ -474,17 +474,17 @@ export default function Overview() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <Card className="hover:shadow-aury transition-all border border-slate-100">
+          <Card className="hover:shadow-aury transition-all border border-border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-3 bg-gradient-to-br from-[#5FBDBD] to-[#4FA9A5] rounded-xl shadow-md">
                   <Shield className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-sm font-semibold text-[#1B3A52]">Caixinha</p>
+                <p className="text-sm font-semibold text-foreground">Caixinha</p>
               </div>
-              <p className="text-3xl font-bold text-[#1B3A52] mb-2">{emergencyProgress.toFixed(0)}%</p>
+              <p className="text-3xl font-bold text-foreground mb-2">{emergencyProgress.toFixed(0)}%</p>
               <Progress value={emergencyProgress} className="h-2 mb-2" />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 {emergencyProgress < 30 ? "Você tá começando a construir" :
                  emergencyProgress < 70 ? "Tá crescendo. Continue" :
                  emergencyProgress < 100 ? "Tá quase seguro" :
@@ -499,16 +499,16 @@ export default function Overview() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45 }}
         >
-          <Card className="hover:shadow-aury transition-all border border-slate-100">
+          <Card className="hover:shadow-aury transition-all border border-border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-3 bg-gradient-to-br from-[#2A4A62] to-[#1B3A52] rounded-xl shadow-md">
                   <Target className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-sm font-semibold text-[#1B3A52]">Metas Ativas</p>
+                <p className="text-sm font-semibold text-foreground">Metas Ativas</p>
               </div>
-              <p className="text-3xl font-bold text-[#1B3A52] mb-2">{goals.length}</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-3xl font-bold text-foreground mb-2">{goals.length}</p>
+              <p className="text-xs text-muted-foreground">
                 {goals.length === 0 ? 'Que tal definir um objetivo?' : 
                  goals.length === 1 ? 'Um sonho que você tá perseguindo' :
                  `${goals.length} coisas que você quer conquistar`}
@@ -522,16 +522,16 @@ export default function Overview() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card className="hover:shadow-aury transition-all border border-slate-100">
+          <Card className="hover:shadow-aury transition-all border border-border">
             <CardContent className="p-6">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-3 bg-gradient-to-br from-[#4FA9A5] to-[#2A4A62] rounded-xl shadow-md">
                   <Calendar className="w-5 h-5 text-white" />
                 </div>
-                <p className="text-sm font-semibold text-[#1B3A52]">Este Mês</p>
+                <p className="text-sm font-semibold text-foreground">Este Mês</p>
               </div>
-              <p className="text-3xl font-bold text-[#1B3A52] mb-2">{formatCurrency(totalExpenses)}</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-3xl font-bold text-foreground mb-2">{formatCurrency(totalExpenses)}</p>
+              <p className="text-xs text-muted-foreground">
                 {expenses.length === 0 ? "Nenhum gasto anotado ainda" :
                  expenses.length === 1 ? "Um gasto registrado" :
                  `${expenses.length} gastos que você anotou`}
@@ -543,7 +543,7 @@ export default function Overview() {
 
       {/* Quick Actions */}
       <div>
-        <h3 className="font-semibold text-[#1B3A52] text-lg mb-4">O que você quer fazer agora?</h3>
+        <h3 className="font-semibold text-foreground text-lg mb-4">O que você quer fazer agora?</h3>
         <div className="grid grid-cols-3 gap-4">
           {quickActions.map((action, index) => {
             const Icon = action.icon;
@@ -559,12 +559,12 @@ export default function Overview() {
                 className="group"
                 onClick={() => handleQuickAction(action)}
               >
-                <Card className={`cursor-pointer hover:shadow-aury transition-all border border-slate-200 hover:border-[#5FBDBD]/50 bg-white relative ${isLocked ? 'opacity-80' : ''}`}>
+                <Card className={`cursor-pointer hover:shadow-aury transition-all border border-border hover:border-[#5FBDBD]/50 bg-card relative ${isLocked ? 'opacity-80' : ''}`}>
                   <CardContent className="p-6 text-center">
                     <div className={`w-14 h-14 bg-gradient-to-br ${isLocked ? 'from-slate-200 to-slate-300' : action.color} rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform shadow-md`}>
-                      {isLocked ? <Lock className="w-7 h-7 text-slate-400" /> : <Icon className="w-7 h-7 text-white" />}
+                      {isLocked ? <Lock className="w-7 h-7 text-muted-foreground" /> : <Icon className="w-7 h-7 text-white" />}
                     </div>
-                    <p className="font-semibold text-[#1B3A52] text-sm">{action.label}</p>
+                    <p className="font-semibold text-foreground text-sm">{action.label}</p>
                     {isLocked && <Crown className="w-3.5 h-3.5 text-amber-500 mx-auto mt-1" />}
                   </CardContent>
                 </Card>
@@ -578,7 +578,7 @@ export default function Overview() {
       <Dialog open={quickActionDialog === "expense"} onOpenChange={() => setQuickActionDialog(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">Registrar Gasto</DialogTitle>
+            <DialogTitle className="text-foreground">Registrar Gasto</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleQuickSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
@@ -648,7 +648,7 @@ export default function Overview() {
       <Dialog open={quickActionDialog === "income"} onOpenChange={() => setQuickActionDialog(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">Adicionar Renda</DialogTitle>
+            <DialogTitle className="text-foreground">Adicionar Renda</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleQuickSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">

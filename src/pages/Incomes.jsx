@@ -160,8 +160,8 @@ export default function Incomes() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Rendas</h1>
-          <p className="text-slate-500 mt-1">Gerencie suas fontes de renda</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Rendas</h1>
+          <p className="text-muted-foreground mt-1">Gerencie suas fontes de renda</p>
         </div>
         <Button 
           onClick={() => handleOpenDialog()}
@@ -194,17 +194,17 @@ export default function Incomes() {
 
       {/* Income List */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-800">Fontes de Renda</h2>
+        <h2 className="text-lg font-semibold text-foreground">Fontes de Renda</h2>
         
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
+              <div key={i} className="bg-card rounded-xl p-4 animate-pulse">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-slate-200 rounded-xl" />
+                  <div className="w-12 h-12 bg-muted rounded-xl" />
                   <div className="flex-1">
-                    <div className="h-4 bg-slate-200 rounded w-1/3 mb-2" />
-                    <div className="h-3 bg-slate-200 rounded w-1/4" />
+                    <div className="h-4 bg-muted rounded w-1/3 mb-2" />
+                    <div className="h-3 bg-muted rounded w-1/4" />
                   </div>
                 </div>
               </div>
@@ -214,15 +214,15 @@ export default function Incomes() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl p-8 text-center border border-slate-100"
+            className="bg-card rounded-2xl p-8 text-center border border-border"
           >
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Wallet className="w-8 h-8 text-slate-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <Wallet className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Nenhuma renda cadastrada
             </h3>
-            <p className="text-slate-500 mb-4">
+            <p className="text-muted-foreground mb-4">
               Comece adicionando sua primeira fonte de renda
             </p>
             <Button 
@@ -246,7 +246,7 @@ export default function Incomes() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+                  className="bg-card rounded-xl p-4 shadow-sm border border-border hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -254,12 +254,12 @@ export default function Incomes() {
                         <Icon className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-slate-800">{income.description}</h3>
-                        <p className="text-sm text-slate-500">{typeConfig?.label || 'Outros'}</p>
+                        <h3 className="font-semibold text-foreground">{income.description}</h3>
+                        <p className="text-sm text-muted-foreground">{typeConfig?.label || 'Outros'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
-                      <p className="text-xl font-bold text-slate-800">
+                      <p className="text-xl font-bold text-foreground">
                         {formatCurrency(income.amount)}
                       </p>
                       <DropdownMenu>
@@ -297,7 +297,7 @@ export default function Incomes() {
         {/* Inactive Incomes */}
         {inactiveIncomes.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-sm font-medium text-slate-500 mb-3">Rendas Inativas</h3>
+            <h3 className="text-sm font-medium text-muted-foreground mb-3">Rendas Inativas</h3>
             <div className="space-y-3 opacity-60">
               {inactiveIncomes.map((income) => {
                 const typeConfig = INCOME_TYPES[income.type];
@@ -306,20 +306,20 @@ export default function Incomes() {
                 return (
                   <div
                     key={income.id}
-                    className="bg-slate-50 rounded-xl p-4 border border-slate-200"
+                    className="bg-muted rounded-xl p-4 border border-border"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="p-3 rounded-xl bg-slate-300">
+                        <div className="p-3 rounded-xl bg-muted-foreground/30">
                           <Icon className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                          <h3 className="font-semibold text-slate-600">{income.description}</h3>
-                          <p className="text-sm text-slate-400">{typeConfig?.label || 'Outros'}</p>
+                          <h3 className="font-semibold text-muted-foreground">{income.description}</h3>
+                          <p className="text-sm text-muted-foreground/70">{typeConfig?.label || 'Outros'}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <p className="text-lg font-medium text-slate-500">
+                        <p className="text-lg font-medium text-muted-foreground">
                           {formatCurrency(income.amount)}
                         </p>
                         <Button 

@@ -190,8 +190,8 @@ export default function Expenses() {
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-2xl lg:text-3xl font-bold text-slate-800">Gastos</h1>
-          <p className="text-slate-500 mt-1">Controle seus gastos mensais</p>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Gastos</h1>
+          <p className="text-muted-foreground mt-1">Controle seus gastos mensais</p>
         </div>
         <Button 
           onClick={() => handleOpenDialog()}
@@ -207,27 +207,27 @@ export default function Expenses() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-5 shadow-sm border border-border"
         >
-          <p className="text-sm text-slate-500 mb-1">Renda do Mês</p>
+          <p className="text-sm text-muted-foreground mb-1">Renda do Mês</p>
           <p className="text-2xl font-bold text-emerald-600">{formatCurrency(totalIncome)}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-5 shadow-sm border border-border"
         >
-          <p className="text-sm text-slate-500 mb-1">Total de Gastos</p>
+          <p className="text-sm text-muted-foreground mb-1">Total de Gastos</p>
           <p className="text-2xl font-bold text-rose-500">{formatCurrency(totalExpenses)}</p>
         </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-5 shadow-sm border border-slate-100"
+          className="bg-card rounded-xl p-5 shadow-sm border border-border"
         >
-          <p className="text-sm text-slate-500 mb-1">Saldo Restante</p>
+          <p className="text-sm text-muted-foreground mb-1">Saldo Restante</p>
           <p className={`text-2xl font-bold ${totalIncome - totalExpenses >= 0 ? 'text-[#00A8A0]' : 'text-red-500'}`}>
             {formatCurrency(totalIncome - totalExpenses)}
           </p>
@@ -247,14 +247,14 @@ export default function Expenses() {
               className={`p-4 rounded-xl cursor-pointer transition-all ${
                 selectedCategory === key 
                   ? `${config.color} text-white shadow-lg` 
-                  : 'bg-white border border-slate-100 hover:border-slate-300'
+                  : 'bg-card border border-border hover:border-border/80'
               }`}
             >
               <Icon className={`w-5 h-5 mb-2 ${selectedCategory === key ? 'text-white' : config.textColor}`} />
-              <p className={`text-xs ${selectedCategory === key ? 'text-white/80' : 'text-slate-500'}`}>
+              <p className={`text-xs ${selectedCategory === key ? 'text-white/80' : 'text-muted-foreground'}`}>
                 {config.label}
               </p>
-              <p className={`text-lg font-bold ${selectedCategory === key ? 'text-white' : 'text-slate-800'}`}>
+              <p className={`text-lg font-bold ${selectedCategory === key ? 'text-white' : 'text-foreground'}`}>
                 {formatCurrency(expensesByCategory[key])}
               </p>
             </motion.div>
@@ -293,12 +293,12 @@ export default function Expenses() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3, 4, 5].map(i => (
-              <div key={i} className="bg-white rounded-xl p-4 animate-pulse">
+              <div key={i} className="bg-card rounded-xl p-4 animate-pulse">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-slate-200 rounded-xl" />
+                  <div className="w-10 h-10 bg-muted rounded-xl" />
                   <div className="flex-1">
-                    <div className="h-4 bg-slate-200 rounded w-1/3 mb-2" />
-                    <div className="h-3 bg-slate-200 rounded w-1/4" />
+                    <div className="h-4 bg-muted rounded w-1/3 mb-2" />
+                    <div className="h-3 bg-muted rounded w-1/4" />
                   </div>
                 </div>
               </div>
@@ -308,15 +308,15 @@ export default function Expenses() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="bg-white rounded-2xl p-8 text-center border border-slate-100"
+            className="bg-card rounded-2xl p-8 text-center border border-border"
           >
-            <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ShoppingCart className="w-8 h-8 text-slate-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <ShoppingCart className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-700 mb-2">
+            <h3 className="text-lg font-semibold text-foreground mb-2">
               Nenhum gasto encontrado
             </h3>
-            <p className="text-slate-500 mb-4">
+            <p className="text-muted-foreground mb-4">
               {searchQuery || selectedCategory !== "all" 
                 ? "Tente ajustar os filtros" 
                 : "Registre seu primeiro gasto"}
@@ -342,7 +342,7 @@ export default function Expenses() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ delay: index * 0.03 }}
-                  className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+                  className="bg-card rounded-xl p-4 shadow-sm border border-border hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -350,13 +350,13 @@ export default function Expenses() {
                         <Icon className="w-4 h-4 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-slate-800">{expense.description}</h3>
+                        <h3 className="font-medium text-foreground">{expense.description}</h3>
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs text-slate-400">
+                          <span className="text-xs text-muted-foreground">
                             {new Date(expense.date).toLocaleDateString('pt-BR')}
                           </span>
                           {expense.is_recurring && (
-                            <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full">
+                            <span className="text-xs px-2 py-0.5 bg-blue-500/15 text-blue-400 rounded-full">
                               Recorrente
                             </span>
                           )}
@@ -364,7 +364,7 @@ export default function Expenses() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      <p className="text-lg font-bold text-slate-800">
+                      <p className="text-lg font-bold text-foreground">
                         {formatCurrency(expense.amount)}
                       </p>
                       <DropdownMenu>
@@ -478,7 +478,7 @@ export default function Expenses() {
             </div>
 
             {formData.is_recurring && (
-              <div className="space-y-4 p-4 bg-slate-50 rounded-lg">
+              <div className="space-y-4 p-4 bg-muted rounded-lg">
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
                     <Label>Repetir a cada</Label>
@@ -508,7 +508,7 @@ export default function Expenses() {
                     </Select>
                   </div>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-muted-foreground">
                   Este gasto se repetirá a cada {formData.recurrence_interval} {
                     formData.recurrence_type === "days" ? "dia(s)" :
                     formData.recurrence_type === "weeks" ? "semana(s)" :

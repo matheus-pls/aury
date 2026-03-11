@@ -28,9 +28,9 @@ export default function UpgradeModal({ isOpen, onClose, feature = "este recurso"
               
               <button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-slate-100 transition-colors z-10"
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-accent transition-colors z-10"
               >
-                <X className="w-5 h-5 text-slate-500" />
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
 
               <CardContent className="p-8 relative">
@@ -42,16 +42,16 @@ export default function UpgradeModal({ isOpen, onClose, feature = "este recurso"
                   <Crown className="w-10 h-10 text-white" />
                 </motion.div>
 
-                <h2 className="text-3xl font-bold text-center text-[#1B3A52] mb-3">
+                <h2 className="text-3xl font-bold text-center text-foreground mb-3">
                   Recurso Premium
                 </h2>
                 
-                <p className="text-center text-slate-600 mb-6">
+                <p className="text-center text-muted-foreground mb-6">
                   <strong>{feature}</strong> está disponível apenas no plano Premium
                 </p>
 
-                <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-5 mb-6">
-                  <p className="text-sm font-semibold text-[#1B3A52] mb-3 flex items-center gap-2">
+                <div className="bg-muted rounded-2xl p-5 mb-6">
+                  <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[#5FBDBD]" />
                     Com Premium você desbloqueia:
                   </p>
@@ -64,7 +64,7 @@ export default function UpgradeModal({ isOpen, onClose, feature = "este recurso"
                       "Planejamento Automático",
                       "Suporte Prioritário"
                     ].map((item, i) => (
-                      <div key={i} className="flex items-center gap-2 text-sm text-slate-700">
+                      <div key={i} className="flex items-center gap-2 text-sm text-foreground">
                         <Check className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                         <span>{item}</span>
                       </div>
@@ -93,7 +93,7 @@ export default function UpgradeModal({ isOpen, onClose, feature = "este recurso"
                   </Button>
                 </div>
 
-                <p className="text-xs text-center text-slate-500 mt-4">
+                <p className="text-xs text-center text-muted-foreground mt-4">
                   A partir de R$ 19,90/mês
                 </p>
               </CardContent>
