@@ -65,15 +65,15 @@ function Section({ icon: Icon, iconGradient, title, description, children, delay
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="bg-white border border-slate-100 rounded-3xl shadow-sm overflow-hidden"
+      className="bg-card border border-border rounded-3xl shadow-sm overflow-hidden"
     >
-      <div className="px-7 pt-7 pb-5 border-b border-slate-50 flex items-center gap-4">
+      <div className="px-7 pt-7 pb-5 border-b border-border flex items-center gap-4">
         <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${iconGradient} flex items-center justify-center shadow-md flex-shrink-0`}>
           <Icon className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h2 className="font-bold text-[#1B3A52] text-lg leading-tight">{title}</h2>
-          {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
+          <h2 className="font-bold text-foreground text-lg leading-tight">{title}</h2>
+          {description && <p className="text-sm text-muted-foreground mt-0.5">{description}</p>}
         </div>
       </div>
       <div className="px-7 py-6">{children}</div>
@@ -164,9 +164,9 @@ export default function Settings() {
   if (isLoading) {
     return (
       <div className="space-y-5 animate-pulse max-w-3xl mx-auto">
-        <div className="h-10 bg-slate-100 rounded-2xl w-1/3" />
-        <div className="h-52 bg-slate-100 rounded-3xl" />
-        <div className="h-72 bg-slate-100 rounded-3xl" />
+        <div className="h-10 bg-muted rounded-2xl w-1/3" />
+        <div className="h-52 bg-muted rounded-3xl" />
+        <div className="h-72 bg-muted rounded-3xl" />
       </div>
     );
   }
@@ -184,8 +184,8 @@ export default function Settings() {
               <SettingsIcon className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Configurações</h1>
-              <p className="text-slate-500 text-sm mt-0.5">Personalize sua experiência financeira</p>
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Configurações</h1>
+              <p className="text-muted-foreground text-sm mt-0.5">Personalize sua experiência financeira</p>
             </div>
           </div>
 
@@ -206,9 +206,9 @@ export default function Settings() {
 
       {/* ── Perfil de Risco ── */}
       <Section icon={User} iconGradient="from-violet-500 to-purple-600" title="Perfil de Risco" description="Escolha seu perfil — ajustaremos a distribuição automaticamente" delay={0.05}>
-        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-4 mb-5 flex gap-3">
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 mb-5 flex gap-3">
           <Sparkles className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
-          <p className="text-sm text-amber-800">
+          <p className="text-sm text-amber-500/90">
             Ao selecionar um perfil, todos os percentuais são ajustados automaticamente. Você pode personalizar depois.
           </p>
         </div>
@@ -223,17 +223,17 @@ export default function Settings() {
                 className={`relative p-5 rounded-2xl border-2 text-left transition-all duration-200 ${
                   active
                     ? 'border-[#5FBDBD] bg-gradient-to-br from-[#5FBDBD]/8 to-[#1B3A52]/5 shadow-lg shadow-[#5FBDBD]/10'
-                    : 'border-slate-100 bg-slate-50 hover:border-slate-200 hover:bg-white'
+                    : 'border-border bg-muted hover:border-border/80 hover:bg-accent'
                 }`}
               >
                 {active && (
                   <span className="absolute top-3 right-3 w-2 h-2 bg-[#5FBDBD] rounded-full shadow-sm" />
                 )}
                 <div className="text-2xl mb-2">{profile.emoji}</div>
-                <p className={`font-bold text-base mb-1 ${active ? 'text-[#1B3A52]' : 'text-slate-600'}`}>
+                <p className={`font-bold text-base mb-1 ${active ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {profile.label}
                 </p>
-                <p className="text-xs text-slate-500 leading-relaxed">{profile.description}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed">{profile.description}</p>
               </button>
             );
           })}
@@ -247,17 +247,17 @@ export default function Settings() {
         <div className="flex justify-end mb-5">
           <span className={`text-sm font-semibold px-4 py-1.5 rounded-full border ${
             isValidDistribution
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-              : 'bg-red-50 text-red-700 border-red-200'
+              ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30'
+              : 'bg-red-500/15 text-red-500 border-red-500/30'
           }`}>
             Total: {totalPercentage}%
           </span>
         </div>
 
         {!isValidDistribution && (
-          <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl mb-5">
-            <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0" />
-            <p className="text-sm text-amber-700">A soma deve ser exatamente 100%</p>
+          <div className="flex items-center gap-2 p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl mb-5">
+            <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0" />
+            <p className="text-sm text-amber-500">A soma deve ser exatamente 100%</p>
           </div>
         )}
 
@@ -278,12 +278,12 @@ export default function Settings() {
               <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <div className={`w-2.5 h-2.5 rounded-full ${item.color}`} />
-                  <Label className="font-semibold text-slate-700">{item.label}</Label>
+                  <Label className="font-semibold text-foreground">{item.label}</Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-base font-bold text-[#1B3A52]">{settings[item.key]}%</span>
+                  <span className="text-base font-bold text-foreground">{settings[item.key]}%</span>
                   {totalIncome > 0 && (
-                    <span className="text-xs text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full">
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                       {fmt((totalIncome * settings[item.key]) / 100)}
                     </span>
                   )}
@@ -296,7 +296,7 @@ export default function Settings() {
                 step={1}
                 className={item.track}
               />
-              <p className="text-xs text-slate-400">{item.sub}</p>
+              <p className="text-xs text-muted-foreground">{item.sub}</p>
             </div>
           ))}
         </div>
@@ -308,8 +308,8 @@ export default function Settings() {
           <div className="flex items-center gap-3">
             {theme === "dark" ? <Moon className="w-5 h-5 text-slate-400" /> : <Sun className="w-5 h-5 text-amber-500" />}
             <div>
-              <p className="font-semibold text-slate-700">Tema escuro</p>
-              <p className="text-sm text-slate-500 mt-0.5">{theme === "dark" ? "Modo escuro ativado" : "Modo claro ativado"}</p>
+              <p className="font-semibold text-foreground">Tema escuro</p>
+              <p className="text-sm text-muted-foreground mt-0.5">{theme === "dark" ? "Modo escuro ativado" : "Modo claro ativado"}</p>
             </div>
           </div>
           <Switch
@@ -323,8 +323,8 @@ export default function Settings() {
       <Section icon={Bell} iconGradient="from-blue-500 to-indigo-600" title="Notificações" description="Configure alertas e lembretes inteligentes" delay={0.15}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-semibold text-slate-700">Alertas de limite</p>
-            <p className="text-sm text-slate-500 mt-0.5">Avisos quando ultrapassar limites de categoria</p>
+            <p className="font-semibold text-foreground">Alertas de limite</p>
+            <p className="text-sm text-muted-foreground mt-0.5">Avisos quando ultrapassar limites de categoria</p>
           </div>
           <Switch
             checked={settings.notifications_enabled}
@@ -385,8 +385,8 @@ export default function Settings() {
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <div className="text-left">
-                    <p className="font-semibold text-slate-700">{item.label}</p>
-                    <p className="text-xs text-slate-500">{item.sub}</p>
+                    <p className="font-semibold text-foreground">{item.label}</p>
+                    <p className="text-xs text-muted-foreground">{item.sub}</p>
                   </div>
                 </div>
                 {item.external
@@ -408,7 +408,7 @@ export default function Settings() {
             href="https://instagram.com/auryapp"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-pink-100 bg-gradient-to-br from-pink-50 to-purple-50 hover:border-pink-300 hover:shadow-md transition-all group"
+            className="flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-pink-500/20 bg-pink-500/5 hover:border-pink-500/40 hover:shadow-md transition-all group"
           >
             <Instagram className="w-5 h-5 text-pink-600 group-hover:scale-110 transition-transform" />
             <span className="font-semibold text-pink-700">Instagram</span>
@@ -417,7 +417,7 @@ export default function Settings() {
             href="https://wa.me/5511999999999?text=Olá,%20vim%20do%20app%20Aury!"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-green-100 bg-gradient-to-br from-green-50 to-emerald-50 hover:border-green-300 hover:shadow-md transition-all group"
+            className="flex items-center justify-center gap-3 p-4 rounded-2xl border-2 border-green-500/20 bg-green-500/5 hover:border-green-500/40 hover:shadow-md transition-all group"
           >
             <MessageCircle className="w-5 h-5 text-green-600 group-hover:scale-110 transition-transform" />
             <span className="font-semibold text-green-700">WhatsApp</span>
