@@ -81,6 +81,27 @@ export default function Layout({ children, currentPageName }) {
       <Toaster position="top-center" richColors />
       <NotificationGenerator />
       <style>{`
+        .dark {
+          --background: 220 15% 7%;
+          --foreground: 0 0% 95%;
+          --card: 220 13% 11%;
+          --card-foreground: 0 0% 95%;
+          --popover: 220 13% 11%;
+          --popover-foreground: 0 0% 95%;
+          --primary: 0 0% 95%;
+          --primary-foreground: 0 0% 9%;
+          --secondary: 220 10% 17%;
+          --secondary-foreground: 0 0% 95%;
+          --muted: 220 10% 17%;
+          --muted-foreground: 0 0% 58%;
+          --accent: 220 10% 20%;
+          --accent-foreground: 0 0% 95%;
+          --destructive: 0 62.8% 30.6%;
+          --destructive-foreground: 0 0% 98%;
+          --border: 220 10% 20%;
+          --input: 220 10% 17%;
+          --ring: 180 40% 55%;
+        }
         :root {
           --aury-teal: #5FBDBD;
           --aury-teal-dark: #4FA9A5;
