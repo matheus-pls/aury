@@ -277,7 +277,7 @@ export default function BehaviorAnalysis() {
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[#5FBDBD] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-500">Analisando seus dados...</p>
+          <p className="text-muted-foreground">Analisando seus dados...</p>
         </div>
       </div>
     );
@@ -287,13 +287,13 @@ export default function BehaviorAnalysis() {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center max-w-md">
-          <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <BarChart3 className="w-10 h-10 text-slate-400" />
+          <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+            <BarChart3 className="w-10 h-10 text-muted-foreground" />
           </div>
-          <h2 className="text-xl font-semibold text-slate-700 mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Dados insuficientes
           </h2>
-          <p className="text-slate-500">
+          <p className="text-muted-foreground">
             Registre gastos por pelo menos um mês para ver análises comportamentais.
           </p>
         </div>
@@ -315,8 +315,8 @@ export default function BehaviorAnalysis() {
             <Activity className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Como você se comporta</h1>
-            <p className="text-slate-500 text-sm">Seus hábitos dos últimos {selectedPeriod} meses</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Como você se comporta</h1>
+            <p className="text-muted-foreground text-sm">Seus hábitos dos últimos {selectedPeriod} meses</p>
           </div>
           <Select value={selectedPeriod.toString()} onValueChange={(val) => setSelectedPeriod(parseInt(val))}>
             <SelectTrigger className="w-40 border-slate-200">
@@ -395,7 +395,7 @@ export default function BehaviorAnalysis() {
           <div className="flex gap-3">
             <Button
               variant="outline"
-              className="flex-1 border-slate-200 hover:bg-slate-50 hover:border-[#5FBDBD]/30 text-slate-600"
+              className="flex-1 border-border hover:bg-accent hover:border-[#5FBDBD]/30 text-muted-foreground"
               onClick={handlePrevious}
               disabled={currentInsightIndex === 0}
             >
@@ -404,7 +404,7 @@ export default function BehaviorAnalysis() {
             </Button>
             <Button
               variant="outline"
-              className="flex-1 border-[#5FBDBD]/30 hover:bg-[#5FBDBD]/5 text-[#1B3A52]"
+              className="flex-1 border-[#5FBDBD]/30 hover:bg-[#5FBDBD]/5 text-foreground"
               onClick={() => setShowFullReport(true)}
             >
               <FileText className="w-4 h-4 mr-2" />
@@ -424,10 +424,10 @@ export default function BehaviorAnalysis() {
         <div className="space-y-6">
           {/* Full Report Header - Premium */}
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-[#1B3A52]">Relatório Completo</h2>
+            <h2 className="text-xl font-bold text-foreground">Relatório Completo</h2>
             <Button 
               variant="outline"
-              className="border-slate-200 hover:bg-slate-50 hover:border-[#5FBDBD]/30"
+              className="border-border hover:bg-accent hover:border-[#5FBDBD]/30"
               onClick={() => setShowFullReport(false)}
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
@@ -444,26 +444,26 @@ export default function BehaviorAnalysis() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="overflow-hidden border border-slate-200 hover:border-[#5FBDBD]/30 hover:shadow-aury transition-all">
+                <Card className="overflow-hidden border border-border hover:border-[#5FBDBD]/30 hover:shadow-aury transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4 mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-xl flex items-center justify-center flex-shrink-0">
                         <Activity className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-base font-semibold text-[#1B3A52] mb-1">{insight.title}</h3>
-                        <p className="text-sm text-slate-600 leading-relaxed">{insight.message}</p>
+                        <h3 className="text-base font-semibold text-foreground mb-1">{insight.title}</h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{insight.message}</p>
                       </div>
                     </div>
                     {insight.action && (
-                      <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3">
                         <div className="flex items-start gap-2">
-                          <Target className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                          <Target className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
                           <div>
-                            <p className="text-xs font-semibold text-emerald-900 mb-1">Ação Sugerida</p>
-                            <p className="text-sm text-emerald-800">{insight.action}</p>
+                            <p className="text-xs font-semibold text-emerald-500 mb-1">Ação Sugerida</p>
+                            <p className="text-sm text-emerald-400">{insight.action}</p>
                             {insight.impact && (
-                              <p className="text-xs text-emerald-600 mt-1">💡 {insight.impact}</p>
+                              <p className="text-xs text-emerald-500/70 mt-1">💡 {insight.impact}</p>
                             )}
                           </div>
                         </div>

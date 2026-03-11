@@ -300,7 +300,7 @@ export default function CoupleMode() {
       <div className="min-h-[70vh] flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-rose-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-500">Carregando...</p>
+          <p className="text-muted-foreground">Carregando...</p>
         </div>
       </div>
     );
@@ -318,13 +318,13 @@ export default function CoupleMode() {
               <Star className="w-4 h-4 text-white fill-white" />
             </div>
           </div>
-          <h2 className="text-3xl font-bold text-[#1B3A52] mb-2">Modo Casal</h2>
-          <p className="text-slate-500 mb-6 leading-relaxed">
+          <h2 className="text-3xl font-bold text-foreground mb-2">Modo Casal</h2>
+          <p className="text-muted-foreground mb-6 leading-relaxed">
             Um espaço só de vocês dois para organizar as finanças juntos — sem julgamento, com muito mais harmonia.
           </p>
           <div className="flex flex-col gap-2 mb-8">
             {["💳 Gastos compartilhados sem surpresas", "🎯 Sonhos que vocês constroem juntos", "📊 Transparência total entre vocês dois"].map((item, i) => (
-              <div key={i} className="p-3 bg-rose-50 rounded-xl border border-rose-100 text-sm text-rose-800 font-medium text-left">{item}</div>
+              <div key={i} className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20 text-sm text-rose-400 font-medium text-left">{item}</div>
             ))}
           </div>
           <Button
@@ -343,7 +343,7 @@ export default function CoupleMode() {
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-4 mt-4">
-                <p className="text-sm text-slate-500">Dê um nome que represente vocês dois.</p>
+                <p className="text-sm text-muted-foreground">Dê um nome que represente vocês dois.</p>
                 <div className="space-y-2">
                   <Label className="text-[#1B3A52]">Nome da parceria</Label>
                   <Input placeholder="Ex: João e Ana ❤️" value={groupName} onChange={(e) => setGroupName(e.target.value)} className="border-slate-200 focus:border-rose-400 h-11" />
@@ -379,12 +379,12 @@ export default function CoupleMode() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-[#1B3A52]">{activeGroup.name}</h1>
+                <h1 className="text-2xl font-bold text-foreground">{activeGroup.name}</h1>
                 <button onClick={() => { setEditGroupName(activeGroup.name); setIsEditNameOpen(true); }} className="p-1 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-500 transition-all">
                   <Pencil className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-sm text-slate-500">Vocês dois, no mesmo caminho 💕</p>
+              <p className="text-sm text-muted-foreground">Vocês dois, no mesmo caminho 💕</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -456,9 +456,9 @@ export default function CoupleMode() {
 
       {/* Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card className="border-rose-100 shadow-sm hover:shadow-md transition-all">
+        <Card className="border-rose-500/20 shadow-sm hover:shadow-md transition-all">
           <CardHeader className="pb-4">
-            <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
+            <CardTitle className="text-base text-foreground flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center">
                 <TrendingDown className="w-4 h-4 text-white" />
               </div>
@@ -466,15 +466,15 @@ export default function CoupleMode() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-[#1B3A52] mb-2">{formatCurrency(totalSharedExpenses)}</p>
-            <p className="text-sm text-slate-500">O que vocês gastaram juntos esse mês</p>
+            <p className="text-4xl font-bold text-foreground mb-2">{formatCurrency(totalSharedExpenses)}</p>
+            <p className="text-sm text-muted-foreground">O que vocês gastaram juntos esse mês</p>
           </CardContent>
         </Card>
 
-        <Card className="border-rose-100 shadow-sm hover:shadow-md transition-all">
+        <Card className="border-rose-500/20 shadow-sm hover:shadow-md transition-all">
           <CardHeader className="pb-4">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
+              <CardTitle className="text-base text-foreground flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center">
                   <Target className="w-4 h-4 text-white" />
                 </div>
@@ -492,10 +492,10 @@ export default function CoupleMode() {
                 {sharedGoals.slice(0, 2).map(goal => {
                   const progress = (goal.current_amount / goal.target_amount) * 100;
                   return (
-                    <button key={goal.id} onClick={() => openGoalDetails(goal)} className="w-full text-left space-y-2 p-3 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-100 transition-all">
+                    <button key={goal.id} onClick={() => openGoalDetails(goal)} className="w-full text-left space-y-2 p-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 transition-all">
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-semibold text-[#1B3A52]">{goal.title}</span>
-                        <span className="text-xs font-bold text-rose-500 px-2 py-0.5 bg-white rounded-full">{progress.toFixed(0)}%</span>
+                        <span className="text-sm font-semibold text-foreground">{goal.title}</span>
+                        <span className="text-xs font-bold text-rose-500 px-2 py-0.5 bg-card rounded-full">{progress.toFixed(0)}%</span>
                       </div>
                       <Progress value={progress} className="h-1.5" />
                       <p className="text-xs text-rose-600">Faltam {formatCurrency(goal.target_amount - (goal.current_amount || 0))}</p>
@@ -504,17 +504,17 @@ export default function CoupleMode() {
                 })}
               </div>
             ) : (
-              <p className="text-sm text-slate-500">Qual sonho vocês têm juntos? ✨</p>
+              <p className="text-sm text-muted-foreground">Qual sonho vocês têm juntos? ✨</p>
             )}
           </CardContent>
         </Card>
       </div>
 
       {/* Vocês Dois */}
-      <Card className="border-rose-100 shadow-sm">
+      <Card className="border-rose-500/20 shadow-sm">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg text-[#1B3A52] flex items-center gap-2">
+            <CardTitle className="text-lg text-foreground flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-400 to-pink-500 flex items-center justify-center">
                 <Heart className="w-4 h-4 text-white fill-white" />
               </div>
@@ -529,8 +529,8 @@ export default function CoupleMode() {
         </CardHeader>
         <CardContent>
           {activeGroup.members?.length === 1 && (
-            <div className="p-4 bg-rose-50 rounded-xl border border-rose-100 mb-4 text-center">
-              <p className="text-sm text-rose-700">💌 Convide seu(sua) parceiro(a) para gerenciar juntos</p>
+            <div className="p-4 bg-rose-500/10 rounded-xl border border-rose-500/20 mb-4 text-center">
+              <p className="text-sm text-rose-400">💌 Convide seu(sua) parceiro(a) para gerenciar juntos</p>
             </div>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -538,14 +538,14 @@ export default function CoupleMode() {
               const memberExpenses = sharedExpenses.filter(e => e.paid_by === email).reduce((s, e) => s + e.amount, 0);
               const isMe = email === user?.email;
               return (
-                <div key={index} className="rounded-2xl p-4 bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-100 hover:border-rose-300 hover:shadow-md transition-all">
+                <div key={index} className="rounded-2xl p-4 bg-rose-500/5 border border-rose-500/20 hover:border-rose-500/40 hover:shadow-md transition-all">
                   <div className="flex items-center gap-3 mb-3">
                     <div className={`w-14 h-14 bg-gradient-to-br ${getMemberAvatar(email)} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md`}>
                       {getMemberInitials(email)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-[#1B3A52] truncate">{getMemberName(email)}</p>
-                      <span className="text-xs px-2 py-0.5 bg-rose-100 text-rose-600 rounded-full font-medium">{isMe ? "Você" : "Parceiro(a)"}</span>
+                      <p className="text-sm font-bold text-foreground truncate">{getMemberName(email)}</p>
+                      <span className="text-xs px-2 py-0.5 bg-rose-500/15 text-rose-400 rounded-full font-medium">{isMe ? "Você" : "Parceiro(a)"}</span>
                     </div>
                     {!isMe && (
                       <Button variant="ghost" size="icon" onClick={() => handleRemoveMember(email)} className="h-7 w-7 hover:bg-rose-100 opacity-60 hover:opacity-100 transition-all">
@@ -554,9 +554,9 @@ export default function CoupleMode() {
                     )}
                   </div>
                   {memberExpenses > 0 && (
-                    <div className="pt-3 border-t border-rose-100">
-                      <p className="text-xs text-slate-500 mb-0.5">Pagou este mês</p>
-                      <p className="text-base font-bold text-[#1B3A52]">{formatCurrency(memberExpenses)}</p>
+                    <div className="pt-3 border-t border-rose-500/20">
+                      <p className="text-xs text-muted-foreground mb-0.5">Pagou este mês</p>
+                      <p className="text-base font-bold text-foreground">{formatCurrency(memberExpenses)}</p>
                     </div>
                   )}
                 </div>
@@ -569,7 +569,7 @@ export default function CoupleMode() {
       {/* Distribuição */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-[#1B3A52] text-lg">Pra onde foi o dinheiro</h3>
+          <h3 className="font-semibold text-foreground text-lg">Pra onde foi o dinheiro</h3>
           {selectedCategory && (
             <button onClick={() => setSelectedCategory(null)} className="text-xs text-rose-500 font-medium hover:underline">
               Ver todos
@@ -584,14 +584,14 @@ export default function CoupleMode() {
             const isSelected = selectedCategory === key;
             return (
               <button key={key} onClick={() => setSelectedCategory(isSelected ? null : key)} className="text-left w-full">
-                <Card className={`border-2 transition-all group hover:shadow-md ${isSelected ? 'border-rose-400 shadow-md bg-rose-50' : 'border-slate-100'}`}>
+                <Card className={`border-2 transition-all group hover:shadow-md ${isSelected ? 'border-rose-400 shadow-md bg-rose-500/10' : 'border-border'}`}>
                   <CardContent className="p-5 text-center">
                     <div className={`w-12 h-12 bg-gradient-to-br ${config.color} rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-md group-hover:scale-110 transition-transform ${isSelected ? 'scale-110' : ''}`}>
                       <Icon className="w-6 h-6 text-white" />
                     </div>
-                    <p className="text-xs text-slate-600 font-medium mb-1">{config.label}</p>
-                    <p className="text-sm font-bold text-[#1B3A52]">{formatCurrency(categoryTotal)}</p>
-                    {percentage > 0 && <p className="text-xs text-slate-400">{percentage.toFixed(0)}%</p>}
+                    <p className="text-xs text-muted-foreground font-medium mb-1">{config.label}</p>
+                    <p className="text-sm font-bold text-foreground">{formatCurrency(categoryTotal)}</p>
+                    {percentage > 0 && <p className="text-xs text-muted-foreground/60">{percentage.toFixed(0)}%</p>}
                   </CardContent>
                 </Card>
               </button>
@@ -603,19 +603,19 @@ export default function CoupleMode() {
       {/* Histórico */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-[#1B3A52] text-lg">
+          <h3 className="font-semibold text-foreground text-lg">
             {selectedCategory ? `${EXPENSE_CATEGORIES[selectedCategory].label}` : 'Histórico de Gastos'}
           </h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             {(selectedCategory ? sharedExpenses.filter(e => e.category === selectedCategory) : sharedExpenses).length} registros
           </p>
         </div>
         {sharedExpenses.length === 0 ? (
-          <Card className="border-rose-100">
+          <Card className="border-rose-500/20">
             <CardContent className="p-12 text-center">
               <div className="text-4xl mb-4">💳</div>
-              <h4 className="font-semibold text-[#1B3A52] mb-2">Nenhum gasto ainda</h4>
-              <p className="text-sm text-slate-500">Quando um de vocês registrar, aparece aqui</p>
+              <h4 className="font-semibold text-foreground mb-2">Nenhum gasto ainda</h4>
+              <p className="text-sm text-muted-foreground">Quando um de vocês registrar, aparece aqui</p>
             </CardContent>
           </Card>
         ) : (
@@ -625,7 +625,7 @@ export default function CoupleMode() {
               const Icon = categoryConfig.icon;
               const isCurrentUser = user?.email === expense.paid_by;
               return (
-                <Card key={expense.id} className="border-slate-100 hover:border-rose-200 transition-all group">
+                <Card key={expense.id} className="border-border hover:border-rose-500/30 transition-all group">
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 flex-1">
@@ -633,8 +633,8 @@ export default function CoupleMode() {
                           <Icon className="w-4 h-4 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-[#1B3A52] text-sm mb-0.5">{expense.description}</h4>
-                          <div className="flex items-center gap-2 text-xs text-slate-400">
+                          <h4 className="font-semibold text-foreground text-sm mb-0.5">{expense.description}</h4>
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <span>{new Date(expense.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })}</span>
                             <span>•</span>
                             <div className="flex items-center gap-1">
@@ -647,7 +647,7 @@ export default function CoupleMode() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <p className="font-bold text-[#1B3A52]">{formatCurrency(expense.amount)}</p>
+                        <p className="font-bold text-foreground">{formatCurrency(expense.amount)}</p>
                         {isCurrentUser && (
                           <Button variant="ghost" size="icon" onClick={() => deleteExpenseMutation.mutate(expense.id)} className="h-7 w-7 opacity-0 group-hover:opacity-100 hover:bg-rose-50 transition-all">
                             <Trash2 className="w-3.5 h-3.5 text-slate-400 hover:text-rose-500" />
@@ -672,8 +672,8 @@ export default function CoupleMode() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-5 mt-4">
-            <div className="p-4 bg-rose-50 rounded-xl border border-rose-100">
-              <p className="text-sm text-slate-700 leading-relaxed">Juntos, vocês vão ver gastos, metas e progresso em tempo real. 💕</p>
+            <div className="p-4 bg-rose-500/10 rounded-xl border border-rose-500/20">
+              <p className="text-sm text-muted-foreground leading-relaxed">Juntos, vocês vão ver gastos, metas e progresso em tempo real. 💕</p>
             </div>
             <div className="space-y-2">
               <Label className="text-[#1B3A52] font-medium">Email do(a) parceiro(a)</Label>
@@ -717,8 +717,8 @@ export default function CoupleMode() {
                 <SelectContent>{Object.entries(EXPENSE_CATEGORIES).map(([key, { label }]) => <SelectItem key={key} value={key}>{label}</SelectItem>)}</SelectContent>
               </Select>
             </div>
-            <div className="p-3 bg-rose-50 rounded-xl border border-rose-100">
-              <p className="text-xs text-rose-700">💕 Os dois vão ver esse gasto. Transparência é amor também.</p>
+            <div className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20">
+              <p className="text-xs text-rose-400">💕 Os dois vão ver esse gasto. Transparência é amor também.</p>
             </div>
             <div className="flex gap-3">
               <Button type="button" variant="outline" className="flex-1 h-11" onClick={() => setIsAddExpenseOpen(false)}>Cancelar</Button>
@@ -757,18 +757,18 @@ export default function CoupleMode() {
               <Label className="text-[#1B3A52]">Prazo (opcional)</Label>
               <Input type="date" value={goalForm.deadline} onChange={(e) => setGoalForm({ ...goalForm, deadline: e.target.value })} className="border-slate-200 focus:border-rose-400" />
             </div>
-            <div className="space-y-3 p-5 bg-rose-50 rounded-xl border border-rose-100">
-              <Label className="flex items-center gap-2 text-[#1B3A52] font-medium">
+            <div className="space-y-3 p-5 bg-rose-500/10 rounded-xl border border-rose-500/20">
+              <Label className="flex items-center gap-2 text-foreground font-medium">
                 <Heart className="w-4 h-4 text-rose-500" /> Quanto cada um vai contribuir?
               </Label>
-              <p className="text-xs text-slate-500">Não é cobrança — é um combinado de vocês dois.</p>
+              <p className="text-xs text-muted-foreground">Não é cobrança — é um combinado de vocês dois.</p>
               {activeGroup.members?.map(email => {
                 const isMe = email === user?.email;
                 return (
-                  <div key={email} className="flex items-center gap-3 p-3 bg-white rounded-xl">
+                  <div key={email} className="flex items-center gap-3 p-3 bg-card rounded-xl">
                     <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getMemberAvatar(email)} flex items-center justify-center text-white font-semibold text-xs`}>{getMemberInitials(email)}</div>
-                    <span className="text-sm font-medium text-slate-700 flex-1">{isMe ? "Você" : getMemberName(email)}</span>
-                    <Input type="number" min="0" max="100" placeholder="0" value={goalForm.responsibilities[email] || ''} onChange={(e) => setGoalForm({ ...goalForm, responsibilities: { ...goalForm.responsibilities, [email]: parseFloat(e.target.value) || 0 } })} className="w-20 border-slate-200 h-9" />
+                    <span className="text-sm font-medium text-foreground flex-1">{isMe ? "Você" : getMemberName(email)}</span>
+                    <Input type="number" min="0" max="100" placeholder="0" value={goalForm.responsibilities[email] || ''} onChange={(e) => setGoalForm({ ...goalForm, responsibilities: { ...goalForm.responsibilities, [email]: parseFloat(e.target.value) || 0 } })} className="w-20 h-9" />
                     <span className="text-sm font-medium text-rose-500">%</span>
                   </div>
                 );
@@ -802,7 +802,7 @@ export default function CoupleMode() {
                   <div className="text-right"><p className="text-xs text-slate-500">Meta</p><p className="text-lg font-semibold text-slate-600">{formatCurrency(selectedGoal.target_amount)}</p></div>
                 </div>
                 <Progress value={(selectedGoal.current_amount / selectedGoal.target_amount) * 100} className="h-3" />
-                <p className="text-xs text-slate-500 text-center">Faltam {formatCurrency(selectedGoal.target_amount - (selectedGoal.current_amount || 0))} pra esse sonho se tornar real 💕</p>
+                <p className="text-xs text-muted-foreground text-center">Faltam {formatCurrency(selectedGoal.target_amount - (selectedGoal.current_amount || 0))} pra esse sonho se tornar real 💕</p>
               </div>
               <div className="space-y-3">
                 <Label className="flex items-center gap-2 text-[#1B3A52]"><Heart className="w-4 h-4 text-rose-500" /> Contribuição de cada um</Label>
@@ -813,15 +813,15 @@ export default function CoupleMode() {
                   const contributionProgress = expectedAmount > 0 ? (contribution / expectedAmount) * 100 : 0;
                   const isMe = email === user?.email;
                   return (
-                    <div key={email} className="p-3 bg-rose-50 rounded-xl border border-rose-100 space-y-2">
+                    <div key={email} className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20 space-y-2">
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                           <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getMemberAvatar(email)} flex items-center justify-center text-white font-semibold text-xs`}>{getMemberInitials(email)}</div>
-                          <span className="text-sm font-medium text-[#1B3A52]">{isMe ? "Você" : getMemberName(email)}</span>
+                          <span className="text-sm font-medium text-foreground">{isMe ? "Você" : getMemberName(email)}</span>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm font-bold text-[#1B3A52]">{formatCurrency(contribution)}</p>
-                          {responsibility > 0 && <p className="text-xs text-slate-400">de {formatCurrency(expectedAmount)} ({responsibility}%)</p>}
+                          <p className="text-sm font-bold text-foreground">{formatCurrency(contribution)}</p>
+                          {responsibility > 0 && <p className="text-xs text-muted-foreground">{formatCurrency(expectedAmount)} ({responsibility}%)</p>}
                         </div>
                       </div>
                       {responsibility > 0 && <Progress value={Math.min(contributionProgress, 100)} className="h-1.5" />}
@@ -829,8 +829,8 @@ export default function CoupleMode() {
                   );
                 })}
               </div>
-              <div className="space-y-3 p-4 bg-rose-50 rounded-xl border border-rose-100">
-                <Label className="flex items-center gap-2 text-[#1B3A52]"><Coins className="w-4 h-4 text-rose-500" /> Movimentar valor</Label>
+              <div className="space-y-3 p-4 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                <Label className="flex items-center gap-2 text-foreground"><Coins className="w-4 h-4 text-rose-500" /> Movimentar valor</Label>
                 <div className="flex gap-2">
                   <Input type="number" step="0.01" placeholder="0,00" value={contributionAmount} onChange={(e) => setContributionAmount(e.target.value)} className="border-slate-200 focus:border-rose-400" />
                   <Button onClick={() => handleContribute(false)} disabled={!contributionAmount || updateGoalMutation.isPending} variant="outline" className="border-rose-200 hover:bg-rose-50 text-rose-600">Retirar</Button>
@@ -891,15 +891,15 @@ export default function CoupleMode() {
                 <Input type="date" value={editGoalForm.deadline} onChange={(e) => setEditGoalForm({ ...editGoalForm, deadline: e.target.value })} className="border-slate-200 focus:border-rose-400 h-11" />
               </div>
             </div>
-            <div className="space-y-3 p-4 bg-rose-50 rounded-xl border border-rose-100">
-              <Label className="text-[#1B3A52] font-medium">Contribuição de cada um</Label>
+            <div className="space-y-3 p-4 bg-rose-500/10 rounded-xl border border-rose-500/20">
+              <Label className="text-foreground font-medium">Contribuição de cada um</Label>
               {activeGroup.members?.map(email => {
                 const isMe = email === user?.email;
                 return (
-                  <div key={email} className="flex items-center gap-3 p-3 bg-white rounded-xl">
+                  <div key={email} className="flex items-center gap-3 p-3 bg-card rounded-xl">
                     <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getMemberAvatar(email)} flex items-center justify-center text-white font-semibold text-xs`}>{getMemberInitials(email)}</div>
-                    <span className="text-sm font-medium text-slate-700 flex-1">{isMe ? "Você" : getMemberName(email)}</span>
-                    <Input type="number" min="0" max="100" placeholder="0" value={editGoalForm.responsibilities?.[email] || ''} onChange={(e) => setEditGoalForm({ ...editGoalForm, responsibilities: { ...editGoalForm.responsibilities, [email]: parseFloat(e.target.value) || 0 } })} className="w-20 border-slate-200 h-9" />
+                    <span className="text-sm font-medium text-foreground flex-1">{isMe ? "Você" : getMemberName(email)}</span>
+                    <Input type="number" min="0" max="100" placeholder="0" value={editGoalForm.responsibilities?.[email] || ''} onChange={(e) => setEditGoalForm({ ...editGoalForm, responsibilities: { ...editGoalForm.responsibilities, [email]: parseFloat(e.target.value) || 0 } })} className="w-20 h-9" />
                     <span className="text-sm text-rose-500">%</span>
                   </div>
                 );
