@@ -83,6 +83,7 @@ function Section({ icon: Icon, iconGradient, title, description, children, delay
 
 export default function Settings() {
   const queryClient = useQueryClient();
+  const { theme, setTheme } = useTheme();
   
   const [settings, setSettings] = useState({
     risk_profile: "balanced",
