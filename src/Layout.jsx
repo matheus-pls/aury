@@ -162,9 +162,9 @@ export default function Layout({ children, currentPageName }) {
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-2 rounded-xl hover:bg-slate-100 transition-colors"
-              >
-                <X className="w-5 h-5 text-slate-500" />
+                className="lg:hidden p-2 rounded-xl hover:bg-accent transition-colors"
+                >
+                <X className="w-5 h-5 text-muted-foreground" />
               </button>
             </div>
           </div>
