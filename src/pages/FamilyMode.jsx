@@ -855,7 +855,7 @@ export default function CoupleMode() {
             <div className="space-y-2">
               <Label className="text-[#1B3A52]">Novo nome</Label>
               <Input
-                placeholder="Ex: Família Martuchele ❤️"
+                placeholder="Ex: João e Ana ❤️"
                 value={editGroupName}
                 onChange={(e) => setEditGroupName(e.target.value)}
                 className="border-slate-200 focus:border-rose-400 h-11"
