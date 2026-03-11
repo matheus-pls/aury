@@ -229,18 +229,18 @@ export default function AutoPlanning() {
               key={index}
               className={`p-4 rounded-xl border ${
                 alert.type === "success"
-                  ? "bg-emerald-50 border-emerald-200"
+                  ? "bg-emerald-500/10 border-emerald-500/30"
                   : alert.type === "warning"
-                  ? "bg-amber-50 border-amber-200"
-                  : "bg-red-50 border-red-200"
+                  ? "bg-amber-500/10 border-amber-500/30"
+                  : "bg-red-500/10 border-red-500/30"
               }`}
             >
               <p className={`text-sm ${
                 alert.type === "success"
-                  ? "text-emerald-700"
+                  ? "text-emerald-400"
                   : alert.type === "warning"
-                  ? "text-amber-700"
-                  : "text-red-700"
+                  ? "text-amber-400"
+                  : "text-red-400"
               }`}>
                 {alert.message}
               </p>
