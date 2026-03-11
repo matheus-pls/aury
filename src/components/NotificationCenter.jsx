@@ -2,12 +2,25 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPageUrl } from "@/utils";
 import { 
-  Bell, X, Calendar, TrendingDown, Target, Shield, Sparkles, CheckCircle2, Clock
+  Bell, 
+  X, 
+  Calendar,
+  TrendingDown,
+  Target,
+  Shield,
+  Sparkles,
+  CheckCircle2,
+  Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const NOTIFICATION_ICONS = {
   bill_due: Calendar,
@@ -36,18 +49,24 @@ export default function NotificationCenter() {
 
   const { data: notifications = [] } = useQuery({
     queryKey: ['notifications', user?.email],
-    queryFn: () => base44.entities.Notification.filter({ created_by: user?.email }, '-created_date', 20),
+    queryFn: () => base44.entities.Notification.filter({ 
+      created_by: user?.email 
+    }, '-created_date', 20),
     enabled: !!user
   });
 
   const markAsReadMutation = useMutation({
     mutationFn: (id) => base44.entities.Notification.update(id, { read: true }),
-    onSuccess: () => queryClient.invalidateQueries(['notifications'])
+    onSuccess: () => {
+      queryClient.invalidateQueries(['notifications']);
+    }
   });
 
   const deleteNotificationMutation = useMutation({
     mutationFn: (id) => base44.entities.Notification.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['notifications'])
+    onSuccess: () => {
+      queryClient.invalidateQueries(['notifications']);
+    }
   });
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -58,7 +77,9 @@ export default function NotificationCenter() {
 
   const handleOpenChange = (open) => {
     setIsOpen(open);
-    if (open && unreadCount > 0) markAllAsRead();
+    if (open && unreadCount > 0) {
+      markAllAsRead();
+    }
   };
 
   const handleNotificationClick = (notification) => {
@@ -88,8 +109,12 @@ export default function NotificationCenter() {
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative hover:bg-accent transition-colors">
-          <Bell className="w-5 h-5 text-muted-foreground" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative hover:bg-slate-100 transition-colors"
+        >
+          <Bell className="w-5 h-5 text-slate-600" />
           {unreadCount > 0 && (
             <motion.div
               initial={{ scale: 0 }}
@@ -101,11 +126,10 @@ export default function NotificationCenter() {
           )}
         </Button>
       </PopoverTrigger>
-
-      <PopoverContent className="w-96 p-0 bg-card border border-border" align="end">
-        <div className="p-4 border-b border-border">
+      <PopoverContent className="w-96 p-0" align="end">
+        <div className="p-4 border-b border-slate-100">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-foreground">Notificações</h3>
+            <h3 className="font-bold text-[#1B3A52]">Notificações</h3>
             {unreadCount > 0 && (
               <Badge className="bg-[#5FBDBD] text-white">
                 {unreadCount} nova{unreadCount > 1 ? 's' : ''}
@@ -117,52 +141,57 @@ export default function NotificationCenter() {
         <div className="max-h-[500px] overflow-y-auto">
           {notifications.length === 0 ? (
             <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <Bell className="w-8 h-8 text-muted-foreground" />
+              <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Bell className="w-8 h-8 text-slate-400" />
               </div>
-              <p className="text-sm text-muted-foreground">Nenhuma notificação por enquanto</p>
+              <p className="text-sm text-slate-500">Nenhuma notificação por enquanto</p>
             </div>
           ) : (
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-slate-100">
               <AnimatePresence>
                 {notifications.map((notification) => {
                   const Icon = NOTIFICATION_ICONS[notification.type] || Sparkles;
                   const isUnread = !notification.read;
-
+                  
                   return (
                     <motion.div
                       key={notification.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 20 }}
-                      className={`p-4 hover:bg-accent transition-colors cursor-pointer relative ${isUnread ? 'bg-[#5FBDBD]/5' : ''}`}
+                      className={`p-4 hover:bg-slate-50 transition-colors cursor-pointer relative ${
+                        isUnread ? 'bg-[#5FBDBD]/5' : ''
+                      }`}
                       onClick={() => handleNotificationClick(notification)}
                     >
                       {isUnread && (
                         <div className="absolute left-2 top-1/2 -translate-y-1/2 w-2 h-2 bg-[#5FBDBD] rounded-full" />
                       )}
-
+                      
                       <div className="flex gap-3 pl-3">
                         <div className={`w-10 h-10 bg-gradient-to-br ${NOTIFICATION_COLORS[notification.type]} rounded-xl flex items-center justify-center flex-shrink-0 shadow-md`}>
                           <Icon className="w-5 h-5 text-white" />
                         </div>
-
+                        
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-1">
-                            <h4 className={`text-sm text-foreground ${isUnread ? 'font-bold' : 'font-semibold'}`}>
+                            <h4 className={`text-sm font-semibold text-[#1B3A52] ${isUnread ? 'font-bold' : ''}`}>
                               {notification.title}
                             </h4>
                             <button
-                              onClick={(e) => { e.stopPropagation(); deleteNotificationMutation.mutate(notification.id); }}
-                              className="p-1 hover:bg-muted rounded-lg transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteNotificationMutation.mutate(notification.id);
+                              }}
+                              className="p-1 hover:bg-slate-200 rounded-lg transition-colors"
                             >
-                              <X className="w-3 h-3 text-muted-foreground" />
+                              <X className="w-3 h-3 text-slate-400" />
                             </button>
                           </div>
-                          <p className="text-xs text-muted-foreground leading-relaxed mb-2">
+                          <p className="text-xs text-slate-600 leading-relaxed mb-2">
                             {notification.message}
                           </p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-2 text-xs text-slate-400">
                             <Clock className="w-3 h-3" />
                             <span>{formatDate(notification.created_date)}</span>
                           </div>
@@ -177,8 +206,13 @@ export default function NotificationCenter() {
         </div>
 
         {notifications.length > 0 && (
-          <div className="p-3 border-t border-border">
-            <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground" onClick={markAllAsRead}>
+          <div className="p-3 border-t border-slate-100">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-xs text-slate-600"
+              onClick={markAllAsRead}
+            >
               <CheckCircle2 className="w-3 h-3 mr-2" />
               Marcar todas como lidas
             </Button>
