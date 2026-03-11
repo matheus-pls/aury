@@ -183,7 +183,7 @@ export default function Layout({ children, currentPageName }) {
                     flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative
                     ${isActive 
                       ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20' 
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-[#1B3A52]'
+                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                     }
                   `}
                 >
