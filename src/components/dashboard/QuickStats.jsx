@@ -55,7 +55,7 @@ export default function QuickStats({ stats }) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100"
+            className="bg-card rounded-2xl p-5 shadow-sm border border-border"
           >
             <div className="flex items-center justify-between mb-3">
               <div className={`p-2.5 rounded-xl ${item.bgColor}`}>

@@ -30,7 +30,7 @@ export default function EmergencyFundProgress({ current, goal, monthlyFixed }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+    <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <div className="p-3 rounded-xl bg-emerald-50">

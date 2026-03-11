@@ -24,7 +24,7 @@ export default function CategoryCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+      className="bg-card rounded-2xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
     >
       <div className="flex items-start justify-between mb-4">
         <div className={`p-3 rounded-xl ${bgColor}`}>

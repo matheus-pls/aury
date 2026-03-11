@@ -71,7 +71,7 @@ export default function DistributionChart({ data, type = "suggested" }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+    <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
       <h3 className="text-lg font-semibold text-slate-800 mb-4">
         {type === "suggested" ? "Distribuição Sugerida" : "Distribuição Atual"}
       </h3>

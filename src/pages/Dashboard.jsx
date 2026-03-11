@@ -304,7 +304,7 @@ export default function Dashboard() {
     <div className="space-y-6 pb-8">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="text-3xl font-bold text-[#1B3A52]">Como está seu mês agora?</h1>
+        <h1 className="text-3xl font-bold text-foreground">Como está seu mês agora?</h1>
         <p className="text-slate-600 mt-1">Aqui você vê se está no controle ou precisa ajustar</p>
       </div>
 
@@ -518,12 +518,12 @@ export default function Dashboard() {
                   <DollarSign className="w-5 h-5 text-[#5FBDBD]" />
                 </div>
                 <div>
-                  <CardTitle className="text-[#1B3A52]">Patrimônio Líquido</CardTitle>
+                  <CardTitle className="text-foreground">Patrimônio Líquido</CardTitle>
                   <CardDescription>Saldo + Reservas + Metas</CardDescription>
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-bold text-[#1B3A52]">
+                <p className="text-3xl font-bold text-foreground">
                   {formatCurrency(netWorth)}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
@@ -555,7 +555,7 @@ export default function Dashboard() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <PieChart className="w-5 h-5 text-[#5FBDBD]" />
-                <CardTitle className="text-[#1B3A52]">Gastos por Categoria</CardTitle>
+                <CardTitle className="text-foreground">Gastos por Categoria</CardTitle>
               </div>
               <CardDescription>Pra onde seu dinheiro foi esse mês</CardDescription>
             </CardHeader>
@@ -604,7 +604,7 @@ export default function Dashboard() {
                           />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs text-slate-600 truncate">{item.name}</p>
-                            <p className="text-sm font-bold text-[#1B3A52]">
+                            <p className="text-sm font-bold text-foreground">
                               {formatCurrency(item.value)}
                             </p>
                             <p className="text-xs text-slate-500">{percentage}% do total</p>
@@ -636,7 +636,7 @@ export default function Dashboard() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-[#5FBDBD]" />
-                <CardTitle className="text-[#1B3A52]">Receitas vs Despesas</CardTitle>
+                <CardTitle className="text-foreground">Receitas vs Despesas</CardTitle>
               </div>
               <CardDescription>Você está gastando mais ou menos que antes?</CardDescription>
             </CardHeader>
@@ -703,7 +703,7 @@ export default function Dashboard() {
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-[#5FBDBD]" />
-                <CardTitle className="text-[#1B3A52]">Progresso das Metas</CardTitle>
+                <CardTitle className="text-foreground">Progresso das Metas</CardTitle>
               </div>
               <CardDescription>Seus sonhos tão chegando?</CardDescription>
             </CardHeader>
@@ -734,7 +734,7 @@ export default function Dashboard() {
                               Progresso: <span className="font-bold text-[#5FBDBD]">{data.progress}%</span>
                             </p>
                             <p className="text-sm text-slate-600 mt-1">
-                              Economizado: <span className="font-bold text-[#1B3A52]">{formatCurrency(data.current)}</span>
+                              Economizado: <span className="font-bold text-foreground">{formatCurrency(data.current)}</span>
                             </p>
                             <p className="text-sm text-slate-600">
                               Meta: <span className="font-semibold text-slate-700">{formatCurrency(data.target)}</span>
@@ -766,7 +766,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-slate-500">Economizado</span>
-                      <span className="font-bold text-[#1B3A52]">
+                      <span className="font-bold text-foreground">
                         {formatCurrency(goal.current)}
                       </span>
                     </div>

@@ -8,34 +8,34 @@ export default function AlertCard({ alerts }) {
       case "danger":
         return { 
           icon: XCircle, 
-          bg: "bg-red-50", 
-          border: "border-red-200",
+          bg: "bg-red-500/10", 
+          border: "border-red-500/30",
           iconColor: "text-red-500",
-          textColor: "text-red-700"
+          textColor: "text-red-500"
         };
       case "warning":
         return { 
           icon: AlertTriangle, 
-          bg: "bg-amber-50", 
-          border: "border-amber-200",
+          bg: "bg-amber-500/10", 
+          border: "border-amber-500/30",
           iconColor: "text-amber-500",
-          textColor: "text-amber-700"
+          textColor: "text-amber-500"
         };
       case "success":
         return { 
           icon: CheckCircle, 
-          bg: "bg-emerald-50", 
-          border: "border-emerald-200",
+          bg: "bg-emerald-500/10", 
+          border: "border-emerald-500/30",
           iconColor: "text-emerald-500",
-          textColor: "text-emerald-700"
+          textColor: "text-emerald-500"
         };
       default:
         return { 
           icon: Info, 
-          bg: "bg-blue-50", 
-          border: "border-blue-200",
+          bg: "bg-blue-500/10", 
+          border: "border-blue-500/30",
           iconColor: "text-blue-500",
-          textColor: "text-blue-700"
+          textColor: "text-blue-400"
         };
     }
   };
