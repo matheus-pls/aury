@@ -218,5 +218,5 @@ export default function Layout({ children, currentPageName }) {
       </main>
     </div>
     </ThemeProvider>
-  );
+  )
 }
