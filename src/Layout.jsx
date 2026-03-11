@@ -187,7 +187,7 @@ export default function Layout({ children, currentPageName }) {
                     }
                   `}
                 >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
                   <span className="font-medium">{item.name}</span>
                   {isLocked && (
                     <span className="ml-auto">
