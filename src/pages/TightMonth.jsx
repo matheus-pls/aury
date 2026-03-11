@@ -110,8 +110,8 @@ export default function TightMonth() {
             <Heart className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Modo Apertado</h1>
-            <p className="text-slate-500 text-sm">Agora o foco é o essencial</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Modo Apertado</h1>
+            <p className="text-muted-foreground text-sm">Agora o foco é o essencial</p>
           </div>
         </div>
       </motion.div>
@@ -155,13 +155,13 @@ export default function TightMonth() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-5 border border-amber-200"
+          className="bg-amber-500/10 rounded-2xl p-5 border border-amber-500/30"
         >
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-amber-900 mb-1">Vamos com calma até o fim do mês</p>
-              <p className="text-sm text-amber-700 leading-relaxed">
+              <p className="font-semibold text-amber-500 mb-1">Vamos com calma até o fim do mês</p>
+              <p className="text-sm text-amber-500/80 leading-relaxed">
                 Se conseguir reduzir {formatCurrency(potentialSavings * 0.5)}, você fecha o mês tranquilo.
               </p>
             </div>
@@ -174,23 +174,23 @@ export default function TightMonth() {
         {/* Unavoidable */}
         <Card className="border-slate-200 shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base text-[#1B3A52] flex items-center gap-2">
-              <Shield className="w-4 h-4 text-[#1B3A52]" />
+            <CardTitle className="text-base text-foreground flex items-center gap-2">
+              <Shield className="w-4 h-4 text-foreground" />
               O que não dá pra cortar
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold text-[#1B3A52] mb-3">{formatCurrency(unavoidableExpenses)}</p>
+            <p className="text-2xl font-bold text-foreground mb-3">{formatCurrency(unavoidableExpenses)}</p>
             <div className="space-y-2">
               {unavoidableItems.map((item, i) => {
                 const Icon = item.icon;
                 return (
                   <div key={i} className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
-                      <Icon className="w-4 h-4 text-slate-400" />
-                      <span className="text-slate-600">{item.label}</span>
+                      <Icon className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">{item.label}</span>
                     </div>
-                    <span className="font-semibold text-slate-800">{formatCurrency(item.amount)}</span>
+                    <span className="font-semibold text-foreground">{formatCurrency(item.amount)}</span>
                   </div>
                 );
               })}
@@ -199,7 +199,7 @@ export default function TightMonth() {
         </Card>
 
         {/* Reducible */}
-        <Card className="border-amber-200 shadow-sm bg-amber-50/30">
+        <Card className="border-amber-500/30 shadow-sm bg-amber-500/5">
           <CardHeader className="pb-3">
             <CardTitle className="text-base text-amber-900 flex items-center gap-2">
               <TrendingDown className="w-4 h-4 text-amber-600" />
@@ -222,8 +222,8 @@ export default function TightMonth() {
                 );
               })}
             </div>
-            <div className="mt-3 pt-3 border-t border-amber-200">
-              <p className="text-xs text-amber-700">
+            <div className="mt-3 pt-3 border-t border-amber-500/30">
+              <p className="text-xs text-amber-500">
                 💡 Cortando pela metade: +{formatCurrency(reducibleExpenses * 0.4)} no bolso
               </p>
             </div>
@@ -232,15 +232,15 @@ export default function TightMonth() {
 
         {/* Cuttable */}
         {cuttableExpenses > 0 && (
-          <Card className="border-rose-200 shadow-sm bg-rose-50/30">
+          <Card className="border-rose-500/30 shadow-sm bg-rose-500/5">
             <CardHeader className="pb-3">
-              <CardTitle className="text-base text-rose-900 flex items-center gap-2">
+              <CardTitle className="text-base text-rose-500 flex items-center gap-2">
                 <Zap className="w-4 h-4 text-rose-600" />
                 O que pode esperar
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold text-rose-900 mb-3">{formatCurrency(cuttableExpenses)}</p>
+              <p className="text-2xl font-bold text-rose-500 mb-3">{formatCurrency(cuttableExpenses)}</p>
               <div className="space-y-2">
                 {cuttableItems.map((item, i) => {
                   const Icon = item.icon;
@@ -248,9 +248,9 @@ export default function TightMonth() {
                     <div key={i} className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
                         <Icon className="w-4 h-4 text-rose-500" />
-                        <span className="text-rose-800">{item.label}</span>
-                      </div>
-                      <span className="font-semibold text-rose-900">
+                        <span className="text-rose-400">{item.label}</span>
+                        </div>
+                        <span className="font-semibold text-rose-500">
                         +{formatCurrency(item.savings)} se pausar
                       </span>
                     </div>
@@ -267,17 +267,17 @@ export default function TightMonth() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
+        className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden"
       >
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="w-full p-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-5 flex items-center justify-between hover:bg-accent transition-colors"
         >
-          <span className="font-semibold text-[#1B3A52]">Como passar o mês</span>
+          <span className="font-semibold text-foreground">Como passar o mês</span>
           {showDetails ? (
-            <ChevronUp className="w-5 h-5 text-slate-400" />
+            <ChevronUp className="w-5 h-5 text-muted-foreground" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-slate-400" />
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
           )}
         </button>
 
@@ -287,21 +287,21 @@ export default function TightMonth() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="border-t border-slate-100"
+              className="border-t border-border"
             >
               <div className="p-6 space-y-5">
                 <div className="bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-xl p-4 border border-[#5FBDBD]/20">
-                 <h4 className="font-semibold text-[#1B3A52] mb-3">O que importa agora</h4>
-                 <ul className="space-y-2 text-sm text-slate-700">
+                 <h4 className="font-semibold text-foreground mb-3">O que importa agora</h4>
+                 <ul className="space-y-2 text-sm text-muted-foreground">
                    <li>• Fechar o mês sem dívida</li>
                    <li>• Pagar só o necessário</li>
                    <li>• Sobreviver sem culpa</li>
                  </ul>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                 <h4 className="font-semibold text-blue-900 mb-2">Esse mês pede cuidado, não cobrança</h4>
-                 <p className="text-sm text-blue-700 leading-relaxed">
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                 <h4 className="font-semibold text-blue-400 mb-2">Esse mês pede cuidado, não cobrança</h4>
+                 <p className="text-sm text-blue-400/80 leading-relaxed">
                    Não é fracasso. É um momento que exige estratégia. 
                    Com alguns cortes nos supérfluos, você chega lá.
                  </p>

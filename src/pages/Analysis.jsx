@@ -85,8 +85,8 @@ export default function Analysis() {
             <BarChart3 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-[#1B3A52]">Análises</h1>
-            <p className="text-slate-500 text-sm">Entenda como você lida com dinheiro</p>
+            <h1 className="text-3xl font-bold text-foreground">Análises</h1>
+            <p className="text-muted-foreground text-sm">Entenda como você lida com dinheiro</p>
           </div>
         </div>
       </motion.div>
@@ -100,7 +100,7 @@ export default function Analysis() {
 
       {/* Analysis Sections */}
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-[#1B3A52]">O que você quer entender?</h2>
+        <h2 className="text-lg font-semibold text-foreground">O que você quer entender?</h2>
         <div className="grid grid-cols-1 gap-3">
           {ANALYSIS_SECTIONS.map((section, index) => {
             const Icon = section.icon;
@@ -115,22 +115,22 @@ export default function Analysis() {
                 whileTap={{ scale: 0.99 }}
                 onClick={() => handleSection(section)}
               >
-                <Card className={`group cursor-pointer transition-all duration-300 border bg-white ${isLocked ? 'border-dashed border-slate-200 opacity-75' : 'border-slate-200 hover:shadow-lg hover:border-slate-300'}`}>
+                <Card className={`group cursor-pointer transition-all duration-300 border bg-card ${isLocked ? 'border-dashed border-border opacity-75' : 'border-border hover:shadow-lg hover:border-border/80'}`}>
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 bg-gradient-to-br ${isLocked ? 'from-slate-200 to-slate-300' : section.gradient} rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform`}>
-                        {isLocked ? <Lock className="w-6 h-6 text-slate-400" /> : <Icon className="w-6 h-6 text-white" />}
+                      <div className={`w-12 h-12 bg-gradient-to-br ${isLocked ? 'from-muted to-muted' : section.gradient} rounded-xl flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform`}>
+                        {isLocked ? <Lock className="w-6 h-6 text-muted-foreground" /> : <Icon className="w-6 h-6 text-white" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <h3 className="font-medium text-[#1B3A52]">{section.title}</h3>
+                          <h3 className="font-medium text-foreground">{section.title}</h3>
                           {isLocked && <PremiumBadge />}
                         </div>
-                        <p className="text-xs text-slate-500 leading-relaxed">{section.description}</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{section.description}</p>
                       </div>
                       {isLocked
                         ? <Crown className="w-4 h-4 text-amber-500" />
-                        : <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 group-hover:translate-x-0.5 transition-all" />
+                        : <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground group-hover:translate-x-0.5 transition-all" />
                       }
                     </div>
                   </CardContent>
