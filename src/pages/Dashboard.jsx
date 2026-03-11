@@ -712,36 +712,36 @@ export default function Dashboard() {
             <CardContent>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={goalsProgressData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis 
                     type="number" 
                     domain={[0, 100]}
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                     tickFormatter={(value) => `${value}%`}
                   />
                   <YAxis 
                     type="category" 
                     dataKey="name" 
                     width={120}
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                   />
                   <Tooltip 
                     content={({ active, payload }) => {
                       if (active && payload && payload.length) {
                         const data = payload[0].payload;
                         return (
-                          <div className="bg-white border border-slate-200 rounded-lg p-3 shadow-lg">
-                            <p className="font-semibold text-slate-800 mb-2">{data.name}</p>
-                            <p className="text-sm text-slate-600">
+                          <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
+                            <p className="font-semibold text-foreground mb-2">{data.name}</p>
+                            <p className="text-sm text-muted-foreground">
                               Progresso: <span className="font-bold text-[#5FBDBD]">{data.progress}%</span>
                             </p>
-                            <p className="text-sm text-slate-600 mt-1">
+                            <p className="text-sm text-muted-foreground mt-1">
                               Economizado: <span className="font-bold text-foreground">{formatCurrency(data.current)}</span>
                             </p>
-                            <p className="text-sm text-slate-600">
-                              Meta: <span className="font-semibold text-slate-700">{formatCurrency(data.target)}</span>
+                            <p className="text-sm text-muted-foreground">
+                              Meta: <span className="font-semibold text-foreground">{formatCurrency(data.target)}</span>
                             </p>
-                            <p className="text-xs text-slate-500 mt-1 pt-1 border-t border-slate-200">
+                            <p className="text-xs text-muted-foreground mt-1 pt-1 border-t border-border">
                               Faltam {formatCurrency(data.target - data.current)}
                             </p>
                           </div>
@@ -759,22 +759,22 @@ export default function Dashboard() {
               </ResponsiveContainer>
               <div className="mt-4 grid gap-2">
                 {goalsProgressData.map((goal, idx) => (
-                  <div key={idx} className="p-3 bg-slate-50 rounded-lg">
+                  <div key={idx} className="p-3 bg-muted rounded-lg">
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-slate-700">{goal.name}</span>
-                      <span className="text-xs font-bold text-[#5FBDBD] px-2 py-1 bg-white rounded-full">
+                      <span className="text-sm font-medium text-foreground">{goal.name}</span>
+                      <span className="text-xs font-bold text-[#5FBDBD] px-2 py-1 bg-card rounded-full">
                         {goal.progress}%
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
-                      <span className="text-slate-500">Economizado</span>
+                      <span className="text-muted-foreground">Economizado</span>
                       <span className="font-bold text-foreground">
                         {formatCurrency(goal.current)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center text-xs mt-0.5">
-                      <span className="text-slate-500">Falta</span>
-                      <span className="font-semibold text-slate-600">
+                      <span className="text-muted-foreground">Falta</span>
+                      <span className="font-semibold text-muted-foreground">
                         {formatCurrency(goal.target - goal.current)}
                       </span>
                     </div>
