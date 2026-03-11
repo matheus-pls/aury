@@ -379,7 +379,7 @@ export default function Settings() {
           ].map((item, i) => {
             const Icon = item.icon;
             const inner = (
-              <div className={`w-full flex items-center justify-between p-4 rounded-2xl border border-slate-100 bg-slate-50 hover:bg-white ${item.hoverBorder} transition-all group cursor-pointer`}>
+              <div className={`w-full flex items-center justify-between p-4 rounded-2xl border border-border bg-muted hover:bg-accent ${item.hoverBorder} transition-all group cursor-pointer`}>
                 <div className="flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${item.gradient} flex items-center justify-center shadow-sm`}>
                     <Icon className="w-5 h-5 text-white" />
