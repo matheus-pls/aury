@@ -151,9 +151,9 @@ export default function AutoPlanning() {
         <BackButton to={createPageUrl("Planning")} className="mb-4" />
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-6 h-6 text-[#5FBDBD]" />
-          <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Plano do Mês</h1>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Plano do Mês</h1>
         </div>
-        <p className="text-slate-500">Quanto sobra e para onde vai</p>
+        <p className="text-muted-foreground">Quanto sobra e para onde vai</p>
       </motion.div>
 
       {/* Sobra Diária Segura - Destaque Principal */}
