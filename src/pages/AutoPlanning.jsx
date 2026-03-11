@@ -254,17 +254,17 @@ export default function AutoPlanning() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35 }}
-        className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
+        className="bg-card rounded-2xl border border-border overflow-hidden"
       >
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="w-full p-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-5 flex items-center justify-between hover:bg-accent transition-colors"
         >
-          <span className="font-semibold text-slate-800">Para onde vai meu dinheiro</span>
+          <span className="font-semibold text-foreground">Para onde vai meu dinheiro</span>
           {showDetails ? (
-            <ChevronUp className="w-5 h-5 text-slate-400" />
+            <ChevronUp className="w-5 h-5 text-muted-foreground" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-slate-400" />
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
           )}
         </button>
 
@@ -274,45 +274,45 @@ export default function AutoPlanning() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="border-t border-slate-100"
+              className="border-t border-border"
             >
               <div className="p-6 space-y-6">
                 {/* Monthly Overview */}
                 <div>
-                  <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                    <Wallet className="w-5 h-5 text-[#00A8A0]" />
+                  <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <Wallet className="w-5 h-5 text-[#5FBDBD]" />
                     Resumo do Mês
                   </h3>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-slate-50 rounded-xl p-4">
-                      <p className="text-sm text-slate-500 mb-1">Renda Total</p>
-                      <p className="text-2xl font-bold text-slate-800 tabular-nums">{formatCurrency(totalIncome)}</p>
+                    <div className="bg-muted rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Renda Total</p>
+                      <p className="text-2xl font-bold text-foreground tabular-nums">{formatCurrency(totalIncome)}</p>
                     </div>
-                    <div className="bg-slate-50 rounded-xl p-4">
-                      <p className="text-sm text-slate-500 mb-1">Já Gasto</p>
-                      <p className="text-2xl font-bold text-slate-800 tabular-nums">{formatCurrency(totalSpent)}</p>
+                    <div className="bg-muted rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Já Gasto</p>
+                      <p className="text-2xl font-bold text-foreground tabular-nums">{formatCurrency(totalSpent)}</p>
                     </div>
-                    <div className="bg-slate-50 rounded-xl p-4">
-                      <p className="text-sm text-slate-500 mb-1">Orçamento Restante</p>
-                      <p className="text-2xl font-bold text-emerald-600 tabular-nums">{formatCurrency(remainingBudget)}</p>
+                    <div className="bg-muted rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Orçamento Restante</p>
+                      <p className="text-2xl font-bold text-emerald-400 tabular-nums">{formatCurrency(remainingBudget)}</p>
                     </div>
-                    <div className="bg-slate-50 rounded-xl p-4">
-                      <p className="text-sm text-slate-500 mb-1">Dias Restantes</p>
-                      <p className="text-2xl font-bold text-slate-800">{daysRemaining}</p>
+                    <div className="bg-muted rounded-xl p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Dias Restantes</p>
+                      <p className="text-2xl font-bold text-foreground">{daysRemaining}</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Distribution */}
                 <div>
-                  <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                    <DollarSign className="w-5 h-5 text-[#00A8A0]" />
+                  <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-[#5FBDBD]" />
                     Distribuição Recomendada
                   </h3>
                   <div className="space-y-3">
                     {[
-                      { label: "Gastos Fixos", value: distribution.fixed, color: "bg-slate-600" },
-                      { label: "Essenciais", value: distribution.essential, color: "bg-[#00A8A0]" },
+                      { label: "Gastos Fixos", value: distribution.fixed, color: "bg-slate-500" },
+                      { label: "Essenciais", value: distribution.essential, color: "bg-[#5FBDBD]" },
                       { label: "Supérfluos", value: distribution.superfluous, color: "bg-amber-500" },
                       { label: "Reserva de Emergência", value: distribution.emergency, color: "bg-emerald-500" },
                       { label: "Investimentos", value: distribution.investment, color: "bg-violet-500" }
@@ -320,9 +320,9 @@ export default function AutoPlanning() {
                       <div key={index} className="flex items-center justify-between">
                         <div className="flex items-center gap-3 flex-1">
                           <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                          <span className="text-sm text-slate-600">{item.label}</span>
+                          <span className="text-sm text-muted-foreground">{item.label}</span>
                         </div>
-                        <span className="font-semibold text-slate-800 tabular-nums">{formatCurrencyDetailed(item.value)}</span>
+                        <span className="font-semibold text-foreground tabular-nums">{formatCurrencyDetailed(item.value)}</span>
                       </div>
                     ))}
                   </div>
@@ -331,14 +331,14 @@ export default function AutoPlanning() {
                 {/* Goals */}
                 {goals.length > 0 && (
                   <div>
-                    <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                      <Target className="w-5 h-5 text-[#00A8A0]" />
+                    <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                      <Target className="w-5 h-5 text-[#5FBDBD]" />
                       Alocação para Metas
                     </h3>
-                    <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                      <p className="text-sm text-purple-600 mb-2">Sugestão mensal para suas metas</p>
-                      <p className="text-3xl font-bold text-purple-700 tabular-nums">{formatCurrency(goalsAllocation)}</p>
-                      <p className="text-xs text-purple-600 mt-2">
+                    <div className="bg-violet-500/10 border border-violet-500/30 rounded-xl p-4">
+                      <p className="text-sm text-violet-400 mb-2">Sugestão mensal para suas metas</p>
+                      <p className="text-3xl font-bold text-violet-300 tabular-nums">{formatCurrency(goalsAllocation)}</p>
+                      <p className="text-xs text-violet-400 mt-2">
                         {goals.length} {goals.length === 1 ? 'meta ativa' : 'metas ativas'}
                       </p>
                     </div>
@@ -347,25 +347,25 @@ export default function AutoPlanning() {
 
                 {/* Projection */}
                 <div>
-                  <h3 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-5 h-5 text-[#00A8A0]" />
+                  <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-[#5FBDBD]" />
                     Projeção até Fim do Mês
                   </h3>
                   <div className={`rounded-xl p-4 ${
                     projectedBalance >= 0 
-                      ? "bg-emerald-50 border border-emerald-200" 
-                      : "bg-red-50 border border-red-200"
+                      ? "bg-emerald-500/10 border border-emerald-500/30" 
+                      : "bg-red-500/10 border border-red-500/30"
                   }`}>
-                    <p className="text-sm text-slate-600 mb-3">Se manter o ritmo atual de gastos:</p>
+                    <p className="text-sm text-muted-foreground mb-3">Se manter o ritmo atual de gastos:</p>
                     <div className="space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-slate-600">Projeção de gastos totais</span>
-                        <span className="font-semibold text-slate-800 tabular-nums">{formatCurrencyDetailed(projectedSpending)}</span>
+                        <span className="text-sm text-muted-foreground">Projeção de gastos totais</span>
+                        <span className="font-semibold text-foreground tabular-nums">{formatCurrencyDetailed(projectedSpending)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-slate-600">Saldo final estimado</span>
+                        <span className="text-sm text-muted-foreground">Saldo final estimado</span>
                         <span className={`font-bold text-lg tabular-nums ${
-                          projectedBalance >= 0 ? "text-emerald-600" : "text-red-600"
+                          projectedBalance >= 0 ? "text-emerald-400" : "text-red-400"
                         }`}>
                           {formatCurrencyDetailed(projectedBalance)}
                         </span>
@@ -375,28 +375,28 @@ export default function AutoPlanning() {
                 </div>
 
                 {/* Recommendations */}
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-5">
-                  <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                <div className="bg-[#5FBDBD]/10 border border-[#5FBDBD]/30 rounded-xl p-5">
+                  <h4 className="font-semibold text-[#5FBDBD] mb-3 flex items-center gap-2">
                     <Sparkles className="w-5 h-5" />
                     Recomendações
                   </h4>
-                  <ul className="space-y-2 text-sm text-blue-700">
+                  <ul className="space-y-2 text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
-                      <span>Limite diário recomendado: <strong>{formatCurrency(dailySpendingLimit)}</strong></span>
+                      <span className="text-[#5FBDBD] mt-0.5">•</span>
+                      <span>Limite diário recomendado: <strong className="text-foreground">{formatCurrency(dailySpendingLimit)}</strong></span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
-                      <span>Economia semanal planejada: <strong>{formatCurrency(weeklySavings)}</strong></span>
+                      <span className="text-[#5FBDBD] mt-0.5">•</span>
+                      <span>Economia semanal planejada: <strong className="text-foreground">{formatCurrency(weeklySavings)}</strong></span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
-                      <span>Investimento mensal automático: <strong>{formatCurrency(distribution.investment)}</strong></span>
+                      <span className="text-[#5FBDBD] mt-0.5">•</span>
+                      <span>Investimento mensal automático: <strong className="text-foreground">{formatCurrency(distribution.investment)}</strong></span>
                     </li>
                     {goalsAllocation > 0 && (
                       <li className="flex items-start gap-2">
-                        <span className="text-blue-500 mt-0.5">•</span>
-                        <span>Contribuição para metas: <strong>{formatCurrency(goalsAllocation)}</strong></span>
+                        <span className="text-[#5FBDBD] mt-0.5">•</span>
+                        <span>Contribuição para metas: <strong className="text-foreground">{formatCurrency(goalsAllocation)}</strong></span>
                       </li>
                     )}
                   </ul>
