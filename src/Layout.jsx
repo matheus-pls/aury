@@ -76,6 +76,7 @@ export default function Layout({ children, currentPageName }) {
   }, [location]);
 
   return (
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
     <div className="min-h-screen bg-slate-50">
       <Toaster position="top-center" richColors />
       <NotificationGenerator />
