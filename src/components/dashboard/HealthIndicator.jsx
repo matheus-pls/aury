@@ -6,15 +6,15 @@ export default function HealthIndicator({ score, label, status }) {
   const getStatusConfig = () => {
     switch (status) {
       case "excellent":
-        return { color: "#00A8A0", icon: CheckCircle2, bg: "bg-emerald-50", text: "Excelente" };
+        return { color: "#00A8A0", icon: CheckCircle2, bg: "bg-emerald-500/10", text: "Excelente" };
       case "good":
-        return { color: "#22C55E", icon: TrendingUp, bg: "bg-green-50", text: "Bom" };
+        return { color: "#22C55E", icon: TrendingUp, bg: "bg-green-500/10", text: "Bom" };
       case "warning":
-        return { color: "#F59E0B", icon: AlertTriangle, bg: "bg-amber-50", text: "Atenção" };
+        return { color: "#F59E0B", icon: AlertTriangle, bg: "bg-amber-500/10", text: "Atenção" };
       case "danger":
-        return { color: "#EF4444", icon: TrendingDown, bg: "bg-red-50", text: "Crítico" };
+        return { color: "#EF4444", icon: TrendingDown, bg: "bg-red-500/10", text: "Crítico" };
       default:
-        return { color: "#64748B", icon: CheckCircle2, bg: "bg-slate-50", text: "Normal" };
+        return { color: "#64748B", icon: CheckCircle2, bg: "bg-muted", text: "Normal" };
     }
   };
 
@@ -27,7 +27,7 @@ export default function HealthIndicator({ score, label, status }) {
     <div className={`${config.bg} rounded-2xl p-6 relative overflow-hidden`}>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-slate-500 mb-1">{label}</p>
+          <p className="text-sm text-muted-foreground mb-1">{label}</p>
           <div className="flex items-center gap-2">
             <Icon className="w-5 h-5" style={{ color: config.color }} />
             <span className="text-lg font-bold" style={{ color: config.color }}>
@@ -42,7 +42,7 @@ export default function HealthIndicator({ score, label, status }) {
               cy="40"
               r="35"
               fill="none"
-              stroke="#E2E8F0"
+              stroke="hsl(var(--border))"
               strokeWidth="6"
             />
             <motion.circle
@@ -60,7 +60,7 @@ export default function HealthIndicator({ score, label, status }) {
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xl font-bold text-slate-700">{score}</span>
+            <span className="text-xl font-bold text-foreground">{score}</span>
           </div>
         </div>
       </div>

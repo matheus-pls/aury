@@ -26,8 +26,8 @@ export default function DistributionChart({ data, type = "suggested" }) {
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white px-4 py-3 rounded-xl shadow-lg border border-slate-100">
-          <p className="text-sm font-medium text-slate-800">{payload[0].name}</p>
+        <div className="bg-card px-4 py-3 rounded-xl shadow-lg border border-border">
+          <p className="text-sm font-medium text-foreground">{payload[0].name}</p>
           <p className="text-lg font-bold" style={{ color: payload[0].payload.color }}>
             {formatCurrency(payload[0].value)}
           </p>
@@ -72,12 +72,12 @@ export default function DistributionChart({ data, type = "suggested" }) {
 
   return (
     <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
-      <h3 className="text-lg font-semibold text-slate-800 mb-4">
+      <h3 className="text-lg font-semibold text-foreground mb-4">
         {type === "suggested" ? "Distribuição Sugerida" : "Distribuição Atual"}
       </h3>
       
       {chartData.length === 0 ? (
-        <div className="h-64 flex items-center justify-center text-slate-400">
+        <div className="h-64 flex items-center justify-center text-muted-foreground">
           Nenhum dado disponível
         </div>
       ) : (
@@ -107,19 +107,19 @@ export default function DistributionChart({ data, type = "suggested" }) {
       )}
       
       <div className="mt-6 space-y-3">
-        <p className="text-sm font-semibold text-slate-700 mb-3">Para onde vai seu dinheiro:</p>
+        <p className="text-sm font-semibold text-foreground mb-3">Para onde vai seu dinheiro:</p>
         {chartData.map((item, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+          <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
             <div className="flex items-center gap-3">
               <div 
                 className="w-4 h-4 rounded-full flex-shrink-0"
                 style={{ backgroundColor: item.color }}
               />
-              <span className="text-sm font-medium text-slate-700">{item.name}</span>
+              <span className="text-sm font-medium text-foreground">{item.name}</span>
             </div>
             <div className="text-right">
-              <p className="text-sm font-bold text-slate-900">{formatCurrency(item.value)}</p>
-              <p className="text-xs text-slate-500">
+              <p className="text-sm font-bold text-foreground">{formatCurrency(item.value)}</p>
+              <p className="text-xs text-muted-foreground">
                 {((item.value / chartData.reduce((sum, i) => sum + i.value, 0)) * 100).toFixed(0)}%
               </p>
             </div>

@@ -67,8 +67,8 @@ export default function QuickStats({ stats }) {
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mb-1">{item.label}</p>
-            <p className={`text-xl font-bold ${item.color === "text-red-500" ? "text-red-500" : "text-slate-800"}`}>
+            <p className="text-xs text-muted-foreground mb-1">{item.label}</p>
+            <p className={`text-xl font-bold ${item.color === "text-red-500" ? "text-red-500" : "text-foreground"}`}>
               {formatCurrency(item.value)}
             </p>
           </motion.div>

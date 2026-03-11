@@ -37,8 +37,8 @@ export default function EmergencyFundProgress({ current, goal, monthlyFixed }) {
             <Shield className="w-6 h-6 text-emerald-500" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-slate-800">Reserva de Emergência</h3>
-            <p className="text-sm text-slate-500">Sua proteção financeira</p>
+            <h3 className="text-lg font-semibold text-foreground">Reserva de Emergência</h3>
+            <p className="text-sm text-muted-foreground">Sua proteção financeira</p>
           </div>
         </div>
         <span 
@@ -56,7 +56,7 @@ export default function EmergencyFundProgress({ current, goal, monthlyFixed }) {
         {/* Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Progresso</span>
+            <span className="text-muted-foreground">Progresso</span>
             <span className="font-semibold" style={{ color: getStatusColor() }}>
               {percentage.toFixed(1)}%
             </span>
@@ -75,29 +75,29 @@ export default function EmergencyFundProgress({ current, goal, monthlyFixed }) {
 
         {/* Values */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-center p-3 bg-slate-50 rounded-xl">
-            <p className="text-xs text-slate-500 mb-1">Atual</p>
-            <p className="text-lg font-bold text-slate-800">{formatCurrency(current)}</p>
+          <div className="text-center p-3 bg-muted rounded-xl">
+            <p className="text-xs text-muted-foreground mb-1">Atual</p>
+            <p className="text-lg font-bold text-foreground">{formatCurrency(current)}</p>
           </div>
-          <div className="text-center p-3 bg-slate-50 rounded-xl">
-            <p className="text-xs text-slate-500 mb-1">Meta</p>
-            <p className="text-lg font-bold text-slate-800">{formatCurrency(goal)}</p>
+          <div className="text-center p-3 bg-muted rounded-xl">
+            <p className="text-xs text-muted-foreground mb-1">Meta</p>
+            <p className="text-lg font-bold text-foreground">{formatCurrency(goal)}</p>
           </div>
-          <div className="text-center p-3 bg-slate-50 rounded-xl">
-            <p className="text-xs text-slate-500 mb-1">Falta</p>
+          <div className="text-center p-3 bg-muted rounded-xl">
+            <p className="text-xs text-muted-foreground mb-1">Falta</p>
             <p className="text-lg font-bold text-amber-600">{formatCurrency(remaining)}</p>
           </div>
         </div>
 
         {/* Months Covered */}
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-50 to-teal-50 rounded-xl">
+        <div className="flex items-center justify-between p-4 bg-emerald-500/10 rounded-xl">
           <div className="flex items-center gap-3">
-            <Target className="w-5 h-5 text-emerald-600" />
-            <span className="text-sm text-slate-600">Meses de despesas cobertos</span>
+            <Target className="w-5 h-5 text-emerald-500" />
+            <span className="text-sm text-muted-foreground">Meses de despesas cobertos</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold text-emerald-600">{monthsCovered}</span>
-            <span className="text-sm text-slate-500">/ 6 meses</span>
+            <span className="text-sm text-muted-foreground">/ 6 meses</span>
           </div>
         </div>
       </div>

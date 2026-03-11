@@ -31,14 +31,14 @@ export default function CategoryCard({
           <Icon className={`w-5 h-5 ${color}`} />
         </div>
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-          isOverLimit ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'
+          isOverLimit ? 'bg-red-500/15 text-red-500' : 'bg-muted text-muted-foreground'
         }`}>
           {percentage.toFixed(0)}%
         </span>
       </div>
       
-      <h3 className="text-sm font-medium text-slate-500 mb-1">{title}</h3>
-      <p className="text-2xl font-bold text-slate-800 mb-3">
+      <h3 className="text-sm font-medium text-muted-foreground mb-1">{title}</h3>
+      <p className="text-2xl font-bold text-foreground mb-3">
         {formatCurrency(current)}
       </p>
       
@@ -51,7 +51,7 @@ export default function CategoryCard({
           }}
         />
         <div className="flex justify-between text-xs">
-          <span className="text-slate-400">Limite: {formatCurrency(limit)}</span>
+          <span className="text-muted-foreground">Limite: {formatCurrency(limit)}</span>
           <span className={isOverLimit ? 'text-red-500 font-medium' : 'text-slate-400'}>
             {isOverLimit ? `Excedido em ${formatCurrency(current - limit)}` : `Restam ${formatCurrency(limit - current)}`}
           </span>
