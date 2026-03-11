@@ -104,12 +104,12 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white/95 backdrop-blur-sm border-b border-slate-200 z-40 flex items-center justify-between px-4 shadow-sm">
+      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background/95 backdrop-blur-sm border-b border-border z-40 flex items-center justify-between px-4 shadow-sm">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-xl hover:bg-slate-100 transition-colors"
+          className="p-2 rounded-xl hover:bg-accent transition-colors"
         >
-          <Menu className="w-6 h-6 text-[#1B3A52]" />
+          <Menu className="w-6 h-6 text-foreground" />
         </button>
         <div className="flex items-center gap-2">
           <img 
