@@ -390,8 +390,8 @@ export default function Settings() {
                   </div>
                 </div>
                 {item.external
-                  ? <ExternalLink className={`w-4 h-4 text-slate-300 ${item.hoverIcon} transition-colors`} />
-                  : <ChevronRight className={`w-4 h-4 text-slate-300 ${item.hoverIcon} transition-colors`} />
+                  ? <ExternalLink className={`w-4 h-4 text-muted-foreground ${item.hoverIcon} transition-colors`} />
+                  : <ChevronRight className={`w-4 h-4 text-muted-foreground ${item.hoverIcon} transition-colors`} />
                 }
               </div>
             );
