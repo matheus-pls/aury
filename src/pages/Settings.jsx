@@ -3,6 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { createPageUrl } from "@/utils";
+import { useTheme } from "next-themes";
 import { 
   Settings as SettingsIcon, 
   Save, 
@@ -17,7 +18,9 @@ import {
   Instagram,
   MessageCircle,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  Moon,
+  Sun
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
