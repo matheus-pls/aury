@@ -235,9 +235,9 @@ export default function Dashboard() {
   const tranquilityIndex = calculateTranquilityIndex();
   
   const getTranquilityStatus = () => {
-    if (tranquilityIndex >= 70) return { label: "Tranquilo", color: "from-green-500 to-green-600", bgColor: "bg-green-50" };
+    if (tranquilityIndex >= 70) return { label: "Tranquilo", color: "from-green-500 to-green-600", bgColor: "bg-green-500/10" };
     if (tranquilityIndex >= 40) return { label: "Atenção", color: "from-[#1B3A52] to-[#0A2540]", bgColor: "bg-[#1B3A52]/10" };
-    return { label: "Risco", color: "from-red-500 to-red-600", bgColor: "bg-red-50" };
+    return { label: "Risco", color: "from-red-500 to-red-600", bgColor: "bg-red-500/10" };
   };
 
   const tranquilityStatus = getTranquilityStatus();
@@ -305,7 +305,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="mb-4">
         <h1 className="text-3xl font-bold text-foreground">Como está seu mês agora?</h1>
-        <p className="text-slate-600 mt-1">Aqui você vê se está no controle ou precisa ajustar</p>
+        <p className="text-muted-foreground mt-1">Aqui você vê se está no controle ou precisa ajustar</p>
       </div>
 
       {/* Tranquilidade Financeira */}
@@ -402,7 +402,7 @@ export default function Dashboard() {
 
       {/* Quick Actions */}
       <div className="mb-4">
-        <h3 className="text-sm font-medium text-slate-500 mb-3">O que você quer fazer agora?</h3>
+        <h3 className="text-sm font-medium text-muted-foreground mb-3">O que você quer fazer agora?</h3>
         <div className="grid grid-cols-2 gap-4">
           <Link to={createPageUrl("Expenses")}>
             <motion.div
@@ -411,15 +411,15 @@ export default function Dashboard() {
               transition={{ delay: 0.1 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+              className="bg-card rounded-2xl p-6 shadow-sm border border-border hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2.5 bg-rose-50 rounded-xl">
+                <div className="p-2.5 bg-rose-500/10 rounded-xl">
                   <Plus className="w-5 h-5 text-rose-500" />
                 </div>
-                <h3 className="font-semibold text-slate-800">Gastei</h3>
+                <h3 className="font-semibold text-foreground">Gastei</h3>
               </div>
-              <p className="text-sm text-slate-500">Registrar uma saída</p>
+              <p className="text-sm text-muted-foreground">Registrar uma saída</p>
             </motion.div>
           </Link>
 
@@ -430,15 +430,15 @@ export default function Dashboard() {
               transition={{ delay: 0.15 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow"
+              className="bg-card rounded-2xl p-6 shadow-sm border border-border hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="p-2.5 bg-emerald-50 rounded-xl">
+                <div className="p-2.5 bg-emerald-500/10 rounded-xl">
                   <Plus className="w-5 h-5 text-emerald-500" />
                 </div>
-                <h3 className="font-semibold text-slate-800">Recebi</h3>
+                <h3 className="font-semibold text-foreground">Recebi</h3>
               </div>
-              <p className="text-sm text-slate-500">Registrar uma entrada</p>
+              <p className="text-sm text-muted-foreground">Registrar uma entrada</p>
             </motion.div>
           </Link>
         </div>
@@ -449,16 +449,16 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+        className="bg-card rounded-2xl p-6 shadow-sm border border-border"
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-50 rounded-xl">
+            <div className="p-2.5 bg-emerald-500/10 rounded-xl">
               <Shield className="w-5 h-5 text-emerald-500" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-800">Seu colchão de segurança</h3>
-              <p className="text-sm text-slate-500">
+              <h3 className="font-semibold text-foreground">Seu colchão de segurança</h3>
+              <p className="text-sm text-muted-foreground">
                 {emergencyProgress < 30 ? "Ainda tá começando" : 
                  emergencyProgress < 70 ? "Você já tem uma base" : 
                  emergencyProgress < 100 ? "Tá quase lá!" : 
@@ -478,14 +478,14 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+        className="bg-card rounded-2xl p-6 shadow-sm border border-border"
       >
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-purple-50 rounded-xl">
+            <div className="p-2.5 bg-purple-500/10 rounded-xl">
               <Target className="w-5 h-5 text-purple-500" />
             </div>
-            <h3 className="font-semibold text-slate-800">Suas Metas</h3>
+            <h3 className="font-semibold text-foreground">Suas Metas</h3>
           </div>
           <Link to={createPageUrl("Goals")}>
             <Button variant="ghost" size="sm" className="text-[#5FBDBD] hover:text-[#4FA9A5]">
@@ -494,7 +494,7 @@ export default function Dashboard() {
             </Button>
           </Link>
         </div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {goals.length === 0 
             ? "Você ainda não definiu nenhum sonho pra ir atrás"
             : goals.length === 1 
@@ -510,7 +510,7 @@ export default function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <Card className="border-[#5FBDBD] bg-gradient-to-br from-white to-[#5FBDBD]/5">
+        <Card className="border-[#5FBDBD] bg-gradient-to-br from-card to-[#5FBDBD]/5">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -586,9 +586,10 @@ export default function Dashboard() {
                           ];
                         }}
                         contentStyle={{ 
-                          backgroundColor: 'white', 
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '8px'
+                          backgroundColor: 'hsl(var(--card))', 
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: '8px',
+                          color: 'hsl(var(--foreground))'
                         }}
                       />
                     </RechartsPieChart>
@@ -615,7 +616,7 @@ export default function Dashboard() {
                   </div>
                 </>
               ) : (
-                <div className="h-64 flex items-center justify-center text-slate-400">
+                <div className="h-64 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
                     <PieChart className="w-12 h-12 mx-auto mb-2 opacity-30" />
                     <p className="text-sm">Ainda sem gastos este mês</p>
@@ -643,21 +644,22 @@ export default function Dashboard() {
             <CardContent>
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={monthlyTrends}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis 
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                   <XAxis 
                     dataKey="month" 
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                   />
                   <YAxis 
-                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                     tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
                   />
                   <Tooltip 
                     formatter={(value) => formatCurrency(value)}
                     contentStyle={{ 
-                      backgroundColor: 'white', 
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px'
+                      backgroundColor: 'hsl(var(--card))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      color: 'hsl(var(--foreground))'
                     }}
                   />
                   <Legend />
@@ -790,13 +792,13 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="bg-blue-50 border border-blue-200 rounded-2xl p-5"
+          className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-5"
         >
           <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+            <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-medium text-blue-800 mb-1">Vamos começar do começo</h4>
-              <p className="text-sm text-blue-600">
+              <h4 className="font-medium text-blue-400 mb-1">Vamos começar do começo</h4>
+              <p className="text-sm text-blue-400/80">
                 Primeiro me conta: quanto entra por mês? Não precisa ser exato, depois a gente ajusta.
               </p>
             </div>
