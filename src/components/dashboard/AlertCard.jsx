@@ -42,12 +42,12 @@ export default function AlertCard({ alerts }) {
 
   if (!alerts || alerts.length === 0) {
     return (
-      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5">
+      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5">
         <div className="flex items-center gap-3">
           <CheckCircle className="w-6 h-6 text-emerald-500" />
           <div>
-            <p className="font-medium text-emerald-700">Tudo certo!</p>
-            <p className="text-sm text-emerald-600">Suas finanças estão organizadas.</p>
+            <p className="font-medium text-emerald-500">Tudo certo!</p>
+            <p className="text-sm text-emerald-500/80">Suas finanças estão organizadas.</p>
           </div>
         </div>
       </div>

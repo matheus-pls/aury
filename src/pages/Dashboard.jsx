@@ -604,11 +604,11 @@ export default function Dashboard() {
                             style={{ backgroundColor: item.color }}
                           />
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs text-slate-600 truncate">{item.name}</p>
+                            <p className="text-xs text-muted-foreground truncate">{item.name}</p>
                             <p className="text-sm font-bold text-foreground">
                               {formatCurrency(item.value)}
                             </p>
-                            <p className="text-xs text-slate-500">{percentage}% do total</p>
+                            <p className="text-xs text-muted-foreground">{percentage}% do total</p>
                           </div>
                         </div>
                       );
