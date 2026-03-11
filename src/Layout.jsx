@@ -201,10 +201,10 @@ export default function Layout({ children, currentPageName }) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-slate-100">
-            <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4">
-              <p className="text-xs text-slate-500 mb-1">Você não precisa fazer isso sozinho</p>
-              <p className="text-sm font-semibold text-[#1B3A52]">Estou aqui com você</p>
+          <div className="p-4 border-t border-border">
+            <div className="bg-muted rounded-2xl p-4">
+              <p className="text-xs text-muted-foreground mb-1">Você não precisa fazer isso sozinho</p>
+              <p className="text-sm font-semibold text-foreground">Estou aqui com você</p>
             </div>
           </div>
         </div>
