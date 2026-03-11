@@ -328,31 +328,31 @@ export default function Simulations() {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
         <div className="flex items-center gap-3 mb-2">
-          <button onClick={() => setActiveBlock(null)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-            <ChevronLeft className="w-5 h-5 text-slate-500" />
+          <button onClick={() => setActiveBlock(null)} className="p-2 hover:bg-accent rounded-xl transition-colors">
+            <ChevronLeft className="w-5 h-5 text-muted-foreground" />
           </button>
           <div>
-            <h2 className="text-xl font-bold text-[#1B3A52]">Projeção Atual</h2>
-            <p className="text-sm text-slate-500">Mantendo o padrão de hoje</p>
+            <h2 className="text-xl font-bold text-foreground">Projeção Atual</h2>
+            <p className="text-sm text-muted-foreground">Mantendo o padrão de hoje</p>
           </div>
         </div>
 
         <div className="bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 rounded-2xl p-5 border border-[#5FBDBD]/20">
           <div className="grid grid-cols-3 gap-3 mb-4 text-center">
             <div>
-              <p className="text-xs text-slate-500 mb-1">Renda/mês</p>
-              <p className="font-bold text-[#1B3A52]">{fmt(monthlyIncome)}</p>
+              <p className="text-xs text-muted-foreground mb-1">Renda/mês</p>
+              <p className="font-bold text-foreground">{fmt(monthlyIncome)}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 mb-1">Gastos/mês</p>
+              <p className="text-xs text-muted-foreground mb-1">Gastos/mês</p>
               <p className="font-bold text-rose-600">{fmt(monthlyExpenses)}</p>
             </div>
             <div>
-              <p className="text-xs text-slate-500 mb-1">Sobra/mês</p>
+              <p className="text-xs text-muted-foreground mb-1">Sobra/mês</p>
               <p className={`font-bold ${monthlySavings >= 0 ? "text-emerald-600" : "text-red-600"}`}>{fmt(monthlySavings)}</p>
             </div>
           </div>
-          <div className="mb-1 flex justify-between text-xs text-slate-500">
+          <div className="mb-1 flex justify-between text-xs text-muted-foreground">
             <span>{spentPct.toFixed(0)}% da renda gasto</span>
             <span>{(100 - spentPct).toFixed(0)}% sobrando</span>
           </div>
@@ -369,17 +369,17 @@ export default function Simulations() {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm"
+                className="bg-card rounded-2xl p-5 border border-border shadow-sm"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-semibold text-slate-600">{label}</span>
+                  <span className="text-sm font-semibold text-muted-foreground">{label}</span>
                   <span className={`text-xl font-bold ${accumulated >= 0 ? color : "text-red-500"}`}>
                     {fmt(accumulated)}
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-500">
-                  <div>Gastos acumulados: <span className="font-semibold text-slate-700">{fmt(totalExpenses)}</span></div>
-                  <div className="text-right">Entrada total: <span className="font-semibold text-slate-700">{fmt(monthlyIncome * multiplier)}</span></div>
+                <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                  <div>Gastos acumulados: <span className="font-semibold text-foreground">{fmt(totalExpenses)}</span></div>
+                  <div className="text-right">Entrada total: <span className="font-semibold text-foreground">{fmt(monthlyIncome * multiplier)}</span></div>
                 </div>
                 {accumulated > 0 && (
                   <p className="text-xs text-emerald-600 mt-2 font-medium">
@@ -392,11 +392,11 @@ export default function Simulations() {
         </div>
 
         {monthlySavings <= 0 && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex gap-3">
+          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex gap-3">
             <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-amber-800">Os gastos superam a renda</p>
-              <p className="text-xs text-amber-700 mt-1">Use "Ajustes Inteligentes" para simular cortes e mudar esse cenário.</p>
+              <p className="text-sm font-semibold text-amber-500">Os gastos superam a renda</p>
+              <p className="text-xs text-amber-500/80 mt-1">Use "Ajustes Inteligentes" para simular cortes e mudar esse cenário.</p>
             </div>
           </div>
         )}
@@ -409,12 +409,12 @@ export default function Simulations() {
   const SubSimSelector = ({ sims, blockTitle, blockDesc }) => (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
       <div className="flex items-center gap-3 mb-2">
-        <button onClick={() => setActiveBlock(null)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-          <ChevronLeft className="w-5 h-5 text-slate-500" />
+        <button onClick={() => setActiveBlock(null)} className="p-2 hover:bg-accent rounded-xl transition-colors">
+          <ChevronLeft className="w-5 h-5 text-muted-foreground" />
         </button>
         <div>
-          <h2 className="text-xl font-bold text-[#1B3A52]">{blockTitle}</h2>
-          <p className="text-sm text-slate-500">{blockDesc}</p>
+          <h2 className="text-xl font-bold text-foreground">{blockTitle}</h2>
+          <p className="text-sm text-muted-foreground">{blockDesc}</p>
         </div>
       </div>
       <div className="space-y-3">
@@ -429,17 +429,17 @@ export default function Simulations() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               onClick={() => setActiveSim(sim)}
-              className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md hover:border-[#5FBDBD]/40 cursor-pointer transition-all"
+              className="bg-card rounded-2xl p-5 border border-border shadow-sm hover:shadow-md hover:border-[#5FBDBD]/40 cursor-pointer transition-all"
             >
               <div className="flex items-start gap-4">
                 <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${sim.color} flex items-center justify-center flex-shrink-0 shadow-md`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-bold text-[#1B3A52] mb-1">{sim.title}</h3>
-                  <p className="text-sm text-slate-500">{sim.description}</p>
+                  <h3 className="font-bold text-foreground mb-1">{sim.title}</h3>
+                  <p className="text-sm text-muted-foreground">{sim.description}</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 mt-1 flex-shrink-0" />
+                <ArrowRight className="w-4 h-4 text-muted-foreground/50 mt-1 flex-shrink-0" />
               </div>
             </motion.div>
           );
@@ -486,7 +486,7 @@ export default function Simulations() {
 
         {/* Timeline — 1, 3, 5 anos */}
         <div>
-          <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Impacto no tempo</p>
+          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-3">Impacto no tempo</p>
           <div className="space-y-3">
             {result.timeline?.map((row, i) => (
               <motion.div
@@ -494,13 +494,13 @@ export default function Simulations() {
                 initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className={`bg-white rounded-2xl p-4 border shadow-sm flex items-center justify-between gap-4 ${row.highlight ? "border-[#5FBDBD]/50 shadow-[#5FBDBD]/10" : "border-slate-100"}`}
+                className={`bg-card rounded-2xl p-4 border shadow-sm flex items-center justify-between gap-4 ${row.highlight ? "border-[#5FBDBD]/50 shadow-[#5FBDBD]/10" : "border-border"}`}
               >
                 <div>
-                  <p className={`text-xs font-semibold mb-0.5 ${row.highlight ? "text-[#5FBDBD]" : "text-slate-500"}`}>{row.label}</p>
-                  <p className="text-xs text-slate-400">{row.sub}</p>
+                  <p className={`text-xs font-semibold mb-0.5 ${row.highlight ? "text-[#5FBDBD]" : "text-muted-foreground"}`}>{row.label}</p>
+                  <p className="text-xs text-muted-foreground/70">{row.sub}</p>
                 </div>
-                <p className={`text-xl font-bold flex-shrink-0 ${row.highlight ? "text-[#1B3A52]" : "text-slate-700"}`}>{row.value}</p>
+                <p className={`text-xl font-bold flex-shrink-0 ${row.highlight ? "text-foreground" : "text-muted-foreground"}`}>{row.value}</p>
               </motion.div>
             ))}
           </div>
@@ -508,21 +508,21 @@ export default function Simulations() {
 
         {/* Meta Inversa special section */}
         {result.inverseData && (
-          <div className="bg-white rounded-2xl p-5 border border-teal-200 shadow-sm space-y-4">
-            <h3 className="font-bold text-[#1B3A52] flex items-center gap-2">
+          <div className="bg-card rounded-2xl p-5 border border-teal-500/30 shadow-sm space-y-4">
+            <h3 className="font-bold text-foreground flex items-center gap-2">
               <Target className="w-4 h-4 text-[#5FBDBD]" />
               O que precisa mudar
             </h3>
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-slate-50 rounded-xl p-4">
-                <p className="text-xs text-slate-500 mb-1">Você sobra hoje</p>
-                <p className={`text-lg font-bold ${result.inverseData.currentSavings >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+              <div className="bg-muted rounded-xl p-4">
+                <p className="text-xs text-muted-foreground mb-1">Você sobra hoje</p>
+                <p className={`text-lg font-bold ${result.inverseData.currentSavings >= 0 ? "text-emerald-500" : "text-red-500"}`}>
                   {fmt(result.inverseData.currentSavings)}
                 </p>
               </div>
-              <div className="bg-teal-50 rounded-xl p-4">
-                <p className="text-xs text-teal-600 mb-1">Sua meta de sobra</p>
-                <p className="text-lg font-bold text-teal-800">{fmt(result.inverseData.desired)}</p>
+              <div className="bg-teal-500/10 rounded-xl p-4">
+                <p className="text-xs text-teal-500 mb-1">Sua meta de sobra</p>
+                <p className="text-lg font-bold text-teal-400">{fmt(result.inverseData.desired)}</p>
               </div>
             </div>
             {result.inverseData.gap > 0 ? (
@@ -540,9 +540,9 @@ export default function Simulations() {
                 </div>
               </div>
             ) : (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-center">
-                <p className="text-emerald-700 font-semibold">Você já sobra mais que isso! 🎉</p>
-                <p className="text-sm text-emerald-600 mt-1">Que tal aumentar a meta?</p>
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-center">
+                <p className="text-emerald-500 font-semibold">Você já sobra mais que isso! 🎉</p>
+                <p className="text-sm text-emerald-500/80 mt-1">Que tal aumentar a meta?</p>
               </div>
             )}
           </div>
@@ -552,9 +552,9 @@ export default function Simulations() {
         {result.extras?.length > 0 && (
           <div className="grid grid-cols-2 gap-3">
             {result.extras.map((e, i) => (
-              <div key={i} className="bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
-                <p className="text-xs text-slate-500 mb-1">{e.label}</p>
-                <p className="font-bold text-[#1B3A52]">{e.value}</p>
+              <div key={i} className="bg-card rounded-xl p-4 border border-border shadow-sm">
+                <p className="text-xs text-muted-foreground mb-1">{e.label}</p>
+                <p className="font-bold text-foreground">{e.value}</p>
               </div>
             ))}
           </div>
@@ -566,30 +566,30 @@ export default function Simulations() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl p-5"
+            className="bg-emerald-500/10 border-2 border-emerald-500/30 rounded-2xl p-5"
           >
             <div className="flex items-center gap-2 mb-4">
-              <Target className="w-5 h-5 text-emerald-600" />
-              <h3 className="font-bold text-emerald-900">Impacto na meta: {goalImpact.title}</h3>
+              <Target className="w-5 h-5 text-emerald-500" />
+              <h3 className="font-bold text-emerald-500">Impacto na meta: {goalImpact.title}</h3>
             </div>
             <div className="grid grid-cols-2 gap-4 mb-3">
               <div>
-                <p className="text-xs text-emerald-600 mb-1">Sem mudanças</p>
-                <p className="text-xl font-bold text-emerald-900">
+                <p className="text-xs text-emerald-500/70 mb-1">Sem mudanças</p>
+                <p className="text-xl font-bold text-emerald-400">
                   {goalImpact.before ? `${goalImpact.before} meses` : "—"}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-emerald-600 mb-1">Com esta mudança</p>
-                <p className="text-xl font-bold text-emerald-600">
+                <p className="text-xs text-emerald-500/70 mb-1">Com esta mudança</p>
+                <p className="text-xl font-bold text-emerald-500">
                   {goalImpact.after ? `${goalImpact.after} meses` : "—"}
                 </p>
               </div>
             </div>
             {goalImpact.saved > 0 && (
-              <div className="bg-white/60 rounded-xl p-3 flex items-center gap-3">
-                <Clock className="w-5 h-5 text-emerald-600" />
-                <p className="text-sm font-semibold text-emerald-900">{goalImpact.saved} meses mais rápido</p>
+              <div className="bg-card/60 rounded-xl p-3 flex items-center gap-3">
+                <Clock className="w-5 h-5 text-emerald-500" />
+                <p className="text-sm font-semibold text-emerald-500">{goalImpact.saved} meses mais rápido</p>
               </div>
             )}
           </motion.div>
@@ -613,7 +613,7 @@ export default function Simulations() {
       color: "from-[#5FBDBD] to-[#4FA9A5]",
       preview: projectionPreview,
       badge: monthlySavings > 0 ? `+${fmt(monthlySavings * 12)}/ano` : null,
-      badgeColor: "bg-emerald-100 text-emerald-700"
+      badgeColor: "bg-emerald-500/15 text-emerald-500"
     },
     {
       id: "adjustments",
@@ -623,7 +623,7 @@ export default function Simulations() {
       color: "from-violet-500 to-rose-500",
       preview: adjustmentPreview,
       badge: superfluousExpenses > 0 ? `${fmt(superfluousExpenses)} em supérfluos` : null,
-      badgeColor: "bg-amber-100 text-amber-700"
+      badgeColor: "bg-amber-500/15 text-amber-500"
     },
     {
       id: "evolution",
@@ -633,7 +633,7 @@ export default function Simulations() {
       color: "from-[#1B3A52] to-[#5FBDBD]",
       preview: evolutionPreview,
       badge: monthlyIncome > 0 ? `Renda atual ${fmt(monthlyIncome)}` : null,
-      badgeColor: "bg-blue-100 text-blue-700"
+      badgeColor: "bg-blue-500/15 text-blue-400"
     }
   ];
 
@@ -649,8 +649,8 @@ export default function Simulations() {
             <Lightbulb className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Simulações de Futuro</h1>
-            <p className="text-slate-500 text-sm">Veja como suas decisões de hoje moldam seus próximos meses.</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Simulações de Futuro</h1>
+            <p className="text-muted-foreground text-sm">Veja como suas decisões de hoje moldam seus próximos meses.</p>
           </div>
         </div>
       </motion.div>
@@ -670,21 +670,21 @@ export default function Simulations() {
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   onClick={() => setActiveBlock(block.id)}
-                  className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm hover:shadow-md hover:border-[#5FBDBD]/30 cursor-pointer transition-all group"
+                  className="bg-card rounded-2xl p-5 border border-border shadow-sm hover:shadow-md hover:border-[#5FBDBD]/30 cursor-pointer transition-all group"
                 >
                   <div className="flex items-start gap-4">
                     <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${block.color} flex items-center justify-center flex-shrink-0 shadow-lg group-hover:scale-105 transition-transform`}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-[#1B3A52] text-lg mb-0.5">{block.title}</h3>
-                      <p className="text-sm text-slate-500 mb-3">{block.subtitle}</p>
-                      <p className="text-xs text-slate-400 leading-relaxed">{block.preview}</p>
+                      <h3 className="font-bold text-foreground text-lg mb-0.5">{block.title}</h3>
+                      <p className="text-sm text-muted-foreground mb-3">{block.subtitle}</p>
+                      <p className="text-xs text-muted-foreground/70 leading-relaxed">{block.preview}</p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-slate-300 group-hover:text-[#5FBDBD] group-hover:translate-x-1 transition-all flex-shrink-0 mt-1" />
                   </div>
                   {block.badge && (
-                    <div className="mt-4 pt-3 border-t border-slate-50">
+                    <div className="mt-4 pt-3 border-t border-border">
                       <span className={`text-xs font-semibold px-3 py-1 rounded-full ${block.badgeColor}`}>
                         {block.badge}
                       </span>
@@ -730,23 +730,23 @@ export default function Simulations() {
           <motion.div key="input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
               <div className="flex items-center gap-3">
-                <button onClick={() => setActiveSim(null)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
-                  <ChevronLeft className="w-5 h-5 text-slate-500" />
+                <button onClick={() => setActiveSim(null)} className="p-2 hover:bg-accent rounded-xl transition-colors">
+                  <ChevronLeft className="w-5 h-5 text-muted-foreground" />
                 </button>
                 <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${activeSim.color} flex items-center justify-center shadow-md`}>
                   {React.createElement(activeSim.icon, { className: "w-5 h-5 text-white" })}
                 </div>
                 <div>
-                  <h2 className="font-bold text-[#1B3A52]">{activeSim.title}</h2>
-                  <p className="text-xs text-slate-500">{activeSim.description}</p>
+                  <h2 className="font-bold text-foreground">{activeSim.title}</h2>
+                  <p className="text-xs text-muted-foreground">{activeSim.description}</p>
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm space-y-5">
+              <div className="bg-card rounded-2xl p-6 border border-border shadow-sm space-y-5">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">{activeSim.prompt}</label>
+                  <label className="block text-sm font-semibold text-foreground mb-2">{activeSim.prompt}</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-medium">
                       {activeSim.id === "reduce_category" ? "%" : "R$"}
                     </span>
                     <Input
@@ -757,23 +757,23 @@ export default function Simulations() {
                       className="h-13 text-lg pl-10 border-slate-200 focus:border-[#5FBDBD]"
                     />
                   </div>
-                  <p className="text-xs text-slate-400 mt-2">{activeSim.hint}</p>
+                  <p className="text-xs text-muted-foreground mt-2">{activeSim.hint}</p>
                 </div>
 
                 {activeSim.id === "cost_of_time" && monthlyIncome > 0 && (
-                  <div className="bg-violet-50 border border-violet-100 rounded-xl p-4">
-                    <p className="text-xs text-violet-700 font-medium mb-1">Sua hora vale</p>
-                    <p className="text-xl font-bold text-violet-900">{fmt(hourlyRate)}</p>
-                    <p className="text-xs text-violet-600 mt-1">Baseado em 176h/mês de trabalho</p>
+                  <div className="bg-violet-500/10 border border-violet-500/30 rounded-xl p-4">
+                    <p className="text-xs text-violet-400 font-medium mb-1">Sua hora vale</p>
+                    <p className="text-xl font-bold text-violet-400">{fmt(hourlyRate)}</p>
+                    <p className="text-xs text-violet-400/70 mt-1">Baseado em 176h/mês de trabalho</p>
                   </div>
                 )}
 
                 {activeSim.id === "reduce_category" && (
-                  <div className="bg-amber-50 border border-amber-100 rounded-xl p-4">
-                    <p className="text-xs text-amber-700 font-medium mb-1">Seus supérfluos este mês</p>
-                    <p className="text-xl font-bold text-amber-900">{fmt(superfluousExpenses)}</p>
+                  <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
+                    <p className="text-xs text-amber-500 font-medium mb-1">Seus supérfluos este mês</p>
+                    <p className="text-xl font-bold text-amber-500">{fmt(superfluousExpenses)}</p>
                     {simValue && superfluousExpenses > 0 && (
-                      <p className="text-xs text-amber-600 mt-1">
+                      <p className="text-xs text-amber-500/80 mt-1">
                         {parseFloat(simValue)}% = economia de {fmt(superfluousExpenses * (parseFloat(simValue) / 100))}/mês
                       </p>
                     )}
@@ -781,11 +781,11 @@ export default function Simulations() {
                 )}
 
                 {activeSim.id === "new_income" && monthlyIncome > 0 && (
-                  <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4">
-                    <p className="text-xs text-emerald-700 font-medium mb-1">Sua renda atual</p>
-                    <p className="text-xl font-bold text-emerald-900">{fmt(monthlyIncome)}</p>
+                  <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+                    <p className="text-xs text-emerald-500 font-medium mb-1">Sua renda atual</p>
+                    <p className="text-xl font-bold text-emerald-500">{fmt(monthlyIncome)}</p>
                     {simValue && parseFloat(simValue) > monthlyIncome && (
-                      <p className="text-xs text-emerald-600 mt-1">
+                      <p className="text-xs text-emerald-500/80 mt-1">
                         Aumento de {((parseFloat(simValue) - monthlyIncome) / monthlyIncome * 100).toFixed(1)}%
                       </p>
                     )}
@@ -793,11 +793,11 @@ export default function Simulations() {
                 )}
 
                 {activeSim.id === "inverse_goal" && (
-                  <div className="bg-teal-50 border border-teal-100 rounded-xl p-4">
-                    <p className="text-xs text-teal-700 font-medium mb-1">Você sobra hoje</p>
-                    <p className={`text-xl font-bold ${monthlySavings >= 0 ? "text-teal-900" : "text-red-700"}`}>{fmt(monthlySavings)}</p>
+                  <div className="bg-teal-500/10 border border-teal-500/30 rounded-xl p-4">
+                    <p className="text-xs text-teal-500 font-medium mb-1">Você sobra hoje</p>
+                    <p className={`text-xl font-bold ${monthlySavings >= 0 ? "text-teal-500" : "text-red-500"}`}>{fmt(monthlySavings)}</p>
                     {simValue && parseFloat(simValue) > 0 && (
-                      <p className="text-xs text-teal-600 mt-1">
+                      <p className="text-xs text-teal-500/80 mt-1">
                         Diferença: {fmt(parseFloat(simValue) - monthlySavings)}
                       </p>
                     )}
@@ -806,7 +806,7 @@ export default function Simulations() {
 
                 {activeSim.id !== "cost_of_time" && activeSim.id !== "inverse_goal" && activeGoals.length > 0 && (
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Vincular a uma meta (opcional)</label>
+                    <label className="block text-sm font-semibold text-foreground mb-2">Vincular a uma meta (opcional)</label>
                     <Select value={selectedGoal} onValueChange={setSelectedGoal}>
                       <SelectTrigger className="h-11">
                         <SelectValue placeholder="Selecione uma meta para ver o impacto" />
