@@ -169,8 +169,7 @@ export default function Layout({ children, currentPageName }) {
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
                 alt="Aury" 
-                style={{ filter: 'brightness(0) invert(1)' }}
-                className="h-16"
+                className="h-16 mix-blend-screen"
               />
               {isPremium && (
                 <div className="absolute -top-1.5 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-md">
