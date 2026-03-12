@@ -303,7 +303,7 @@ export default function DailyCheckIn() {
                     onClick={handleComplete}
                     disabled={isCompleting}
                     variant="ghost"
-                    className="w-full text-slate-500 hover:text-slate-700"
+                      className="w-full text-muted-foreground hover:text-foreground"
                   >
                     {isCompleting ? "Carregando..." : "Continuar para o app"}
                   </Button>
