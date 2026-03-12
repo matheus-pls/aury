@@ -225,9 +225,9 @@ export default function DailyCheckIn() {
              className="inline-block"
            >
              <img 
-               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
-               alt="Aury" 
-               className="h-12 mx-auto mb-4"
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/2c7880749_aury_sem_fundo_2.png" 
+              alt="Aury" 
+              className="h-32 mx-auto mb-4"
              />
            </motion.div>
            <h1 className="text-2xl font-bold text-foreground mb-2">{getGreeting().text}! {getGreeting().emoji}</h1>
