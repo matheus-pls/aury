@@ -67,8 +67,9 @@ export default function DailyCheckIn() {
      label: "Tranquilo",
      icon: Shield,
      color: "from-green-500 to-green-600",
-     textColor: "text-green-600",
-     bgColor: "bg-green-50",
+     textColor: "text-green-400",
+     bgColor: "bg-green-500/10",
+     borderColor: "border-green-500/30",
      message: "Tá tudo certo por aqui"
    };
 
@@ -78,8 +79,9 @@ export default function DailyCheckIn() {
        label: "Risco",
        icon: AlertTriangle,
        color: "from-red-500 to-red-600",
-       textColor: "text-red-600",
-       bgColor: "bg-red-50",
+       textColor: "text-red-400",
+       bgColor: "bg-red-500/10",
+       borderColor: "border-red-500/30",
        message: "Vamos ajustar isso juntos"
      };
    } else if (spendingPercentage > 85) {
@@ -87,8 +89,9 @@ export default function DailyCheckIn() {
        label: "Risco",
        icon: AlertTriangle,
        color: "from-red-500 to-red-600",
-       textColor: "text-red-600",
-       bgColor: "bg-red-50",
+       textColor: "text-red-400",
+       bgColor: "bg-red-500/10",
+       borderColor: "border-red-500/30",
        message: "Vamos com calma até o fim do mês"
      };
    } else if (spendingPercentage > 70) {
@@ -96,8 +99,9 @@ export default function DailyCheckIn() {
        label: "Atenção",
        icon: TrendingUp,
        color: "from-[#1B3A52] to-[#0A2540]",
-       textColor: "text-[#1B3A52]",
-       bgColor: "bg-[#1B3A52]/10",
+       textColor: "text-amber-400",
+       bgColor: "bg-amber-500/10",
+       borderColor: "border-amber-500/30",
        message: "Hora de ir com mais cuidado"
      };
    }
