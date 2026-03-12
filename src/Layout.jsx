@@ -134,9 +134,9 @@ export default function Layout({ children, currentPageName }) {
         </button>
         <div className="flex items-center gap-2">
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/9721f298e_aury_sem_fundo_1.png" 
             alt="Aury" 
-            className="h-8"
+            className="h-10"
           />
         </div>
         <NotificationCenter />
@@ -167,9 +167,9 @@ export default function Layout({ children, currentPageName }) {
           <div className="h-24 flex items-center justify-between px-6 border-b border-border">
             <div className="relative">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/af2c17ea1_WhatsAppImage2026-01-04at153037.jpg" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/9721f298e_aury_sem_fundo_1.png" 
                 alt="Aury" 
-                className="h-16 mix-blend-screen"
+                className="h-16"
               />
               {isPremium && (
                 <div className="absolute -top-1.5 -right-2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap shadow-md">
