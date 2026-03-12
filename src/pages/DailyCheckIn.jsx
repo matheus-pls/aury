@@ -253,15 +253,15 @@ export default function DailyCheckIn() {
 
             {/* Can Spend Today */}
             <div className="text-center mb-6">
-              <p className="text-sm text-slate-500 mb-2">Você pode gastar hoje:</p>
+              <p className="text-sm text-muted-foreground mb-2">Você pode gastar hoje:</p>
               <motion.p
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
-                className="text-4xl font-bold text-[#1B3A52]"
+                className="text-4xl font-bold text-foreground"
               >
                 {formatCurrency(canSpendToday)}
               </motion.p>
-              <p className="text-xs text-slate-400 mt-2">
+              <p className="text-xs text-muted-foreground mt-2">
                 {daysRemaining} {daysRemaining === 1 ? 'dia restante' : 'dias restantes'} no mês
               </p>
             </div>
