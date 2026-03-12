@@ -365,7 +365,7 @@ export default function DailyCheckIn() {
       <Dialog open={showManualEntry} onOpenChange={setShowManualEntry}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-[#1B3A52]">
+            <DialogTitle>
               {entryType === "expense" ? "Registrar Gasto" : "Registrar Renda"}
             </DialogTitle>
           </DialogHeader>
