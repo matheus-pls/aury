@@ -559,12 +559,12 @@ export default function EmergencyFund() {
             <DialogTitle className="text-[#1B3A52]">Retirar da Caixinha</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
-            <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+            <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-500/30">
               <div className="flex items-start gap-3">
-                <Shield className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <Shield className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-amber-900 mb-1">A caixinha é sua segurança</p>
-                  <p className="text-xs text-amber-700 leading-relaxed">
+                  <p className="text-sm font-medium text-amber-400 mb-1">A caixinha é sua segurança</p>
+                  <p className="text-xs text-amber-400/80 leading-relaxed">
                     É sempre bom manter um valor guardado para imprevistos. Tem certeza que deseja retirar agora?
                   </p>
                 </div>
