@@ -365,7 +365,7 @@ export default function EmergencyFund() {
           <p className="text-4xl font-bold text-foreground">
             {monthsToComplete > 0 ? monthsToComplete : "—"}
           </p>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {monthsToComplete > 0 ? "meses até completar" : "objetivo alcançado"}
           </p>
         </motion.div>
