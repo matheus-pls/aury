@@ -384,14 +384,14 @@ export default function EmergencyFund() {
               key={index}
               className={`p-5 rounded-2xl border ${
                 msg.type === "success"
-                  ? "bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-200"
-                  : "bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 border-[#5FBDBD]/20"
+                  ? "bg-emerald-500/10 border-emerald-500/30"
+                  : "bg-[#5FBDBD]/10 border-[#5FBDBD]/20"
               }`}
             >
               <p className={`text-sm leading-relaxed ${
                 msg.type === "success"
-                  ? "text-emerald-700"
-                  : "text-[#1B3A52]"
+                  ? "text-emerald-400"
+                  : "text-muted-foreground"
               }`}>
                 {msg.message}
               </p>
