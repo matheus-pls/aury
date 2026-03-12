@@ -599,7 +599,7 @@ export default function EmergencyFund() {
               </div>
             )}
 
-            <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg">
+            <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
               <input
                 type="checkbox"
                 id="withdrawConfirm"
@@ -607,7 +607,7 @@ export default function EmergencyFund() {
                 onChange={(e) => setWithdrawConfirm(e.target.checked)}
                 className="w-4 h-4 text-[#5FBDBD] rounded focus:ring-[#5FBDBD]"
               />
-              <Label htmlFor="withdrawConfirm" className="text-sm text-slate-700 cursor-pointer">
+              <Label htmlFor="withdrawConfirm" className="text-sm text-muted-foreground cursor-pointer">
                 Confirmo que quero retirar este valor
               </Label>
             </div>
