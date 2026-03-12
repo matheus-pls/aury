@@ -425,35 +425,35 @@ export default function EmergencyFund() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              className="border-t border-slate-100"
+              className="border-t border-border"
             >
               <div className="p-6 space-y-6">
                 {/* Calculation Breakdown */}
                 <div>
-                  <h3 className="font-semibold text-slate-800 mb-4">Como Calculamos</h3>
+                  <h3 className="font-semibold text-foreground mb-4">Como Calculamos</h3>
                   <div className="space-y-3 text-sm">
-                    <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                      <span className="text-slate-600">Gastos fixos mensais</span>
-                      <span className="font-semibold text-slate-800 tabular-nums">{formatCurrencyDetailed(monthlyEssentialExpenses)}</span>
+                    <div className="flex justify-between p-3 bg-muted rounded-lg">
+                      <span className="text-muted-foreground">Gastos fixos mensais</span>
+                      <span className="font-semibold text-foreground tabular-nums">{formatCurrencyDetailed(monthlyEssentialExpenses)}</span>
                     </div>
-                    <div className="flex justify-between p-3 bg-slate-50 rounded-lg">
-                      <span className="text-slate-600">Meta de meses de cobertura</span>
-                      <span className="font-semibold text-slate-800">{emergencyGoalMonths} meses</span>
+                    <div className="flex justify-between p-3 bg-muted rounded-lg">
+                      <span className="text-muted-foreground">Meta de meses de cobertura</span>
+                      <span className="font-semibold text-foreground">{emergencyGoalMonths} meses</span>
                     </div>
-                    <div className="flex justify-between p-3 bg-emerald-50 rounded-lg border border-emerald-200">
-                      <span className="text-emerald-700 font-medium">Reserva ideal total</span>
-                      <span className="font-bold text-emerald-700 tabular-nums">{formatCurrencyDetailed(idealEmergencyFund)}</span>
+                    <div className="flex justify-between p-3 bg-emerald-500/10 rounded-lg border border-emerald-500/30">
+                      <span className="text-emerald-400 font-medium">Reserva ideal total</span>
+                      <span className="font-bold text-emerald-400 tabular-nums">{formatCurrencyDetailed(idealEmergencyFund)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Monthly Contribution */}
                 <div>
-                  <h3 className="font-semibold text-slate-800 mb-4">Aportes Mensais</h3>
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                    <p className="text-sm text-blue-600 mb-2">Contribuição mensal automática</p>
-                    <p className="text-3xl font-bold text-blue-700 mb-3 tabular-nums">{formatCurrency(monthlyContribution)}</p>
-                    <p className="text-xs text-blue-600">
+                  <h3 className="font-semibold text-foreground mb-4">Aportes Mensais</h3>
+                  <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                    <p className="text-sm text-blue-400 mb-2">Contribuição mensal automática</p>
+                    <p className="text-3xl font-bold text-blue-300 mb-3 tabular-nums">{formatCurrency(monthlyContribution)}</p>
+                    <p className="text-xs text-blue-400">
                       {currentSettings.emergency_percentage}% da sua renda ({formatCurrencyDetailed(totalIncome)})
                     </p>
                   </div>
@@ -461,25 +461,25 @@ export default function EmergencyFund() {
 
                 {/* Recommendations */}
                 <div>
-                  <h3 className="font-semibold text-slate-800 mb-4">Orientações</h3>
+                  <h3 className="font-semibold text-foreground mb-4">Orientações</h3>
                   <div className="space-y-3">
                     {progressPercentage < 100 && (
-                      <div className="bg-gradient-to-br from-[#5FBDBD]/10 to-[#1B3A52]/10 border border-[#5FBDBD]/20 rounded-xl p-4">
-                        <p className="text-sm text-[#1B3A52] font-medium mb-2">💫 Para acelerar</p>
-                        <p className="text-xs text-slate-700 leading-relaxed">
+                      <div className="bg-[#5FBDBD]/10 border border-[#5FBDBD]/20 rounded-xl p-4">
+                        <p className="text-sm text-[#5FBDBD] font-medium mb-2">💫 Para acelerar</p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
                           Adicionando {formatCurrency(remainingToGoal / 6)} por mês, você completa sua caixinha em 6 meses. No seu tempo, sem pressão.
                         </p>
                       </div>
                     )}
-                    <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-4">
-                      <p className="text-sm text-emerald-800 font-medium mb-2">💡 Onde guardar</p>
-                      <p className="text-xs text-emerald-700 leading-relaxed">
+                    <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4">
+                      <p className="text-sm text-emerald-400 font-medium mb-2">💡 Onde guardar</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
                         Aplicações líquidas e seguras são ideais: CDB com liquidez diária, Tesouro Selic ou poupança.
                       </p>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
-                      <p className="text-sm text-blue-800 font-medium mb-2">🎯 Quanto é o ideal</p>
-                      <p className="text-xs text-blue-700 leading-relaxed">
+                    <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
+                      <p className="text-sm text-blue-400 font-medium mb-2">🎯 Quanto é o ideal</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
                         Entre 6 e 12 meses de gastos essenciais é o recomendado para ter tranquilidade.
                       </p>
                     </div>
