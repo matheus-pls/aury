@@ -226,8 +226,8 @@ export default function DailyCheckIn() {
                className="h-12 mx-auto mb-4"
              />
            </motion.div>
-           <h1 className="text-2xl font-bold text-[#1B3A52] mb-2">{getGreeting().text}! {getGreeting().emoji}</h1>
-           <p className="text-slate-500">Como estão suas finanças hoje?</p>
+           <h1 className="text-2xl font-bold text-foreground mb-2">{getGreeting().text}! {getGreeting().emoji}</h1>
+           <p className="text-muted-foreground">Como estão suas finanças hoje?</p>
          </div>
 
          {/* Main Card */}
