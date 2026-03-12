@@ -256,7 +256,7 @@ export default function EmergencyFund() {
             <Button
               onClick={() => setShowWithdrawDialog(true)}
               variant="outline"
-              className="border-slate-300 text-slate-600 hover:bg-slate-50"
+              className="border-border text-foreground hover:bg-accent"
             >
               <TrendingDown className="w-4 h-4 mr-2" />
               Retirar
