@@ -238,17 +238,17 @@ export default function DailyCheckIn() {
          <Card className="border-2 border-[#5FBDBD]/20 shadow-aury mb-6">
           <CardContent className="p-8">
             {/* Status */}
-            <div className={`${status.bgColor} rounded-2xl p-6 mb-6`}>
+            <div className={`${status.bgColor} border ${status.borderColor} rounded-2xl p-6 mb-6`}>
               <div className="flex items-center gap-3 mb-3">
                 <div className={`w-10 h-10 bg-gradient-to-br ${status.color} rounded-xl flex items-center justify-center shadow-md`}>
                   <StatusIcon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600">Hoje você está:</p>
+                  <p className="text-sm text-muted-foreground">Hoje você está:</p>
                   <p className={`text-lg font-bold ${status.textColor}`}>{status.label}</p>
                 </div>
               </div>
-              <p className="text-sm text-slate-600">{status.message}</p>
+              <p className="text-sm text-muted-foreground">{status.message}</p>
             </div>
 
             {/* Can Spend Today */}
