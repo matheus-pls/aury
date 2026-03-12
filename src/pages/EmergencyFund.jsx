@@ -591,9 +591,9 @@ export default function EmergencyFund() {
             </div>
 
             {withdrawAmount && parseFloat(withdrawAmount) > 0 && (
-              <div className="bg-rose-50 rounded-lg p-4">
-                <p className="text-sm text-rose-600 mb-1">Nova caixinha</p>
-                <p className="text-2xl font-bold text-rose-700 tabular-nums">
+              <div className="bg-rose-500/10 rounded-lg p-4 border border-rose-500/30">
+                <p className="text-sm text-rose-400 mb-1">Nova caixinha</p>
+                <p className="text-2xl font-bold text-rose-300 tabular-nums">
                   {formatCurrency(Math.max(0, currentEmergencyFund - parseFloat(withdrawAmount)))}
                 </p>
               </div>
