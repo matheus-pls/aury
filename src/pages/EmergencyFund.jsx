@@ -517,9 +517,9 @@ export default function EmergencyFund() {
             </div>
 
             {addAmount && parseFloat(addAmount) > 0 && (
-              <div className="bg-emerald-50 rounded-lg p-4">
-                <p className="text-sm text-emerald-600 mb-1">Nova caixinha</p>
-                <p className="text-2xl font-bold text-emerald-700 tabular-nums">
+              <div className="bg-emerald-500/10 rounded-lg p-4 border border-emerald-500/30">
+                <p className="text-sm text-emerald-400 mb-1">Nova caixinha</p>
+                <p className="text-2xl font-bold text-emerald-300 tabular-nums">
                   {formatCurrency(currentEmergencyFund + parseFloat(addAmount))}
                 </p>
               </div>
