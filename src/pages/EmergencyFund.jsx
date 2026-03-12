@@ -571,13 +571,13 @@ export default function EmergencyFund() {
               </div>
             </div>
 
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm text-slate-600 mb-1">Caixinha atual</p>
-              <p className="text-2xl font-bold text-slate-800 tabular-nums">{formatCurrency(currentEmergencyFund)}</p>
+            <div className="bg-muted rounded-lg p-4">
+              <p className="text-sm text-muted-foreground mb-1">Caixinha atual</p>
+              <p className="text-2xl font-bold text-foreground tabular-nums">{formatCurrency(currentEmergencyFund)}</p>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="withdrawAmount" className="text-[#1B3A52]">Valor a Retirar</Label>
+              <Label htmlFor="withdrawAmount">Valor a Retirar</Label>
               <Input
                 id="withdrawAmount"
                 type="number"
