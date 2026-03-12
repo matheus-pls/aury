@@ -498,9 +498,9 @@ export default function EmergencyFund() {
             <DialogTitle className="text-[#1B3A52]">Adicionar à Caixinha</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm text-slate-600 mb-1">Caixinha atual</p>
-              <p className="text-2xl font-bold text-slate-800 tabular-nums">{formatCurrency(currentEmergencyFund)}</p>
+            <div className="bg-muted rounded-lg p-4">
+              <p className="text-sm text-muted-foreground mb-1">Caixinha atual</p>
+              <p className="text-2xl font-bold text-foreground tabular-nums">{formatCurrency(currentEmergencyFund)}</p>
             </div>
             
             <div className="space-y-2">
