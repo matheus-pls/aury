@@ -241,9 +241,9 @@ export default function EmergencyFund() {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Shield className="w-6 h-6 text-[#5FBDBD]" />
-              <h1 className="text-2xl lg:text-3xl font-bold text-[#1B3A52]">Caixinha</h1>
-            </div>
-            <p className="text-slate-500">Sua segurança para imprevistos</p>
+              <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Caixinha</h1>
+              </div>
+              <p className="text-muted-foreground">Sua segurança para imprevistos</p>
           </div>
           <div className="flex gap-2">
             <Button
