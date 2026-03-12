@@ -356,13 +356,13 @@ export default function EmergencyFund() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100"
+          className="bg-card rounded-2xl p-6 border border-border"
         >
           <div className="flex items-center gap-2 mb-3">
             <Zap className="w-5 h-5 text-[#5FBDBD]" />
-            <p className="text-sm text-slate-600 font-medium">No Ritmo Atual</p>
+            <p className="text-sm text-muted-foreground font-medium">No Ritmo Atual</p>
           </div>
-          <p className="text-4xl font-bold text-[#1B3A52]">
+          <p className="text-4xl font-bold text-foreground">
             {monthsToComplete > 0 ? monthsToComplete : "—"}
           </p>
           <p className="text-sm text-slate-500 mt-1">
