@@ -318,8 +318,8 @@ export default function DailyCheckIn() {
                 >
                   <Button
                     variant="ghost"
-                    onClick={() => setShowAuryFlow(false)}
-                    className="w-full text-slate-600 hover:text-slate-800 mb-2"
+                      onClick={() => setShowAuryFlow(false)}
+                      className="w-full text-muted-foreground hover:text-foreground mb-2"
                   >
                     <ChevronLeft className="w-4 h-4 mr-2" />
                     Voltar
