@@ -405,17 +405,17 @@ export default function EmergencyFund() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.35 }}
-        className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
+        className="bg-card rounded-2xl border border-border overflow-hidden"
       >
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="w-full p-5 flex items-center justify-between hover:bg-slate-50 transition-colors"
+          className="w-full p-5 flex items-center justify-between hover:bg-accent transition-colors"
         >
-          <span className="font-semibold text-slate-800">Ver detalhes completos</span>
+          <span className="font-semibold text-foreground">Ver detalhes completos</span>
           {showDetails ? (
-            <ChevronUp className="w-5 h-5 text-slate-400" />
+            <ChevronUp className="w-5 h-5 text-muted-foreground" />
           ) : (
-            <ChevronDown className="w-5 h-5 text-slate-400" />
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
           )}
         </button>
 
