@@ -356,7 +356,7 @@ export default function DailyCheckIn() {
         </Card>
 
         {/* Footer */}
-        <p className="text-center text-xs text-slate-400">
+        <p className="text-center text-xs text-muted-foreground">
          Seu momento diário de clareza • 10 segundos
         </p>
       </motion.div>
