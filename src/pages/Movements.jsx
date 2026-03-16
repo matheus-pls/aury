@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
 import { Wallet, Receipt, Zap } from "lucide-react";
-import BackButton from "@/components/BackButton";
 import AuryFlow from "@/components/overview/AuryFlow";
 import Incomes from "./Incomes";
 import Expenses from "./Expenses";
+import PullToRefresh from "@/components/PullToRefresh";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TABS = [
   { id: "quick", label: "Registrar", icon: Zap },

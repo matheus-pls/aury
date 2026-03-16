@@ -28,6 +28,7 @@ import { Crown } from "lucide-react";
 import { toast } from "sonner";
 import UpgradeModal from "@/components/UpgradeModal";
 import PremiumBadge from "@/components/PremiumBadge";
+import PullToRefresh from "@/components/PullToRefresh";
 
 const PROFILE_DISTRIBUTIONS = {
   essential: { fixed_percentage: 50, essential_percentage: 25, superfluous_percentage: 15, emergency_percentage: 7, investment_percentage: 3 },

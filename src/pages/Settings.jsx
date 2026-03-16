@@ -20,7 +20,8 @@ import {
   ExternalLink,
   Sparkles,
   Moon,
-  Sun
+  Sun,
+  Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
