@@ -19,7 +19,7 @@ export default function BackButton({ to, className = "" }) {
       variant="ghost"
       size="sm"
       onClick={handleBack}
-      className={`gap-2 text-slate-600 hover:text-[#1B3A52] hover:bg-slate-100 ${className}`}
+      className={`gap-2 text-muted-foreground hover:text-foreground hover:bg-accent ${className}`}
     >
       <ArrowLeft className="w-4 h-4" />
       Voltar

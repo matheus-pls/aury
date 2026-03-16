@@ -27,6 +27,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import BackButton from "@/components/BackButton";
 
@@ -85,6 +87,9 @@ function Section({ icon: Icon, iconGradient, title, description, children, delay
 export default function Settings() {
   const queryClient = useQueryClient();
   const { theme, setTheme } = useTheme();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const [settings, setSettings] = useState({
     risk_profile: "balanced",
@@ -425,6 +430,81 @@ export default function Settings() {
           </a>
         </div>
       </Section>
+
+      {/* ── Danger Zone ── */}
+      <Section icon={Trash2} iconGradient="from-red-500 to-red-700" title="Zona de Perigo" description="Ações irreversíveis — tenha cuidado" delay={0.3}>
+        <div className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Ao excluir sua conta, todos os seus dados (rendas, gastos, metas e configurações) serão permanentemente removidos. Essa ação <strong className="text-foreground">não pode ser desfeita</strong>.
+          </p>
+          <Button
+            variant="outline"
+            className="border-red-500/40 text-red-500 hover:bg-red-500/10 hover:border-red-500/70 w-full sm:w-auto"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            Excluir minha conta
+          </Button>
+        </div>
+      </Section>
+
+      {/* Delete Account Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={(open) => { setShowDeleteDialog(open); setDeleteConfirmText(""); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-red-500 flex items-center gap-2">
+              <Trash2 className="w-5 h-5" />
+              Excluir conta permanentemente
+            </DialogTitle>
+            <DialogDescription>
+              Todos os seus dados serão apagados para sempre. Isso não pode ser desfeito.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+              <p className="text-sm text-red-500 font-medium">⚠️ Você perderá:</p>
+              <ul className="text-sm text-muted-foreground mt-2 space-y-1 list-disc list-inside">
+                <li>Todo o histórico de gastos e rendas</li>
+                <li>Suas metas financeiras</li>
+                <li>Configurações e perfil personalizado</li>
+                <li>Acesso ao aplicativo</li>
+              </ul>
+            </div>
+            <div className="space-y-2">
+              <Label>Digite <strong>EXCLUIR</strong> para confirmar</Label>
+              <Input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder="EXCLUIR"
+                className="border-red-500/30 focus-visible:ring-red-500/50"
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button variant="outline" className="flex-1" onClick={() => { setShowDeleteDialog(false); setDeleteConfirmText(""); }}>
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                className="flex-1"
+                disabled={deleteConfirmText !== "EXCLUIR" || isDeleting}
+                onClick={async () => {
+                  setIsDeleting(true);
+                  try {
+                    await base44.auth.deleteMe();
+                    base44.auth.logout("/");
+                  } catch (e) {
+                    toast.error("Erro ao excluir conta. Tente novamente.");
+                    setIsDeleting(false);
+                  }
+                }}
+              >
+                <Trash2 className="w-4 h-4 mr-2" />
+                {isDeleting ? "Excluindo..." : "Excluir minha conta"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Mobile Save ── */}
       {hasChanges && (
