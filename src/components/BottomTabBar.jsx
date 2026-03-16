@@ -14,7 +14,7 @@ const TABS = [
 export default function BottomTabBar({ currentPageName }) {
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border z-40"
+      className="lg:hidden fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border z-[60]"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="flex h-16">
