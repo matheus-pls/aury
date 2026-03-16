@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Disable overscroll bounce on iOS/Android ── */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* ── Disable text selection on interactive UI elements ── */
+button, [role="button"], [role="tab"], nav a, nav button {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Keep text selectable in content areas ── */
+p, span, h1, h2, h3, h4, h5, h6 {
+  user-select: text;
+}
+
 
 /* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;

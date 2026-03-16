@@ -9,8 +9,6 @@ import {
   Wallet, 
   Target, 
   Settings,
-  Menu,
-  X,
   ChevronRight,
   Sparkles,
   TrendingUp,
@@ -19,11 +17,10 @@ import {
 } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
-import { motion, AnimatePresence } from "framer-motion";
+import BottomTabBar from "@/components/BottomTabBar";
 import { Toaster } from "@/components/ui/sonner";
 
 export default function Layout({ children, currentPageName }) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navigation, setNavigation] = useState([
     { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
     { name: "Planejamento", page: "Planning", icon: Sparkles },
@@ -32,14 +29,13 @@ export default function Layout({ children, currentPageName }) {
     { name: "Análises", page: "BehaviorAnalysis", icon: TrendingUp },
     { name: "Configurações", page: "Settings", icon: Settings },
   ]);
-  const location = useLocation();
 
   const { data: user } = useQuery({
     queryKey: ['current-user'],
     queryFn: () => base44.auth.me()
   });
 
-  const isPremium = true; // user?.is_premium || false;
+  const isPremium = true;
 
   const { data: familyGroups = [] } = useQuery({
     queryKey: ['user-family-groups', user?.email],
@@ -67,13 +63,8 @@ export default function Layout({ children, currentPageName }) {
     }
 
     baseNav.push({ name: "Configurações", page: "Settings", icon: Settings });
-
     setNavigation(baseNav);
   }, [familyGroups.length, isPremium]);
-
-  useEffect(() => {
-    setSidebarOpen(false);
-  }, [location]);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
@@ -125,50 +116,31 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-background/95 backdrop-blur-sm border-b border-border z-40 flex items-center justify-between px-4 shadow-sm">
-        <button
-          onClick={() => setSidebarOpen(true)}
-          className="p-2 rounded-xl hover:bg-accent transition-colors"
-        >
-          <Menu className="w-6 h-6 text-foreground" />
-        </button>
-        <div className="flex items-center gap-2">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/9721f298e_aury_sem_fundo_1.png" 
-            alt="Aury" 
-            className="h-10"
-          />
-        </div>
+      <header
+        className="lg:hidden fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm border-b border-border z-40 flex items-end justify-between px-4 pb-2 shadow-sm"
+        style={{
+          paddingTop: "env(safe-area-inset-top)",
+          height: "calc(4rem + env(safe-area-inset-top))"
+        }}
+      >
+        <div className="flex-1" />
+        <img
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/9721f298e_aury_sem_fundo_1.png"
+          alt="Aury"
+          className="h-10 absolute left-1/2 -translate-x-1/2 bottom-2"
+        />
         <NotificationCenter />
       </header>
 
-      {/* Mobile Sidebar Overlay */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/50 z-40"
-          />
-        )}
-      </AnimatePresence>
-
-      {/* Sidebar */}
-      <aside className={`
-        fixed top-0 left-0 h-full bg-background border-r border-border z-50
-        transition-transform duration-300 ease-out
-        w-72 lg:translate-x-0
-        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex flex-col fixed top-0 left-0 h-full bg-background border-r border-border z-50 w-72">
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="h-24 flex items-center justify-between px-6 border-b border-border">
             <div className="relative">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/9721f298e_aury_sem_fundo_1.png" 
-                alt="Aury" 
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6935a6219ca262b0cf97d9fa/9721f298e_aury_sem_fundo_1.png"
+                alt="Aury"
                 className="h-24"
               />
               {isPremium && (
@@ -177,17 +149,7 @@ export default function Layout({ children, currentPageName }) {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="hidden lg:block">
-                <NotificationCenter />
-              </div>
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="lg:hidden p-2 rounded-xl hover:bg-accent transition-colors"
-                >
-                <X className="w-5 h-5 text-muted-foreground" />
-              </button>
-            </div>
+            <NotificationCenter />
           </div>
 
           {/* Navigation */}
@@ -202,8 +164,8 @@ export default function Layout({ children, currentPageName }) {
                   to={createPageUrl(item.page)}
                   className={`
                     flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative
-                    ${isActive 
-                      ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20' 
+                    ${isActive
+                      ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20'
                       : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                     }
                   `}
@@ -232,11 +194,20 @@ export default function Layout({ children, currentPageName }) {
       </aside>
 
       {/* Main Content */}
-      <main className="lg:pl-72 pt-16 lg:pt-0 min-h-screen">
-        <div className="p-4 lg:p-8">
+      <main
+        className="lg:pl-72 min-h-screen lg:pt-0 lg:pb-0"
+        style={{
+          paddingTop: "calc(4rem + env(safe-area-inset-top))",
+          paddingBottom: "calc(4.5rem + env(safe-area-inset-bottom))"
+        }}
+      >
+        <div className="p-4 lg:p-8 lg:pt-8">
           {children}
         </div>
       </main>
+
+      {/* Bottom Tab Bar - Mobile only */}
+      <BottomTabBar currentPageName={currentPageName} />
     </div>
     </ThemeProvider>
   );
