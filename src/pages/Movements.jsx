@@ -16,14 +16,19 @@ const TABS = [
 
 export default function Movements() {
   const [activeTab, setActiveTab] = useState("quick");
+  const queryClient = useQueryClient();
+
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries();
+  };
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 pb-8">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <BackButton to={createPageUrl("Overview")} className="mb-4" />
         <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Movimentações</h1>
         <p className="text-muted-foreground mt-1">Registre rapidamente com Aury Flow</p>
       </motion.div>
@@ -74,5 +79,6 @@ export default function Movements() {
         </motion.div>
       </AnimatePresence>
     </div>
+    </PullToRefresh>
   );
 }

@@ -193,7 +193,12 @@ export default function Overview() {
     }
   };
 
+  const handleRefresh = async () => {
+    await queryClient.invalidateQueries();
+  };
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 pb-8">
       {/* Header */}
       <div className="mb-4">
@@ -595,5 +600,6 @@ export default function Overview() {
 
       <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} feature={upgradeFeature} />
     </div>
+    </PullToRefresh>
   );
 }
