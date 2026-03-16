@@ -65,22 +65,41 @@ export default function Incomes() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Income.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['incomes']);
-      handleCloseDialog();
-    }
+    onMutate: async (newIncome) => {
+      await queryClient.cancelQueries(['incomes']);
+      const prev = queryClient.getQueryData(['incomes']);
+      queryClient.setQueryData(['incomes'], (old = []) => [
+        { ...newIncome, id: `temp-${Date.now()}` }, ...old
+      ]);
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['incomes'], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['incomes']); handleCloseDialog(); }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Income.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['incomes']);
-      handleCloseDialog();
-    }
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries(['incomes']);
+      const prev = queryClient.getQueryData(['incomes']);
+      queryClient.setQueryData(['incomes'], (old = []) =>
+        old.map(i => i.id === id ? { ...i, ...data } : i)
+      );
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['incomes'], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['incomes']); handleCloseDialog(); }
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Income.delete(id),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries(['incomes']);
+      const prev = queryClient.getQueryData(['incomes']);
+      queryClient.setQueryData(['incomes'], (old = []) => old.filter(i => i.id !== id));
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['incomes'], ctx.prev),
     onSuccess: () => queryClient.invalidateQueries(['incomes'])
   });
 

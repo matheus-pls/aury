@@ -81,22 +81,41 @@ export default function Expenses() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Expense.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['expenses']);
-      handleCloseDialog();
-    }
+    onMutate: async (newExpense) => {
+      await queryClient.cancelQueries(['expenses', selectedMonth]);
+      const prev = queryClient.getQueryData(['expenses', selectedMonth]);
+      queryClient.setQueryData(['expenses', selectedMonth], (old = []) => [
+        { ...newExpense, id: `temp-${Date.now()}` }, ...old
+      ]);
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', selectedMonth], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['expenses']); handleCloseDialog(); }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Expense.update(id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['expenses']);
-      handleCloseDialog();
-    }
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries(['expenses', selectedMonth]);
+      const prev = queryClient.getQueryData(['expenses', selectedMonth]);
+      queryClient.setQueryData(['expenses', selectedMonth], (old = []) =>
+        old.map(e => e.id === id ? { ...e, ...data } : e)
+      );
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', selectedMonth], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['expenses']); handleCloseDialog(); }
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Expense.delete(id),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries(['expenses', selectedMonth]);
+      const prev = queryClient.getQueryData(['expenses', selectedMonth]);
+      queryClient.setQueryData(['expenses', selectedMonth], (old = []) => old.filter(e => e.id !== id));
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', selectedMonth], ctx.prev),
     onSuccess: () => queryClient.invalidateQueries(['expenses'])
   });
 

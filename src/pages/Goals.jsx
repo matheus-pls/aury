@@ -90,22 +90,32 @@ export default function Goals() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.FinancialGoal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['goals']);
-      toast.success("Meta criada com sucesso!");
-      handleCloseDialog();
-    }
+    onMutate: async (newGoal) => {
+      await queryClient.cancelQueries(['goals']);
+      const prev = queryClient.getQueryData(['goals']);
+      queryClient.setQueryData(['goals'], (old = []) => [
+        { ...newGoal, id: `temp-${Date.now()}` }, ...old
+      ]);
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['goals'], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['goals']); toast.success("Meta criada!"); handleCloseDialog(); }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.FinancialGoal.update(id, data),
-    onSuccess: (_, variables) => {
+    onMutate: async ({ id, data }) => {
+      await queryClient.cancelQueries(['goals']);
+      const prev = queryClient.getQueryData(['goals']);
+      queryClient.setQueryData(['goals'], (old = []) =>
+        old.map(g => g.id === id ? { ...g, ...data } : g)
+      );
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['goals'], ctx.prev),
+    onSuccess: () => {
       queryClient.invalidateQueries(['goals']);
-      if (isAddingMoney) {
-        toast.success("Dinheiro adicionado à meta!");
-      } else {
-        toast.success("Meta atualizada com sucesso!");
-      }
+      toast.success(isAddingMoney ? "Dinheiro adicionado!" : "Meta atualizada!");
       handleCloseDialog();
       setIsAddingMoney(false);
       setSelectedGoalForMoney(null);
@@ -115,10 +125,14 @@ export default function Goals() {
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.FinancialGoal.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries(['goals']);
-      toast.success("Meta excluída");
-    }
+    onMutate: async (id) => {
+      await queryClient.cancelQueries(['goals']);
+      const prev = queryClient.getQueryData(['goals']);
+      queryClient.setQueryData(['goals'], (old = []) => old.filter(g => g.id !== id));
+      return { prev };
+    },
+    onError: (_, __, ctx) => queryClient.setQueryData(['goals'], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['goals']); toast.success("Meta excluída"); }
   });
 
   const handleOpenDialog = (goal = null) => {
