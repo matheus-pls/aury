@@ -130,7 +130,7 @@ export default function CoupleMode() {
   const createGroupMutation = useMutation({
     mutationFn: (data) => base44.entities.FamilyGroup.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['family-groups']);
+      queryClient.invalidateQueries({ queryKey: ['family-groups'] });
       setIsCreateGroupOpen(false);
       setGroupName("");
     }
@@ -140,7 +140,7 @@ export default function CoupleMode() {
     mutationFn: ({ groupId, members }) =>
       base44.entities.FamilyGroup.update(groupId, { members }),
     onSuccess: () => {
-      queryClient.invalidateQueries(['family-groups']);
+      queryClient.invalidateQueries({ queryKey: ['family-groups'] });
       setIsAddMemberOpen(false);
       setNewMemberEmail("");
     }
@@ -149,7 +149,7 @@ export default function CoupleMode() {
   const createExpenseMutation = useMutation({
     mutationFn: (data) => base44.entities.SharedExpense.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['shared-expenses']);
+      queryClient.invalidateQueries({ queryKey: ['shared-expenses'] });
       setIsAddExpenseOpen(false);
       setExpenseForm({ description: "", amount: "", category: "essential", date: new Date().toISOString().slice(0, 10) });
     }
@@ -158,7 +158,7 @@ export default function CoupleMode() {
   const createGoalMutation = useMutation({
     mutationFn: (data) => base44.entities.SharedGoal.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['shared-goals']);
+      queryClient.invalidateQueries({ queryKey: ['shared-goals'] });
       setIsAddGoalOpen(false);
       setGoalForm({ title: "", target_amount: "", current_amount: "0", deadline: "", category: "other", responsibilities: {} });
     }
@@ -167,7 +167,7 @@ export default function CoupleMode() {
   const updateGoalMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.SharedGoal.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['shared-goals']);
+      queryClient.invalidateQueries({ queryKey: ['shared-goals'] });
       setIsGoalDetailsOpen(false);
       setIsEditGoalOpen(false);
       setSelectedGoal(null);
@@ -178,7 +178,7 @@ export default function CoupleMode() {
   const deleteGoalMutation = useMutation({
     mutationFn: (id) => base44.entities.SharedGoal.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries(['shared-goals']);
+      queryClient.invalidateQueries({ queryKey: ['shared-goals'] });
       setIsGoalDetailsOpen(false);
       setSelectedGoal(null);
     }
@@ -186,13 +186,13 @@ export default function CoupleMode() {
 
   const deleteExpenseMutation = useMutation({
     mutationFn: (id) => base44.entities.SharedExpense.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['shared-expenses'])
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shared-expenses'] })
   });
 
   const updateGroupNameMutation = useMutation({
     mutationFn: ({ groupId, name }) => base44.entities.FamilyGroup.update(groupId, { name }),
     onSuccess: () => {
-      queryClient.invalidateQueries(['family-groups']);
+      queryClient.invalidateQueries({ queryKey: ['family-groups'] });
       setIsEditNameOpen(false);
     }
   });
@@ -205,7 +205,7 @@ export default function CoupleMode() {
   const removeMemberMutation = useMutation({
     mutationFn: ({ groupId, members }) =>
       base44.entities.FamilyGroup.update(groupId, { members }),
-    onSuccess: () => queryClient.invalidateQueries(['family-groups'])
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['family-groups'] })
   });
 
   const handleRemoveMember = (email) => {
