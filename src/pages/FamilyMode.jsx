@@ -217,7 +217,8 @@ export default function CoupleMode() {
   };
 
   const handleCreateGroup = () => {
-    createGroupMutation.mutate({ name: groupName, admin_email: user.email, members: [user.email], active: true });
+    if (!user?.email || !groupName.trim()) return;
+    createGroupMutation.mutate({ name: groupName.trim(), admin_email: user.email, members: [user.email], active: true });
   };
 
   const handleAddMember = () => {
@@ -350,7 +351,9 @@ export default function CoupleMode() {
                 </div>
                 <div className="flex gap-3">
                   <Button variant="outline" className="flex-1" onClick={() => setIsCreateGroupOpen(false)}>Cancelar</Button>
-                  <Button className="flex-1 bg-gradient-to-r from-rose-400 to-pink-500 text-white" onClick={handleCreateGroup} disabled={!groupName || createGroupMutation.isPending}>Criar</Button>
+                  <Button className="flex-1 bg-gradient-to-r from-rose-400 to-pink-500 text-white" onClick={handleCreateGroup} disabled={!groupName.trim() || !user || createGroupMutation.isPending}>
+                    {createGroupMutation.isPending ? "Criando..." : "Criar"}
+                  </Button>
                 </div>
               </div>
             </DialogContent>
