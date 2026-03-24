@@ -47,10 +47,23 @@ export default function Home() {
     queryFn: () => base44.entities.Income.filter({ is_active: true })
   });
 
+  const prevMonth = (() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 1);
+    return d.toISOString().slice(0, 7);
+  })();
+
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses", currentMonth],
     queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth })
   });
+
+  const { data: prevExpenses = [] } = useQuery({
+    queryKey: ["expenses", prevMonth],
+    queryFn: () => base44.entities.Expense.filter({ month_year: prevMonth })
+  });
+
+  const allExpenses = [...expenses, ...prevExpenses];
 
   const { data: settings } = useQuery({
     queryKey: ["settings"],
