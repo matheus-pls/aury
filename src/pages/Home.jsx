@@ -317,7 +317,7 @@ export default function Home() {
 
       {/* Smart Alert */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
-        <SmartAlert spentPct={spentPct} expensesByCategory={expensesByCategory} totalIncome={totalIncome} />
+        <SmartAlert spentPct={spentPct} expensesByCategory={expensesByCategory} totalIncome={totalIncome} balance={balance} />
       </motion.div>
 
       {/* Month Progress */}
