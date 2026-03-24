@@ -1,15 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { LayoutDashboard, Wallet, Sparkles, Target, Heart, Settings } from "lucide-react";
+import { Home, Wallet, Sparkles, User } from "lucide-react";
 
 const TABS = [
-  { name: "Início",   page: "Overview",    icon: LayoutDashboard },
-  { name: "Gastos",   page: "Movements",   icon: Wallet },
-  { name: "Planejar", page: "Planning",    icon: Sparkles },
-  { name: "Metas",    page: "Goals",       icon: Target },
-  { name: "Casal",    page: "FamilyMode",  icon: Heart },
-  { name: "Config",   page: "Settings",    icon: Settings },
+  { name: "Home",          page: "Home",        icon: Home },
+  { name: "Movimentações", page: "Movements",   icon: Wallet },
+  { name: "Planejamento",  page: "NewPlanning", icon: Sparkles },
+  { name: "Perfil",        page: "NewProfile",  icon: User },
 ];
 
 export default function BottomTabBar({ currentPageName }) {

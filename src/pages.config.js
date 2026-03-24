@@ -47,6 +47,8 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import NewPlanning from './pages/NewPlanning';
+import NewProfile from './pages/NewProfile';
 import Analysis from './pages/Analysis';
 import AutoPlanning from './pages/AutoPlanning';
 import BehaviorAnalysis from './pages/BehaviorAnalysis';
