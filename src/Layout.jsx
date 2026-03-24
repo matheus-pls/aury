@@ -9,23 +9,38 @@ import {
   Settings,
   ChevronRight,
   Sparkles,
-  Crown
+  Crown,
+  PiggyBank,
+  Users,
+  BarChart2,
+  Lock
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { usePremium } from "@/lib/PremiumContext";
 import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
 import BottomTabBar from "@/components/BottomTabBar";
 import { Toaster } from "@/components/ui/sonner";
 
-const NAVIGATION = [
+const FREE_NAV = [
   { name: "Home", page: "Home", icon: LayoutDashboard },
   { name: "Movimentações", page: "Movements", icon: Wallet },
   { name: "Planejamento", page: "NewPlanning", icon: Sparkles },
+];
+
+const PREMIUM_NAV = [
+  { name: "Caixinha", page: "EmergencyFund", icon: PiggyBank },
+  { name: "Modo Casal", page: "FamilyMode", icon: Users },
+  { name: "Análise", page: "Analysis", icon: BarChart2 },
+];
+
+const BOTTOM_NAV = [
   { name: "Perfil", page: "NewProfile", icon: Settings },
 ];
 
 export default function Layout({ children, currentPageName }) {
   const { isPremium } = usePremium();
+  const navigate = useNavigate();
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
@@ -114,28 +129,102 @@ export default function Layout({ children, currentPageName }) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-1">
-            {NAVIGATION.map((item) => {
-              const isActive = currentPageName === item.page;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.page}
-                  to={createPageUrl(item.page)}
-                  className={`
-                    flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 relative
-                    ${isActive
-                      ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20'
-                      : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-                    }
-                  `}
-                >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
-                  <span className="font-medium">{item.name}</span>
-                  {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
-                </Link>
-              );
-            })}
+          <nav className="flex-1 px-4 py-6 overflow-y-auto">
+            {/* Free items */}
+            <div className="space-y-1">
+              {FREE_NAV.map((item) => {
+                const isActive = currentPageName === item.page;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.page}
+                    to={createPageUrl(item.page)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
+                      ${isActive
+                        ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20'
+                        : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                      }
+                    `}
+                  >
+                    <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
+                    <span className="font-medium">{item.name}</span>
+                    {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Divider + Premium section */}
+            <div className="my-4">
+              <div className="flex items-center gap-2 px-2 mb-2">
+                <div className="h-px flex-1 bg-border" />
+                <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-widest">Premium</span>
+                <div className="h-px flex-1 bg-border" />
+              </div>
+              <div className="space-y-1">
+                {PREMIUM_NAV.map((item) => {
+                  const isActive = currentPageName === item.page;
+                  const Icon = item.icon;
+                  const locked = !isPremium;
+                  return locked ? (
+                    <button
+                      key={item.page}
+                      onClick={() => navigate(createPageUrl("Upgrade"))}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-muted-foreground/50 hover:bg-accent/50 hover:text-muted-foreground group"
+                    >
+                      <Icon className="w-5 h-5 flex-shrink-0" />
+                      <span className="font-medium flex-1 text-left">{item.name}</span>
+                      <span className="flex items-center gap-1 bg-amber-500/10 text-amber-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-amber-500/20">
+                        <Lock className="w-2.5 h-2.5" />
+                        PRO
+                      </span>
+                    </button>
+                  ) : (
+                    <Link
+                      key={item.page}
+                      to={createPageUrl(item.page)}
+                      className={`
+                        flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
+                        ${isActive
+                          ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20'
+                          : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                        }
+                      `}
+                    >
+                      <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
+                      <span className="font-medium">{item.name}</span>
+                      {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Profile at bottom of nav */}
+            <div className="mt-2 space-y-1">
+              {BOTTOM_NAV.map((item) => {
+                const isActive = currentPageName === item.page;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.page}
+                    to={createPageUrl(item.page)}
+                    className={`
+                      flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200
+                      ${isActive
+                        ? 'bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white shadow-lg shadow-[#5FBDBD]/20'
+                        : 'text-muted-foreground hover:bg-accent hover:text-foreground'
+                      }
+                    `}
+                  >
+                    <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
+                    <span className="font-medium">{item.name}</span>
+                    {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
+                  </Link>
+                );
+              })}
+            </div>
           </nav>
 
           {/* Footer */}
