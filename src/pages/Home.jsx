@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
-  Wallet, Shield, TrendingUp, TrendingDown, Heart,
+  Wallet, Shield, Heart,
   PieChart, Plus, Receipt, Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { toast } from "sonner";
 import PullToRefresh from "@/components/PullToRefresh";
+import { usePremium } from "@/lib/PremiumContext";
+import SmartAlert from "@/components/home/SmartAlert";
+import MonthProgress from "@/components/home/MonthProgress";
+import RecentTransactions from "@/components/home/RecentTransactions";
+import MicroInsights from "@/components/home/MicroInsights";
+import PremiumPreview from "@/components/home/PremiumPreview";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
