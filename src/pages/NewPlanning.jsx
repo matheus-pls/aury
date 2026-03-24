@@ -44,7 +44,7 @@ const TABS = [
     color: "from-[#5FBDBD] to-[#2A4A62]",
     description: "E se eu cortasse isso? E se ganhasse mais?",
     premium: true,
-    Component: Simulations,
+    Component: () => <Simulations inline />,
   },
   {
     id: "autoplan",
@@ -53,7 +53,7 @@ const TABS = [
     color: "from-amber-400 to-orange-500",
     description: "Quanto posso gastar hoje sem comprometer o mês",
     premium: true,
-    Component: AutoPlanning,
+    Component: () => <AutoPlanning inline />,
   },
 ];
 
