@@ -35,7 +35,7 @@ const TABS = [
     color: "from-[#5FBDBD] to-[#4FA9A5]",
     description: "Construa sua reserva de emergência",
     premium: false,
-    Component: EmergencyFund,
+    Component: EmergencyFundInline,
   },
   {
     id: "simulations",
