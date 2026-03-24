@@ -1,15 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import {
   Settings, Heart, TrendingUp, Shield,
-  ChevronRight, LogOut, User, Bell, Crown
+  ChevronRight, LogOut, Bell, Crown, Star
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { usePremium } from "@/lib/PremiumContext";
 
 const MENU_ITEMS = [
   {
@@ -33,6 +34,9 @@ const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v || 0);
 
 export default function NewProfile() {
+  const { isPremium } = usePremium();
+  const navigate = useNavigate();
+
   const { data: user } = useQuery({
     queryKey: ["current-user"],
     queryFn: () => base44.auth.me()
@@ -45,11 +49,8 @@ export default function NewProfile() {
 
   const totalIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
   const initials = user?.full_name?.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() || "??";
-  const firstName = user?.full_name?.split(" ")[0] || "Usuário";
 
-  const handleLogout = () => {
-    base44.auth.logout();
-  };
+  const handleLogout = () => { base44.auth.logout(); };
 
   return (
     <div className="space-y-6 pb-8">
@@ -82,29 +83,44 @@ export default function NewProfile() {
           <div>
             <p className="text-white/60 text-xs mb-0.5">Plano Atual</p>
             <div className="flex items-center gap-1">
-              <p className="font-bold">Gratuito</p>
-              <Crown className="w-3.5 h-3.5 text-amber-300" />
+              <p className="font-bold">{isPremium ? "Premium" : "Gratuito"}</p>
+              <Crown className={`w-3.5 h-3.5 ${isPremium ? "text-amber-300 fill-amber-300/50" : "text-white/50"}`} />
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Upgrade Banner */}
+      {/* Plan Banner */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-gradient-to-r from-amber-500/15 to-orange-500/10 border border-amber-500/30 rounded-2xl p-4"
+        className={`border rounded-2xl p-4 ${isPremium ? "bg-amber-500/10 border-amber-500/30" : "bg-gradient-to-r from-amber-500/15 to-orange-500/10 border-amber-500/30"}`}
       >
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="font-semibold text-amber-500 text-sm">Upgrade para Premium</p>
-            <p className="text-xs text-amber-500/80 mt-0.5">Desbloqueie simulações, IA e muito mais</p>
+        {isPremium ? (
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+              <Crown className="w-5 h-5 text-amber-500 fill-amber-500/50" />
+            </div>
+            <div className="flex-1">
+              <p className="font-semibold text-amber-500 text-sm">Premium ativo ✨</p>
+              <p className="text-xs text-amber-500/80 mt-0.5">Você tem acesso a todos os recursos</p>
+            </div>
+            <Button size="sm" variant="outline" className="border-amber-500/30 text-amber-500 text-xs h-8" onClick={() => navigate(createPageUrl("Upgrade"))}>
+              Gerenciar
+            </Button>
           </div>
-          <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-white text-xs h-8">
-            Ver Planos
-          </Button>
-        </div>
+        ) : (
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-amber-500 text-sm">Upgrade para Premium</p>
+              <p className="text-xs text-amber-500/80 mt-0.5">Desbloqueie simulações, IA e muito mais</p>
+            </div>
+            <Button size="sm" className="bg-amber-500 hover:bg-amber-600 text-white text-xs h-8" onClick={() => navigate(createPageUrl("Upgrade"))}>
+              Ver Planos
+            </Button>
+          </div>
+        )}
       </motion.div>
 
       {/* Menu Groups */}
