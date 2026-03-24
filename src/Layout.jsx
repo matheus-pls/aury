@@ -7,13 +7,10 @@ import { useQuery } from "@tanstack/react-query";
 import { 
   LayoutDashboard, 
   Wallet, 
-  Target, 
   Settings,
   ChevronRight,
   Sparkles,
-  TrendingUp,
-  Heart,
-  Lock
+  Crown
 } from "lucide-react";
 import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
