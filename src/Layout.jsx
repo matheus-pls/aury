@@ -33,29 +33,15 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => base44.auth.me()
   });
 
-  const isPremium = true;
-
-  const { data: familyGroups = [] } = useQuery({
-    queryKey: ['user-family-groups', user?.email],
-    queryFn: async () => {
-      if (!user) return [];
-      const allGroups = await base44.entities.FamilyGroup.list();
-      return allGroups.filter(g => 
-        g.admin_email === user.email || g.members?.includes(user.email)
-      );
-    },
-    enabled: !!user
-  });
-
+  // Navigation is always fixed — premium only changes content inside pages
   useEffect(() => {
-    const baseNav = [
+    setNavigation([
       { name: "Home", page: "Home", icon: LayoutDashboard },
       { name: "Movimentações", page: "Movements", icon: Wallet },
       { name: "Planejamento", page: "NewPlanning", icon: Sparkles },
       { name: "Perfil", page: "NewProfile", icon: Settings },
-    ];
-    setNavigation(baseNav);
-  }, [familyGroups.length, isPremium]);
+    ]);
+  }, []);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
