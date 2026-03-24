@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { ThemeProvider } from "next-themes";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
@@ -18,29 +18,19 @@ import NotificationGenerator from "@/components/NotificationGenerator";
 import BottomTabBar from "@/components/BottomTabBar";
 import { Toaster } from "@/components/ui/sonner";
 
-export default function Layout({ children, currentPageName }) {
-  const [navigation, setNavigation] = useState([
-    { name: "Home", page: "Home", icon: LayoutDashboard },
-    { name: "Movimentações", page: "Movements", icon: Wallet },
-    { name: "Planejamento", page: "NewPlanning", icon: Sparkles },
-    { name: "Perfil", page: "NewProfile", icon: Settings },
-  ]);
+const NAVIGATION = [
+  { name: "Home", page: "Home", icon: LayoutDashboard },
+  { name: "Movimentações", page: "Movements", icon: Wallet },
+  { name: "Planejamento", page: "NewPlanning", icon: Sparkles },
+  { name: "Perfil", page: "NewProfile", icon: Settings },
+];
 
+export default function Layout({ children, currentPageName }) {
   const { data: user } = useQuery({
     queryKey: ['current-user'],
     queryFn: () => base44.auth.me()
   });
   const { isPremium } = usePremium();
-
-  // Navigation is always fixed — premium only changes content inside pages
-  useEffect(() => {
-    setNavigation([
-      { name: "Home", page: "Home", icon: LayoutDashboard },
-      { name: "Movimentações", page: "Movements", icon: Wallet },
-      { name: "Planejamento", page: "NewPlanning", icon: Sparkles },
-      { name: "Perfil", page: "NewProfile", icon: Settings },
-    ]);
-  }, []);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
@@ -130,7 +120,7 @@ export default function Layout({ children, currentPageName }) {
 
           {/* Navigation */}
           <nav className="flex-1 px-4 py-6 space-y-1">
-            {navigation.map((item) => {
+            {NAVIGATION.map((item) => {
               const isActive = currentPageName === item.page;
               const Icon = item.icon;
               return (
