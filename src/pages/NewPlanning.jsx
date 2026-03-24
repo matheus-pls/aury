@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Shield, Calculator, Heart, Sparkles,
@@ -10,9 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Goals from "./Goals";
-
-// Global premium flag — change to true to unlock all features
-const IS_PREMIUM = false;
+import { usePremium } from "@/lib/PremiumContext";
 
 const SECTIONS = [
   {
@@ -61,9 +59,9 @@ const SECTIONS = [
   },
 ];
 
-function PremiumLockedCard({ section }) {
+function PremiumLockedCard({ section, onUnlock }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-dashed border-border p-6 opacity-80">
+    <div className="relative overflow-hidden rounded-2xl border border-dashed border-amber-500/30 p-6">
       <div className="flex items-start gap-4">
         <div className="w-14 h-14 rounded-2xl bg-muted flex items-center justify-center flex-shrink-0">
           <Lock className="w-7 h-7 text-muted-foreground" />
@@ -76,21 +74,27 @@ function PremiumLockedCard({ section }) {
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">{section.description}</p>
-          <p className="text-xs text-amber-500 mt-2 font-medium">Desbloqueie no plano Premium ✨</p>
+          <button
+            onClick={onUnlock}
+            className="text-xs text-amber-500 mt-2 font-semibold hover:underline"
+          >
+            Desbloquear Premium ✨
+          </button>
         </div>
       </div>
-      {/* Blurred preview overlay */}
-      <div className="absolute inset-0 bg-background/30 backdrop-blur-[1px] rounded-2xl pointer-events-none" />
     </div>
   );
 }
 
 export default function NewPlanning() {
+  const { isPremium } = usePremium();
+  const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState("goals");
-  const [showUpgradeBanner, setShowUpgradeBanner] = useState(!IS_PREMIUM);
+
+  const goToUpgrade = () => navigate(createPageUrl("Upgrade"));
 
   const handleSectionClick = (section) => {
-    if (section.premium && !IS_PREMIUM) return; // locked
+    if (section.premium && !isPremium) { goToUpgrade(); return; }
     if (section.id === "goals") {
       setActiveSection("goals");
     } else if (section.page) {
@@ -110,7 +114,7 @@ export default function NewPlanning() {
       </motion.div>
 
       {/* Premium Banner */}
-      {showUpgradeBanner && (
+      {!isPremium && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -126,6 +130,7 @@ export default function NewPlanning() {
             </div>
             <Button
               size="sm"
+              onClick={goToUpgrade}
               className="bg-amber-500 hover:bg-amber-600 text-white text-xs h-8 px-3 flex-shrink-0"
             >
               Desbloquear
@@ -185,7 +190,7 @@ export default function NewPlanning() {
           <Crown className="w-3.5 h-3.5 text-amber-500" />
         </div>
         {premiumModules.map((section, i) =>
-          IS_PREMIUM ? (
+          isPremium ? (
             <motion.div
               key={section.id}
               initial={{ opacity: 0, y: 15 }}
@@ -215,7 +220,7 @@ export default function NewPlanning() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.07 }}
             >
-              <PremiumLockedCard section={section} />
+              <PremiumLockedCard section={section} onUnlock={goToUpgrade} />
             </motion.div>
           )
         )}
