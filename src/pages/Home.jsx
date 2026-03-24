@@ -29,6 +29,7 @@ const formatCurrency = (v) =>
 export default function Home() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const queryClient = useQueryClient();
+  const { isPremium } = usePremium();
 
   const [quickDialog, setQuickDialog] = useState(null); // "expense" | "income"
   const [formData, setFormData] = useState({
