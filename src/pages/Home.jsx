@@ -315,6 +315,31 @@ export default function Home() {
         </Card>
       </motion.div>
 
+      {/* Smart Alert */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
+        <SmartAlert spentPct={spentPct} expensesByCategory={expensesByCategory} totalIncome={totalIncome} />
+      </motion.div>
+
+      {/* Month Progress */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }}>
+        <MonthProgress balance={balance} totalIncome={totalIncome} />
+      </motion.div>
+
+      {/* Micro Insights */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36 }}>
+        <MicroInsights expenses={allExpenses} totalIncome={totalIncome} />
+      </motion.div>
+
+      {/* Recent Transactions */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+        <RecentTransactions expenses={expenses} />
+      </motion.div>
+
+      {/* Premium Preview */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44 }}>
+        <PremiumPreview isPremium={isPremium} />
+      </motion.div>
+
       {/* Info Banner for empty state */}
       {totalIncome === 0 && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4">
