@@ -78,6 +78,8 @@ import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "NewPlanning": NewPlanning,
+    "NewProfile": NewProfile,
     "Analysis": Analysis,
     "AutoPlanning": AutoPlanning,
     "BehaviorAnalysis": BehaviorAnalysis,
@@ -106,7 +108,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "Dashboard",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };
