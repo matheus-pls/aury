@@ -22,12 +22,10 @@ import { Toaster } from "@/components/ui/sonner";
 
 export default function Layout({ children, currentPageName }) {
   const [navigation, setNavigation] = useState([
-    { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
-    { name: "Planejamento", page: "Planning", icon: Sparkles },
+    { name: "Home", page: "Home", icon: LayoutDashboard },
     { name: "Movimentações", page: "Movements", icon: Wallet },
-    { name: "Metas", page: "Goals", icon: Target },
-    { name: "Análises", page: "BehaviorAnalysis", icon: TrendingUp },
-    { name: "Configurações", page: "Settings", icon: Settings },
+    { name: "Planejamento", page: "NewPlanning", icon: Sparkles },
+    { name: "Perfil", page: "NewProfile", icon: Settings },
   ]);
 
   const { data: user } = useQuery({
@@ -51,18 +49,11 @@ export default function Layout({ children, currentPageName }) {
 
   useEffect(() => {
     const baseNav = [
-      { name: "Visão Geral", page: "Overview", icon: LayoutDashboard },
-      { name: "Planejamento", page: "Planning", icon: Sparkles, premium: true },
+      { name: "Home", page: "Home", icon: LayoutDashboard },
       { name: "Movimentações", page: "Movements", icon: Wallet },
-      { name: "Metas", page: "Goals", icon: Target },
-      { name: "Análises", page: "Analysis", icon: TrendingUp, premium: true },
+      { name: "Planejamento", page: "NewPlanning", icon: Sparkles },
+      { name: "Perfil", page: "NewProfile", icon: Settings },
     ];
-
-    if (isPremium) {
-      baseNav.push({ name: "Modo Casal", page: "FamilyMode", icon: Heart, premium: true });
-    }
-
-    baseNav.push({ name: "Configurações", page: "Settings", icon: Settings });
     setNavigation(baseNav);
   }, [familyGroups.length, isPremium]);
 
