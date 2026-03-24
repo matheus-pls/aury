@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { usePremium } from "@/lib/PremiumContext";
 
-// Inline page components (no navigation away)
+// Inline page components (no navigation away, no BackButton headers)
 import Goals from "./Goals";
-import EmergencyFund from "./EmergencyFund";
+import EmergencyFundInline from "@/components/planning/EmergencyFundInline";
 import Simulations from "./Simulations";
 import AutoPlanning from "./AutoPlanning";
 
