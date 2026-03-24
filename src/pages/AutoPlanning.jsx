@@ -20,7 +20,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
 
-export default function AutoPlanning() {
+export default function AutoPlanning({ inline = false }) {
   const [showDetails, setShowDetails] = useState(false);
   const currentMonth = new Date().toISOString().slice(0, 7);
   const currentDay = new Date().getDate();
@@ -148,7 +148,7 @@ export default function AutoPlanning() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <BackButton to={createPageUrl("Planning")} className="mb-4" />
+        {!inline && <BackButton to={createPageUrl("NewPlanning")} className="mb-4" />}
         <div className="flex items-center gap-2 mb-2">
           <Sparkles className="w-6 h-6 text-[#5FBDBD]" />
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Plano do Mês</h1>

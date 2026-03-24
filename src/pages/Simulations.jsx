@@ -89,7 +89,7 @@ const EVOLUTION_SIMS = [
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function Simulations() {
+export default function Simulations({ inline = false }) {
   const [activeBlock, setActiveBlock] = useState(null); // 'projection' | 'adjustments' | 'evolution'
   const [activeSim, setActiveSim] = useState(null);
   const [simValue, setSimValue] = useState("");
@@ -643,7 +643,7 @@ export default function Simulations() {
     <div className="space-y-6 pb-10 max-w-2xl mx-auto">
       {/* Page header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
-        <BackButton to={createPageUrl("Planning")} className="mb-4" />
+        {!inline && <BackButton to={createPageUrl("NewPlanning")} className="mb-4" />}
         <div className="flex items-center gap-3 mb-1">
           <div className="w-11 h-11 bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-2xl flex items-center justify-center shadow-md">
             <Lightbulb className="w-5 h-5 text-white" />
