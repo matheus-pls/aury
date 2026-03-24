@@ -12,6 +12,7 @@ import {
   Sparkles,
   Crown
 } from "lucide-react";
+import { usePremium } from "@/lib/PremiumContext";
 import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
 import BottomTabBar from "@/components/BottomTabBar";
@@ -29,6 +30,7 @@ export default function Layout({ children, currentPageName }) {
     queryKey: ['current-user'],
     queryFn: () => base44.auth.me()
   });
+  const { isPremium } = usePremium();
 
   // Navigation is always fixed — premium only changes content inside pages
   useEffect(() => {
@@ -131,7 +133,6 @@ export default function Layout({ children, currentPageName }) {
             {navigation.map((item) => {
               const isActive = currentPageName === item.page;
               const Icon = item.icon;
-              const isLocked = item.premium && !isPremium;
               return (
                 <Link
                   key={item.page}
@@ -146,12 +147,7 @@ export default function Layout({ children, currentPageName }) {
                 >
                   <Icon className={`w-5 h-5 ${isActive ? 'text-white' : 'text-muted-foreground'}`} />
                   <span className="font-medium">{item.name}</span>
-                  {isLocked && (
-                    <span className="ml-auto">
-                      <Lock className="w-3.5 h-3.5 text-amber-500" />
-                    </span>
-                  )}
-                  {isActive && !isLocked && <ChevronRight className="w-4 h-4 ml-auto" />}
+                  {isActive && <ChevronRight className="w-4 h-4 ml-auto" />}
                 </Link>
               );
             })}
