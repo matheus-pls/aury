@@ -3,7 +3,6 @@ import { ThemeProvider } from "next-themes";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
 import { 
   LayoutDashboard, 
   Wallet, 
@@ -26,10 +25,6 @@ const NAVIGATION = [
 ];
 
 export default function Layout({ children, currentPageName }) {
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me()
-  });
   const { isPremium } = usePremium();
 
   return (
