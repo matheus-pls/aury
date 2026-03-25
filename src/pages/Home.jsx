@@ -83,18 +83,21 @@ export default function Home() {
     queryKey: ["incomes", userId],
     queryFn: () => base44.entities.Income.filter({ is_active: true }),
     enabled: isAuthenticated && onboardingCompleted && !!userId,
+    staleTime: 0,
   });
 
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses", userId, currentMonth],
     queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth }),
     enabled: isAuthenticated && onboardingCompleted && !!userId,
+    staleTime: 0,
   });
 
   const { data: prevExpenses = [] } = useQuery({
     queryKey: ["expenses", userId, prevMonth],
     queryFn: () => base44.entities.Expense.filter({ month_year: prevMonth }),
     enabled: isAuthenticated && onboardingCompleted && !!userId,
+    staleTime: 0,
   });
 
   const allExpenses = [...expenses, ...prevExpenses];
