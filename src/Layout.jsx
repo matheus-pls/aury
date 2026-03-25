@@ -43,6 +43,7 @@ const BOTTOM_NAV = [
 
 export default function Layout({ children, currentPageName }) {
   const { isPremium } = usePremium();
+  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   return (
