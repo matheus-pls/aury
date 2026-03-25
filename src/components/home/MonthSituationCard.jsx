@@ -14,8 +14,9 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
     ? {
         label: "Você passou do limite",
         interpretation: "Risco de fechar no negativo",
-        interpretColor: "#F87171",
-        bg: "linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%)",
+        interpretColor: "#FCA5A5",
+        bg: "linear-gradient(135deg, #1a0a0a 0%, #2d1212 100%)",
+        border: "1px solid rgba(239,68,68,0.25)",
         barColor: "#F87171",
         Icon: TrendingDown,
       }
@@ -24,7 +25,8 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
         label: "Atenção — quase no limite",
         interpretation: "Atenção aos seus gastos",
         interpretColor: "#FCD34D",
-        bg: "linear-gradient(135deg, #1c1500 0%, #422006 100%)",
+        bg: "linear-gradient(135deg, #1a1200 0%, #2d1f00 100%)",
+        border: "1px solid rgba(251,191,36,0.25)",
         barColor: "#FCD34D",
         Icon: Minus,
       }
@@ -32,7 +34,8 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
         label: "Sobrou esse mês",
         interpretation: "Você está no controle",
         interpretColor: "#34D399",
-        bg: "linear-gradient(135deg, #052e16 0%, #064e3b 100%)",
+        bg: "linear-gradient(135deg, #021a0e 0%, #052e16 100%)",
+        border: "1px solid rgba(52,211,153,0.2)",
         barColor: "#34D399",
         Icon: TrendingUp,
       };
