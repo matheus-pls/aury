@@ -3,15 +3,14 @@ import { base44 } from "@/api/base44Client";
 import { useAuth } from "@/lib/AuthContext";
 
 /**
- * Returns { isLoading, onboardingCompleted }
- * - Isolado por usuário: usa user.id como parte da queryKey e do localStorage
- * - Nunca retorna dados de outro usuário
+ * Verifica se o onboarding foi concluído para o usuário autenticado atual.
+ * Totalmente isolado por userId — nunca retorna dados de outro usuário.
  */
 export function useOnboardingStatus() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, isLoadingAuth } = useAuth();
   const userId = user?.id || user?.email || null;
 
-  const { data: settings, isLoading } = useQuery({
+  const { data: settings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ["settings-onboarding", userId],
     queryFn: async () => {
       const r = await base44.entities.UserSettings.list();
@@ -21,16 +20,17 @@ export function useOnboardingStatus() {
     staleTime: 30 * 1000,
   });
 
-  if (!isAuthenticated || !userId) {
-    return { isLoading: false, onboardingCompleted: false };
-  }
-
-  // While loading, keep isLoading true
-  if (isLoading) {
+  // Enquanto auth ou userId ainda não resolveram, está carregando
+  if (isLoadingAuth || !isAuthenticated || !userId) {
     return { isLoading: true, onboardingCompleted: false };
   }
 
-  // Check DB field first, fallback to localStorage keyed by userId
+  // Enquanto a query está carregando, está carregando
+  if (isLoadingSettings) {
+    return { isLoading: true, onboardingCompleted: false };
+  }
+
+  // Verifica DB primeiro, depois localStorage isolado por userId
   const dbCompleted = settings?.onboarding_completed === true;
   const localKey = `aury_onboarding_complete_${userId}`;
   const localCompleted = localStorage.getItem(localKey) === "true";
