@@ -319,7 +319,7 @@ export default function MinimalOnboarding() {
             </motion.div>
           )}
 
-          {/* STEP 4 — Loading final */}
+          {/* STEP 4 — Plan Generator */}
           {step === 4 && (
             <motion.div
               key="step4"
@@ -328,17 +328,12 @@ export default function MinimalOnboarding() {
               transition={{ duration: 0.3 }}
               className="text-center space-y-8"
             >
-              <div className="space-y-3">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
-                  className="w-14 h-14 mx-auto rounded-full border-4 border-white/10 border-t-[#5FBDBD]"
-                />
-                <h2 className="text-xl font-bold text-white">Montando seu plano...</h2>
-                <p className="text-sm" style={{ color: "hsl(0, 0%, 55%)" }}>
-                  Tudo certo. Já vou te mostrar o que preparei 🌱
-                </p>
-              </div>
+              <OnboardingPlanGenerator
+                monthlyIncome={monthlyIncome}
+                fixedExpenses={fixedExpenses}
+                selectedGoal={selectedGoal}
+                onComplete={handlePlanComplete}
+              />
             </motion.div>
           )}
 
