@@ -227,6 +227,13 @@ export default function Home() {
         </p>
       </motion.div>
 
+      {/* Daily Insight Banner */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}>
+          <DailyInsightBanner expenses={allExpenses} totalIncome={totalIncome} />
+        </motion.div>
+      )}
+
       {/* Empty state */}
       {hasNoData ? (
         <motion.div
