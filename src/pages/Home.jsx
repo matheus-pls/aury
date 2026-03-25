@@ -67,15 +67,9 @@ export default function Home() {
   }, [isAuthenticated, isLoadingAuth, isLoadingOnboarding, onboardingCompleted, navigate]);
 
   const { data: user } = useQuery({
-    queryKey: ["current-user"],
+    queryKey: ["current-user", userId],
     queryFn: () => base44.auth.me(),
-    enabled: isAuthenticated,
-  });
-
-  const { data: incomes = [] } = useQuery({
-    queryKey: ["incomes"],
-    queryFn: () => base44.entities.Income.filter({ is_active: true }),
-    enabled: isAuthenticated && onboardingCompleted,
+    enabled: isAuthenticated && !!userId,
   });
 
   const prevMonth = (() => {
@@ -84,27 +78,33 @@ export default function Home() {
     return d.toISOString().slice(0, 7);
   })();
 
+  const { data: incomes = [] } = useQuery({
+    queryKey: ["incomes", userId],
+    queryFn: () => base44.entities.Income.filter({ is_active: true }),
+    enabled: isAuthenticated && onboardingCompleted && !!userId,
+  });
+
   const { data: expenses = [] } = useQuery({
-    queryKey: ["expenses", currentMonth],
+    queryKey: ["expenses", userId, currentMonth],
     queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth }),
-    enabled: isAuthenticated && onboardingCompleted,
+    enabled: isAuthenticated && onboardingCompleted && !!userId,
   });
 
   const { data: prevExpenses = [] } = useQuery({
-    queryKey: ["expenses", prevMonth],
+    queryKey: ["expenses", userId, prevMonth],
     queryFn: () => base44.entities.Expense.filter({ month_year: prevMonth }),
-    enabled: isAuthenticated && onboardingCompleted,
+    enabled: isAuthenticated && onboardingCompleted && !!userId,
   });
 
   const allExpenses = [...expenses, ...prevExpenses];
 
   const { data: settings } = useQuery({
-    queryKey: ["settings"],
+    queryKey: ["settings", userId],
     queryFn: async () => {
       const r = await base44.entities.UserSettings.list();
       return r[0] || null;
     },
-    enabled: isAuthenticated && onboardingCompleted,
+    enabled: isAuthenticated && onboardingCompleted && !!userId,
   });
 
   const createExpenseMutation = useMutation({
