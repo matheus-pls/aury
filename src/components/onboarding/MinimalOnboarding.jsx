@@ -9,13 +9,52 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
 import OnboardingPlanGenerator from "./OnboardingPlanGenerator";
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 const GOALS = [
   { id: "control", label: "Parar de gastar sem controle", emoji: "🛑" },
   { id: "organize", label: "Organizar minha vida financeira", emoji: "📋" },
   { id: "save", label: "Começar a guardar dinheiro", emoji: "💰" },
   { id: "freedom", label: "Ter mais liberdade financeira", emoji: "🚀" },
+];
+
+const PROFILES = [
+  {
+    id: "essential",
+    label: "Essencial",
+    description: "Foco em flexibilidade e viver bem",
+    emoji: "🌿",
+    distribution: {
+      essential: 40,
+      superfluous: 30,
+      emergency: 20,
+      investment: 10,
+    },
+  },
+  {
+    id: "balanced",
+    label: "Equilibrado",
+    description: "Equilíbrio entre viver e poupar",
+    emoji: "⚖️",
+    distribution: {
+      essential: 30,
+      superfluous: 20,
+      emergency: 25,
+      investment: 25,
+    },
+  },
+  {
+    id: "focused",
+    label: "Focado",
+    description: "Prioridade em reserva e investimentos",
+    emoji: "🎯",
+    distribution: {
+      essential: 25,
+      superfluous: 10,
+      emergency: 30,
+      investment: 35,
+    },
+  },
 ];
 
 export default function MinimalOnboarding() {
