@@ -147,8 +147,20 @@ export default function Home() {
     }
   };
 
-  const totalIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
-  const totalExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  // Calcular renda com fallback do onboarding
+  let calculatedIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
+  if (calculatedIncome === 0 && settings?.onboarding_income > 0) {
+    calculatedIncome = settings.onboarding_income;
+  }
+
+  // Calcular despesas com fallback do onboarding
+  let calculatedExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  if (calculatedExpenses === 0 && settings?.onboarding_fixed_expenses > 0) {
+    calculatedExpenses = settings.onboarding_fixed_expenses;
+  }
+
+  const totalIncome = calculatedIncome;
+  const totalExpenses = calculatedExpenses;
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
 
