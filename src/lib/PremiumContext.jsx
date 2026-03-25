@@ -76,6 +76,16 @@ export function PremiumProvider({ children }) {
 
   const dismissExpiredModal = () => setShowExpiredModal(false);
 
+  const devResetTrial = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(TRIAL_USED_KEY);
+    localStorage.removeItem(SHOWN_KEY);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    setIsPremium(false);
+    setTrialUsed(false);
+    setShowExpiredModal(false);
+  };
+
   const minutesLeft = () => {
     const until = localStorage.getItem(STORAGE_KEY);
     if (!until) return 0;
