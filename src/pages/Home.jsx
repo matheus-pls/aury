@@ -226,7 +226,7 @@ export default function Home() {
   // Should not render if not authenticated or onboarding not done (redirects handled above)
   if (!isAuthenticated || !onboardingCompleted) return null;
 
-  const hasNoData = totalIncome === 0 && expenses.length === 0;
+  const hasNoData = totalIncome === 0 && calculatedExpenses === 0;
 
   const tranquilityInterpretation =
     tranquilityIndex >= 70
