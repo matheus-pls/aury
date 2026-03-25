@@ -217,7 +217,7 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
               </div>
 
               <p className="text-xs mt-3" style={{ color: 'hsl(0, 0%, 45%)' }}>
-                Essa é só uma sugestão! Você pode ajustar como quiser depois 👍
+                Esse plano reflete seu estilo. Ajuste como quiser depois 👍
               </p>
             </motion.div>
           )}
