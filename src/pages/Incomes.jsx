@@ -58,50 +58,52 @@ export default function Incomes() {
   });
 
   const queryClient = useQueryClient();
+  const { userId } = useCurrentUser();
 
   const { data: incomes = [], isLoading } = useQuery({
-    queryKey: ['incomes'],
-    queryFn: () => base44.entities.Income.list('-created_date')
+    queryKey: ['incomes', userId],
+    queryFn: () => base44.entities.Income.list('-created_date'),
+    enabled: !!userId,
   });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Income.create(data),
     onMutate: async (newIncome) => {
-      await queryClient.cancelQueries(['incomes']);
-      const prev = queryClient.getQueryData(['incomes']);
-      queryClient.setQueryData(['incomes'], (old = []) => [
+      await queryClient.cancelQueries(['incomes', userId]);
+      const prev = queryClient.getQueryData(['incomes', userId]);
+      queryClient.setQueryData(['incomes', userId], (old = []) => [
         { ...newIncome, id: `temp-${Date.now()}` }, ...old
       ]);
       return { prev };
     },
-    onError: (_, __, ctx) => queryClient.setQueryData(['incomes'], ctx.prev),
-    onSuccess: () => { queryClient.invalidateQueries(['incomes']); handleCloseDialog(); }
+    onError: (_, __, ctx) => queryClient.setQueryData(['incomes', userId], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['incomes', userId]); handleCloseDialog(); }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Income.update(id, data),
     onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries(['incomes']);
-      const prev = queryClient.getQueryData(['incomes']);
-      queryClient.setQueryData(['incomes'], (old = []) =>
+      await queryClient.cancelQueries(['incomes', userId]);
+      const prev = queryClient.getQueryData(['incomes', userId]);
+      queryClient.setQueryData(['incomes', userId], (old = []) =>
         old.map(i => i.id === id ? { ...i, ...data } : i)
       );
       return { prev };
     },
-    onError: (_, __, ctx) => queryClient.setQueryData(['incomes'], ctx.prev),
-    onSuccess: () => { queryClient.invalidateQueries(['incomes']); handleCloseDialog(); }
+    onError: (_, __, ctx) => queryClient.setQueryData(['incomes', userId], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['incomes', userId]); handleCloseDialog(); }
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Income.delete(id),
     onMutate: async (id) => {
-      await queryClient.cancelQueries(['incomes']);
-      const prev = queryClient.getQueryData(['incomes']);
-      queryClient.setQueryData(['incomes'], (old = []) => old.filter(i => i.id !== id));
+      await queryClient.cancelQueries(['incomes', userId]);
+      const prev = queryClient.getQueryData(['incomes', userId]);
+      queryClient.setQueryData(['incomes', userId], (old = []) => old.filter(i => i.id !== id));
       return { prev };
     },
-    onError: (_, __, ctx) => queryClient.setQueryData(['incomes'], ctx.prev),
-    onSuccess: () => queryClient.invalidateQueries(['incomes'])
+    onError: (_, __, ctx) => queryClient.setQueryData(['incomes', userId], ctx.prev),
+    onSuccess: () => queryClient.invalidateQueries(['incomes', userId])
   });
 
   const handleOpenDialog = (income = null) => {
