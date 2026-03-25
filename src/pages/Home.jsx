@@ -167,9 +167,11 @@ export default function Home() {
   if (balance > 0) score += Math.min((balance / Math.max(totalIncome, 1)) * 100, 20);
   const tranquilityIndex = Math.round(Math.max(0, Math.min(100, score)));
   const tranquilityStatus =
-    tranquilityIndex >= 70 ? { label: "Tranquilo", color: "from-green-500 to-green-600" }
-    : tranquilityIndex >= 40 ? { label: "Atenção", color: "from-[#1B3A52] to-[#0A2540]" }
-    : { label: "Risco", color: "from-red-500 to-red-600" };
+    tranquilityIndex >= 70
+      ? { label: "Tranquilo", bg: "rgba(52,211,153,0.07)", border: "rgba(52,211,153,0.2)", accent: "#34D399" }
+      : tranquilityIndex >= 40
+      ? { label: "Atenção",   bg: "rgba(251,191,36,0.07)", border: "rgba(251,191,36,0.2)", accent: "#FBBF24" }
+      : { label: "Risco",     bg: "rgba(239,68,68,0.07)",  border: "rgba(239,68,68,0.2)",  accent: "#F87171" };
 
   const greeting = () => {
     const h = new Date().getHours();
