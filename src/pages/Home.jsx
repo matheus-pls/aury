@@ -310,14 +310,15 @@ export default function Home() {
 
       {/* Smart Alert */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22, duration: 0.35 }}>
           <SmartAlert spentPct={spentPct} expensesByCategory={expensesByCategory} totalIncome={totalIncome} balance={balance} isPremium={isPremium} />
         </motion.div>
       )}
 
       {/* Category Distribution */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.26 }}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28, duration: 0.35 }}
+          whileHover={{ y: -1 }}>
           <Card>
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
@@ -366,7 +367,8 @@ export default function Home() {
 
       {/* Emergency Fund Preview */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34, duration: 0.35 }}
+          whileHover={{ y: -1 }}>
           <Card>
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-3">
@@ -391,27 +393,28 @@ export default function Home() {
 
       {/* Month Progress */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34 }}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.40, duration: 0.35 }}
+          whileHover={{ y: -1 }}>
           <MonthProgress balance={balance} totalIncome={totalIncome} />
         </motion.div>
       )}
 
       {/* Micro Insights */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.46, duration: 0.35 }}>
           <MicroInsights expenses={allExpenses} totalIncome={totalIncome} />
         </motion.div>
       )}
 
       {/* Recent Transactions */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42 }}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.52, duration: 0.35 }}>
           <RecentTransactions expenses={expenses} />
         </motion.div>
       )}
 
       {/* Premium Preview */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.46 }}>
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.58, duration: 0.35 }}>
         <PremiumPreview isPremium={isPremium} />
       </motion.div>
 
