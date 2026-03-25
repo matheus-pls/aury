@@ -109,7 +109,18 @@ export default function Layout({ children, currentPageName }) {
           alt="Aury"
           className="h-10 absolute left-1/2 -translate-x-1/2 bottom-2"
         />
-        <NotificationCenter />
+        <div className="flex items-center gap-2">
+          {!isAuthenticated && (
+            <button
+              onClick={() => base44.auth.redirectToLogin(window.location.href)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-[#5FBDBD] border border-[#5FBDBD]/30 rounded-full px-3 py-1.5 hover:bg-[#5FBDBD]/10 transition-colors"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              Entrar
+            </button>
+          )}
+          <NotificationCenter />
+        </div>
       </header>
 
       {/* Desktop Sidebar */}
