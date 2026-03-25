@@ -78,17 +78,16 @@ export default function MinimalOnboarding() {
       onboarding_completed: true,
     });
 
-    queryClient.invalidateQueries(["incomes"]);
-    queryClient.invalidateQueries(["settings"]);
-    queryClient.invalidateQueries(["settings-onboarding"]);
-
-    // Salva localStorage com chave por usuário para isolamento
     const userId = await getUserId();
+
+    queryClient.invalidateQueries(["incomes", userId]);
+    queryClient.invalidateQueries(["settings", userId]);
+    queryClient.invalidateQueries(["settings-onboarding", userId]);
+
+    // Salva localStorage com chave isolada por usuário
     if (userId) {
       localStorage.setItem(`aury_onboarding_complete_${userId}`, "true");
     }
-    // Mantém chave legada para compatibilidade (usuários antigos)
-    localStorage.setItem("aury_onboarding_complete", "true");
 
     setTimeout(() => {
       navigate(createPageUrl("Home"), { replace: true });
