@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { PremiumProvider, usePremium } from '@/lib/PremiumContext';
 import PremiumExpiredModal from '@/components/PremiumExpiredModal';
 import Upgrade from './pages/Upgrade';
+import Welcome from './pages/Welcome';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
