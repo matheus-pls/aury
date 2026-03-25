@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const EXPENSE_CATEGORIES = {
   fixed: { label: "Gastos Fixos", icon: Home, color: "bg-[#0A1A3A]", textColor: "text-[#0A1A3A]" },

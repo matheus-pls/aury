@@ -11,6 +11,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { usePremium } from "@/lib/PremiumContext";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const MENU_ITEMS = [
   {

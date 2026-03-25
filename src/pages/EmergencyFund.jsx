@@ -29,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export default function EmergencyFund() {
   const [showDetails, setShowDetails] = useState(false);

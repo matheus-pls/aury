@@ -44,6 +44,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import BackButton from "@/components/BackButton";
 import { toast } from "sonner";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const GOAL_CATEGORIES = {
   travel: { label: "Viagem", icon: Plane, color: "bg-blue-500", bgLight: "bg-blue-50" },

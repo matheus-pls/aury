@@ -37,6 +37,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const INCOME_TYPES = {
   salary: { label: "Salário", icon: Briefcase, color: "bg-blue-500" },
