@@ -105,9 +105,12 @@ export default function Home() {
 
   const createExpenseMutation = useMutation({
     mutationFn: (data) => base44.entities.Expense.create(data),
-    onSuccess: () => {
+    onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["expenses"] });
-      toast.success("Gasto registrado!");
+      const impact = parseFloat(vars.amount) || 0;
+      toast.success(`Gasto registrado 👍`, {
+        description: `Impacto: -${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(impact)} no mês`,
+      });
       setQuickDialog(null);
       setFormData({ description: "", amount: "", category: "essential", date: new Date().toISOString().slice(0, 10), type: "salary" });
     }
@@ -115,9 +118,12 @@ export default function Home() {
 
   const createIncomeMutation = useMutation({
     mutationFn: (data) => base44.entities.Income.create(data),
-    onSuccess: () => {
+    onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["incomes"] });
-      toast.success("Renda adicionada!");
+      const added = parseFloat(vars.amount) || 0;
+      toast.success(`Renda adicionada! 💚`, {
+        description: `+${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(added)} por mês no seu orçamento`,
+      });
       setQuickDialog(null);
       setFormData({ description: "", amount: "", category: "essential", date: new Date().toISOString().slice(0, 10), type: "salary" });
     }
