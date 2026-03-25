@@ -68,7 +68,8 @@ export default function Home() {
 
   const { data: incomes = [] } = useQuery({
     queryKey: ["incomes"],
-    queryFn: () => base44.entities.Income.filter({ is_active: true })
+    queryFn: () => base44.entities.Income.filter({ is_active: true }),
+    enabled: isAuthenticated && onboardingCompleted,
   });
 
   const prevMonth = (() => {
@@ -79,12 +80,14 @@ export default function Home() {
 
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses", currentMonth],
-    queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth })
+    queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth }),
+    enabled: isAuthenticated && onboardingCompleted,
   });
 
   const { data: prevExpenses = [] } = useQuery({
     queryKey: ["expenses", prevMonth],
-    queryFn: () => base44.entities.Expense.filter({ month_year: prevMonth })
+    queryFn: () => base44.entities.Expense.filter({ month_year: prevMonth }),
+    enabled: isAuthenticated && onboardingCompleted,
   });
 
   const allExpenses = [...expenses, ...prevExpenses];
@@ -94,7 +97,8 @@ export default function Home() {
     queryFn: async () => {
       const r = await base44.entities.UserSettings.list();
       return r[0] || null;
-    }
+    },
+    enabled: isAuthenticated && onboardingCompleted,
   });
 
   const createExpenseMutation = useMutation({
