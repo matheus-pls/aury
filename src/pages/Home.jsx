@@ -81,7 +81,11 @@ export default function Home() {
 
   const { data: incomes = [] } = useQuery({
     queryKey: ["incomes", userId],
-    queryFn: () => base44.entities.Income.filter({ is_active: true }),
+    queryFn: async () => {
+      const result = await base44.entities.Income.filter({ is_active: true });
+      console.log("[HOME] Incomes carregados:", result);
+      return result;
+    },
     enabled: isAuthenticated && onboardingCompleted && !!userId,
     staleTime: 0,
   });
@@ -106,6 +110,7 @@ export default function Home() {
     queryKey: ["settings", userId],
     queryFn: async () => {
       const r = await base44.entities.UserSettings.list();
+      console.log("[HOME] UserSettings carregado:", r[0]);
       return r[0] || null;
     },
     enabled: isAuthenticated && onboardingCompleted && !!userId,
@@ -150,14 +155,17 @@ export default function Home() {
   // Renda: usar dados manuais (Income entity) OU fallback do onboarding
   const manualIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
   const totalIncome = manualIncome > 0 ? manualIncome : (settings?.onboarding_income || 0);
+  console.log("[HOME] Cálculo de Renda:", { manualIncome, onboarding_income: settings?.onboarding_income, totalIncome });
 
   // Despesas: usar Expense entities. Se não houver, usar onboarding_fixed_expenses como fallback
   // (porque o onboarding já cria um Expense entity com os gastos fixos)
   const allMonthExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
   const totalExpenses = allMonthExpenses > 0 ? allMonthExpenses : (settings?.onboarding_fixed_expenses || 0);
+  console.log("[HOME] Cálculo de Despesas:", { allMonthExpenses, onboarding_fixed_expenses: settings?.onboarding_fixed_expenses, totalExpenses });
 
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
+  console.log("[HOME] Resultado Final:", { totalIncome, totalExpenses, balance, spentPct });
 
   // Se não há expenses registrados, usar gastos fixos do onboarding como fallback
   const expensesForCategory = expenses.length > 0 ? expenses : (settings?.onboarding_fixed_expenses > 0 ? [{ category: "fixed", amount: settings.onboarding_fixed_expenses }] : []);

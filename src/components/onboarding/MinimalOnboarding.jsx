@@ -99,12 +99,14 @@ export default function MinimalOnboarding() {
 
     // 1. Criar renda do usuário
     if (incomeValue > 0) {
+      console.log("[ONBOARDING] Criando Income entity:", { description: "Renda Mensal", amount: incomeValue, type: "salary" });
       await createIncomeMutation.mutateAsync({
         description: "Renda Mensal",
         amount: incomeValue,
         type: "salary",
         is_active: true,
       });
+      console.log("[ONBOARDING] Income entity criado com sucesso");
     }
 
     // 2. Criar gastos fixos iniciais (se informado)
@@ -135,6 +137,7 @@ export default function MinimalOnboarding() {
       investment_percentage: profileDistribution.investment,
     };
 
+    console.log("[ONBOARDING] Criando UserSettings com:", { onboarding_income: incomeValue, onboarding_fixed_expenses: fixedValue, financial_profile: selectedProfile });
     await createSettingsMutation.mutateAsync({
       risk_profile: selectedProfile === "focused" ? "aggressive" : selectedProfile === "essential" ? "conservative" : "moderate",
       fixed_percentage: distribution.fixed_percentage,
@@ -150,6 +153,7 @@ export default function MinimalOnboarding() {
       onboarding_fixed_expenses: fixedValue,
       financial_profile: selectedProfile,
     });
+    console.log("[ONBOARDING] UserSettings criado com sucesso");
 
     const userId = await getUserId();
 
