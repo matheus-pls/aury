@@ -178,46 +178,60 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
-              className="rounded-2xl p-5 border space-y-3"
+              className="rounded-2xl p-5 border space-y-4"
               style={{ background: 'rgba(95, 189, 189, 0.08)', borderColor: 'rgba(95, 189, 189, 0.2)' }}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <Sparkles className="w-4 h-4 text-[#5FBDBD]" />
-                <p className="text-sm font-semibold text-[#5FBDBD]">
-                  Seu Plano {PROFILE_EMOJIS[plan.profile]} {PROFILE_NAMES[plan.profile]}
-                </p>
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-[#5FBDBD]" />
+                <div className="text-left flex-1">
+                  <p className="text-sm font-semibold text-[#5FBDBD]">
+                    Seu Plano {PROFILE_EMOJIS[plan.profile]}
+                  </p>
+                  <p className="text-xs" style={{ color: 'hsl(0, 0%, 45%)' }}>
+                    Com base no seu perfil {PROFILE_NAMES[plan.profile].toLowerCase()}, distribuímos seu dinheiro
+                  </p>
+                </div>
               </div>
 
-              <div className="space-y-2 text-left">
+              <div className="space-y-2.5 text-left">
                 {[
-                  { label: 'Essenciais', value: plan.distribution.essential, emoji: '🛒' },
-                  { label: 'Supérfluos', value: plan.distribution.superfluous, emoji: '🎉' },
-                  { label: 'Reserva de Emergência', value: plan.distribution.emergency, emoji: '🛡️' },
-                  { label: 'Investimentos', value: plan.distribution.investment, emoji: '💰' },
-                ].map((item, idx) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.22 + idx * 0.08 }}
-                    className="flex items-center justify-between py-1.5"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{item.emoji}</span>
-                      <span className="text-xs font-medium text-white">{item.label}</span>
-                    </div>
-                    <span
-                      className="text-sm font-bold"
-                      style={{ color: '#5FBDBD' }}
+                  { label: 'Essenciais', value: plan.distribution.essential, emoji: '🛒', desc: 'Supermercado, farmácia...' },
+                  { label: 'Supérfluos', value: plan.distribution.superfluous, emoji: '🎉', desc: 'Lazer, assinaturas...' },
+                  { label: 'Reserva', value: plan.distribution.emergency, emoji: '🛡️', desc: 'Emergências inesperadas' },
+                  { label: 'Investimentos', value: plan.distribution.investment, emoji: '💰', desc: 'Crescimento no longo prazo' },
+                ].map((item, idx) => {
+                  const pct = plan.freeMoney > 0 ? ((item.value / plan.freeMoney) * 100).toFixed(0) : 0;
+                  return (
+                    <motion.div
+                      key={item.label}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.22 + idx * 0.08 }}
+                      className="flex items-start justify-between p-3 rounded-lg"
+                      style={{ background: 'rgba(95, 189, 189, 0.05)' }}
                     >
-                      {formatCurrency(item.value)}
-                    </span>
-                  </motion.div>
-                ))}
+                      <div className="flex items-start gap-2.5 flex-1">
+                        <span className="text-lg mt-0.5">{item.emoji}</span>
+                        <div>
+                          <p className="text-xs font-semibold text-white">{item.label}</p>
+                          <p className="text-[10px]" style={{ color: 'hsl(0, 0%, 45%)' }}>{item.desc}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold" style={{ color: '#5FBDBD' }}>
+                          {formatCurrency(item.value)}
+                        </p>
+                        <p className="text-[10px]" style={{ color: 'hsl(0, 0%, 45%)' }}>
+                          {pct}%
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
 
-              <p className="text-xs mt-3" style={{ color: 'hsl(0, 0%, 45%)' }}>
-                Esse plano reflete seu estilo. Ajuste como quiser depois 👍
+              <p className="text-xs text-center mt-3" style={{ color: 'hsl(0, 0%, 45%)' }}>
+                Esse plano reflete seu estilo. Você consegue ajustar depois 👍
               </p>
             </motion.div>
           )}
