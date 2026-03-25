@@ -129,6 +129,13 @@ export default function Home() {
     e.preventDefault();
     if (quickDialog === "expense") {
       createExpenseMutation.mutate({ ...formData, amount: parseFloat(formData.amount), month_year: formData.date.slice(0, 7) });
+    } else if (quickDialog === "income") {
+      // Para renda, apenas registramos sem necessidade de dialog complexo
+      toast.success("Renda adicionada 💰", {
+        description: `Renda de ${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(parseFloat(formData.amount))} registrada`,
+      });
+      setQuickDialog(null);
+      setFormData({ description: "", amount: "", category: "essential", date: new Date().toISOString().slice(0, 10), type: "salary" });
     }
   };
 
@@ -311,7 +318,16 @@ export default function Home() {
               <span className="text-xs font-semibold">Registrar gasto</span>
             </Button>
           </motion.div>
-
+          <motion.div whileTap={{ scale: 0.93 }} whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
+            <Button
+              onClick={() => setQuickDialog("income")}
+              className="w-full h-13 text-white gap-2 rounded-2xl flex-col py-3"
+              style={{ background: "linear-gradient(135deg, #34D399, #10B981)" }}
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-xs font-semibold">Adicionar renda</span>
+            </Button>
+          </motion.div>
         </div>
       </motion.div>
 
@@ -484,6 +500,45 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
+      {/* Quick Income Dialog */}
+      <Dialog open={quickDialog === "income"} onOpenChange={() => setQuickDialog(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader><DialogTitle>Adicionar Renda</DialogTitle></DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Input placeholder="Ex: Salário" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Valor</Label>
+                <Input type="number" step="0.01" placeholder="0,00" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} required />
+              </div>
+              <div className="space-y-2">
+                <Label>Data</Label>
+                <Input type="date" value={formData.date} onChange={(e) => setFormData({ ...formData, date: e.target.value })} required />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Tipo</Label>
+              <Select value={formData.type} onValueChange={(v) => setFormData({ ...formData, type: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="salary">Salário</SelectItem>
+                  <SelectItem value="freelance">Freelance</SelectItem>
+                  <SelectItem value="investment">Investimento</SelectItem>
+                  <SelectItem value="rental">Aluguel</SelectItem>
+                  <SelectItem value="other">Outro</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex gap-3">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setQuickDialog(null)}>Cancelar</Button>
+              <Button type="submit" className="flex-1 text-white" style={{ background: "linear-gradient(135deg, #34D399, #10B981)" }} disabled={false}>Adicionar</Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
     </div>
     </PullToRefresh>
