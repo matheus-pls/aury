@@ -38,32 +38,32 @@ function buildAlerts({ spentPct, expensesByCategory, totalIncome, balance }) {
   if (spentPct >= 100) {
     alerts.push({
       priority: 0, type: "risk",
-      icon: XCircle,
-      bg: "bg-red-500/10", border: "border-red-500/25", iconColor: "text-red-400",
-      label: "Risco", labelBg: "bg-red-500/20 text-red-400",
-      messageFree: "Você estourou o orçamento do mês.",
-      messagePremium: `Você estourou o orçamento em ${(spentPct - 100).toFixed(0)}%. Corte supérfluos agora para recuperar ${fmt(superfluous * 0.4)} até o fim do mês.`,
-      teaserFree: "Veja como evitar isso no próximo mês",
+      icon: TrendingDown,
+      accentColor: "#F87171",
+      label: "Risco",
+      messageFree: "Você pode estourar o orçamento esse mês.",
+      messagePremium: `Você já usou ${spentPct.toFixed(0)}% da renda. No ritmo atual vai fechar ${projectedEnd.toFixed(0)}% — ${fmt(balance < 0 ? Math.abs(balance) : 0)} no vermelho.`,
+      teaserFree: "Veja exatamente quanto você pode perder no Premium",
     });
   } else if (spentPct >= 85) {
     alerts.push({
       priority: 0, type: "risk",
       icon: TrendingDown,
-      bg: "bg-red-500/10", border: "border-red-500/25", iconColor: "text-red-400",
-      label: "Risco", labelBg: "bg-red-500/20 text-red-400",
+      accentColor: "#F87171",
+      label: "Risco",
       messageFree: "Você pode estourar o orçamento esse mês.",
-      messagePremium: `Você já usou ${spentPct.toFixed(0)}% da renda. No ritmo atual, vai fechar o mês em ${projectedEnd.toFixed(0)}% — ${fmt(balance < 0 ? Math.abs(balance) : 0)} no vermelho.`,
-      teaserFree: "Veja a projeção completa do mês",
+      messagePremium: `Você já usou ${spentPct.toFixed(0)}% da renda. No ritmo atual vai fechar o mês em ${projectedEnd.toFixed(0)}%.`,
+      teaserFree: "Veja exatamente quanto você pode perder no Premium",
     });
   } else if (spentPct > monthPct * 100 + 15) {
     alerts.push({
       priority: 0, type: "risk",
       icon: TrendingDown,
-      bg: "bg-red-500/10", border: "border-red-500/25", iconColor: "text-red-400",
-      label: "Risco", labelBg: "bg-red-500/20 text-red-400",
-      messageFree: "Seus gastos estão acelerados para essa fase do mês.",
+      accentColor: "#FBBF24",
+      label: "Atenção",
+      messageFree: "Você pode estourar o orçamento esse mês.",
       messagePremium: `Você gastou ${spentPct.toFixed(0)}% com apenas ${(monthPct * 100).toFixed(0)}% do mês passado. Projeção: ${projectedEnd.toFixed(0)}% ao final.`,
-      teaserFree: "Veja onde você está gastando mais",
+      teaserFree: "Veja exatamente quanto você pode perder no Premium",
     });
   }
 
