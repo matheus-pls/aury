@@ -54,14 +54,16 @@ export default function AuryFlow() {
   const recordingStartTimeRef = useRef(0);
   
   const queryClient = useQueryClient();
+  const { userId } = useCurrentUser();
 
-  // Fetch historical expenses for ML learning
+  // Fetch historical expenses for ML learning (scoped by userId)
   const { data: historicalExpenses = [] } = useQuery({
-    queryKey: ['expenses-history'],
+    queryKey: ['expenses-history', userId],
     queryFn: async () => {
       const result = await base44.entities.Expense.list();
       return result || [];
-    }
+    },
+    enabled: !!userId,
   });
 
   useEffect(() => {
@@ -73,7 +75,7 @@ export default function AuryFlow() {
   const createExpenseMutation = useMutation({
     mutationFn: (data) => base44.entities.Expense.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['expenses']);
+      queryClient.invalidateQueries(['expenses', userId]);
       toast.success("Gasto registrado com sucesso!");
       resetFlow();
     },
@@ -86,7 +88,7 @@ export default function AuryFlow() {
   const createIncomeMutation = useMutation({
     mutationFn: (data) => base44.entities.Income.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries(['incomes']);
+      queryClient.invalidateQueries(['incomes', userId]);
       toast.success("Renda registrada com sucesso!");
       resetFlow();
     },
