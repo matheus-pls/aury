@@ -123,7 +123,7 @@ export default function Home() {
   const createIncomeMutation = useMutation({
     mutationFn: (data) => base44.entities.Income.create(data),
     onSuccess: (_, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["incomes"] });
+      queryClient.invalidateQueries({ queryKey: ["incomes", userId] });
       const added = parseFloat(vars.amount) || 0;
       toast.success(`Renda adicionada! 💚`, {
         description: `+${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(added)} por mês no seu orçamento`,
