@@ -7,6 +7,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
+import OnboardingPlanGenerator from "./OnboardingPlanGenerator";
 
 const TOTAL_STEPS = 4;
 
