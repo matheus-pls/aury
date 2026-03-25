@@ -242,18 +242,20 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="space-y-2"
+              className="space-y-3 pt-2"
             >
-              <p className="text-sm text-white font-medium">
-                Pronto para começar a usar seu plano?
-              </p>
-              <p className="text-xs" style={{ color: 'hsl(0, 0%, 45%)' }}>
-                Você será redirecionado em instantes...
-              </p>
+              <div className="space-y-2">
+                <p className="text-sm text-white font-semibold">
+                  ✨ Seu plano está pronto!
+                </p>
+                <p className="text-xs" style={{ color: 'hsl(0, 0%, 55%)' }}>
+                  Você tem tudo que precisa para começar a controlar seu dinheiro e atingir seus objetivos.
+                </p>
+              </div>
               <motion.div
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ repeat: Infinity, duration: 1.5 }}
-                className="flex justify-center gap-1 mt-2"
+                className="flex justify-center gap-1 mt-3"
               >
                 {[0, 1, 2].map((i) => (
                   <div
@@ -263,6 +265,9 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
                   />
                 ))}
               </motion.div>
+              <p className="text-xs" style={{ color: 'hsl(0, 0%, 45%)' }}>
+                Levando você para o app...
+              </p>
             </motion.div>
           )}
         </motion.div>
