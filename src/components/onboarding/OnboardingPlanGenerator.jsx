@@ -5,7 +5,19 @@ import { Sparkles, ArrowRight, Check } from 'lucide-react';
 const formatCurrency = (v) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v);
 
-export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, selectedGoal, onComplete }) {
+const PROFILE_NAMES = {
+  essential: "Essencial",
+  balanced: "Equilibrado",
+  focused: "Focado",
+};
+
+const PROFILE_EMOJIS = {
+  essential: "🌿",
+  balanced: "⚖️",
+  focused: "🎯",
+};
+
+export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, selectedGoal, selectedProfile, onComplete }) {
   const [step, setStep] = useState(0);
   const [plan, setPlan] = useState(null);
 
@@ -18,11 +30,19 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
       const freeMoney = Math.max(0, income - fixed);
       const fixedPct = income > 0 ? (fixed / income) * 100 : 0;
 
-      // Sugestão de distribuição do dinheiro livre
-      const essential = freeMoney * 0.3; // 30% para essenciais variáveis
-      const superfluous = freeMoney * 0.2; // 20% para supérfluos
-      const emergency = freeMoney * 0.25; // 25% para reserva
-      const investment = freeMoney * 0.25; // 25% para investimentos
+      // Usar distribuição do perfil (em percentual do dinheiro livre)
+      const profileDistributions = {
+        essential: { essential: 40, superfluous: 30, emergency: 20, investment: 10 },
+        balanced: { essential: 30, superfluous: 20, emergency: 25, investment: 25 },
+        focused: { essential: 25, superfluous: 10, emergency: 30, investment: 35 },
+      };
+
+      const distribution = profileDistributions[selectedProfile] || profileDistributions.balanced;
+
+      const essential = freeMoney * (distribution.essential / 100);
+      const superfluous = freeMoney * (distribution.superfluous / 100);
+      const emergency = freeMoney * (distribution.emergency / 100);
+      const investment = freeMoney * (distribution.investment / 100);
 
       setPlan({
         income,
@@ -35,6 +55,7 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
           emergency,
           investment,
         },
+        profile: selectedProfile,
         goal: selectedGoal,
       });
 
@@ -42,7 +63,7 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
     }, 800);
 
     return () => clearTimeout(timer);
-  }, [monthlyIncome, fixedExpenses, selectedGoal]);
+  }, [monthlyIncome, fixedExpenses, selectedGoal, selectedProfile]);
 
   useEffect(() => {
     if (step === 1) {
