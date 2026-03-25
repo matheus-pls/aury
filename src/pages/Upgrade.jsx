@@ -123,9 +123,14 @@ export default function Upgrade() {
       >
         {isPremium ? (
           <>
-            <div className="flex items-center justify-center gap-2 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
-              <Crown className="w-5 h-5 text-amber-500 fill-amber-500/50" />
-              <p className="text-amber-500 font-semibold">Premium ativo! Você tem acesso completo.</p>
+            <div className="flex flex-col items-center gap-1 p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl text-center">
+              <div className="flex items-center gap-2">
+                <Crown className="w-5 h-5 text-amber-500 fill-amber-500/50" />
+                <p className="text-amber-500 font-semibold">Premium ativo!</p>
+              </div>
+              <p className="text-xs text-amber-400/70">
+                {minsLeft > 1 ? `Expira em ~${minsLeft} minutos` : "Expirando em instantes..."}
+              </p>
             </div>
             <Button
               variant="outline"
@@ -133,7 +138,7 @@ export default function Upgrade() {
               onClick={handleDeactivate}
             >
               <Lock className="w-4 h-4 mr-2" />
-              Desativar Premium (teste)
+              Encerrar teste
             </Button>
           </>
         ) : (
@@ -156,7 +161,7 @@ export default function Upgrade() {
               )}
             </Button>
             <p className="text-center text-xs text-muted-foreground">
-              Modo de teste — sem cobrança real 🔒
+              Modo de teste — 15 minutos · sem cobrança real 🔒
             </p>
           </>
         )}
