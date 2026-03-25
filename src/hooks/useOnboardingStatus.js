@@ -4,24 +4,24 @@ import { useAuth } from "@/lib/AuthContext";
 
 /**
  * Returns { isLoading, onboardingCompleted }
- * - If user is not authenticated, onboardingCompleted = false
- * - Checks UserSettings.onboarding_completed in the DB
- * - Falls back to localStorage for backwards compat
+ * - Isolado por usuário: usa user.id como parte da queryKey e do localStorage
+ * - Nunca retorna dados de outro usuário
  */
 export function useOnboardingStatus() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+  const userId = user?.id || user?.email || null;
 
   const { data: settings, isLoading } = useQuery({
-    queryKey: ["settings-onboarding"],
+    queryKey: ["settings-onboarding", userId],
     queryFn: async () => {
       const r = await base44.entities.UserSettings.list();
       return r[0] || null;
     },
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && !!userId,
     staleTime: 30 * 1000,
   });
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !userId) {
     return { isLoading: false, onboardingCompleted: false };
   }
 
@@ -30,9 +30,10 @@ export function useOnboardingStatus() {
     return { isLoading: true, onboardingCompleted: false };
   }
 
-  // Check DB field first, fallback to localStorage for legacy users
+  // Check DB field first, fallback to localStorage keyed by userId
   const dbCompleted = settings?.onboarding_completed === true;
-  const localCompleted = localStorage.getItem("aury_onboarding_complete") === "true";
+  const localKey = `aury_onboarding_complete_${userId}`;
+  const localCompleted = localStorage.getItem(localKey) === "true";
 
   return {
     isLoading: false,
