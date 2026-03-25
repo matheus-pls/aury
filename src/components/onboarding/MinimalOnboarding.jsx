@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, ArrowLeft, Check } from "lucide-react";
 import OnboardingPlanGenerator from "./OnboardingPlanGenerator";
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 5; // Renda, Objetivo, Gastos Fixos, Perfil, Plano
 
 const GOALS = [
   { id: "control", label: "Parar de gastar sem controle", emoji: "🛑" },
@@ -479,3 +479,5 @@ function ProgressDots({ step }) {
     </div>
   );
 }
+
+// Nota: ProgressDots mostra 4 steps (1-4) pois step 5 (Plan Generator) é a tela final sem dots
