@@ -81,6 +81,13 @@ export default function MinimalOnboarding() {
     queryClient.invalidateQueries(["incomes"]);
     queryClient.invalidateQueries(["settings"]);
     queryClient.invalidateQueries(["settings-onboarding"]);
+
+    // Salva localStorage com chave por usuário para isolamento
+    const userId = await getUserId();
+    if (userId) {
+      localStorage.setItem(`aury_onboarding_complete_${userId}`, "true");
+    }
+    // Mantém chave legada para compatibilidade (usuários antigos)
     localStorage.setItem("aury_onboarding_complete", "true");
 
     setTimeout(() => {
