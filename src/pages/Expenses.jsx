@@ -69,55 +69,58 @@ export default function Expenses() {
   });
 
   const queryClient = useQueryClient();
+  const { userId } = useCurrentUser();
 
   const { data: expenses = [], isLoading } = useQuery({
-    queryKey: ['expenses', selectedMonth],
-    queryFn: () => base44.entities.Expense.filter({ month_year: selectedMonth }, '-date')
+    queryKey: ['expenses', userId, selectedMonth],
+    queryFn: () => base44.entities.Expense.filter({ month_year: selectedMonth }, '-date'),
+    enabled: !!userId,
   });
 
   const { data: incomes = [] } = useQuery({
-    queryKey: ['incomes'],
-    queryFn: () => base44.entities.Income.filter({ is_active: true })
+    queryKey: ['incomes', userId],
+    queryFn: () => base44.entities.Income.filter({ is_active: true }),
+    enabled: !!userId,
   });
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Expense.create(data),
     onMutate: async (newExpense) => {
-      await queryClient.cancelQueries(['expenses', selectedMonth]);
-      const prev = queryClient.getQueryData(['expenses', selectedMonth]);
-      queryClient.setQueryData(['expenses', selectedMonth], (old = []) => [
+      await queryClient.cancelQueries(['expenses', userId, selectedMonth]);
+      const prev = queryClient.getQueryData(['expenses', userId, selectedMonth]);
+      queryClient.setQueryData(['expenses', userId, selectedMonth], (old = []) => [
         { ...newExpense, id: `temp-${Date.now()}` }, ...old
       ]);
       return { prev };
     },
-    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', selectedMonth], ctx.prev),
-    onSuccess: () => { queryClient.invalidateQueries(['expenses']); handleCloseDialog(); }
+    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', userId, selectedMonth], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['expenses', userId]); handleCloseDialog(); }
   });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Expense.update(id, data),
     onMutate: async ({ id, data }) => {
-      await queryClient.cancelQueries(['expenses', selectedMonth]);
-      const prev = queryClient.getQueryData(['expenses', selectedMonth]);
-      queryClient.setQueryData(['expenses', selectedMonth], (old = []) =>
+      await queryClient.cancelQueries(['expenses', userId, selectedMonth]);
+      const prev = queryClient.getQueryData(['expenses', userId, selectedMonth]);
+      queryClient.setQueryData(['expenses', userId, selectedMonth], (old = []) =>
         old.map(e => e.id === id ? { ...e, ...data } : e)
       );
       return { prev };
     },
-    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', selectedMonth], ctx.prev),
-    onSuccess: () => { queryClient.invalidateQueries(['expenses']); handleCloseDialog(); }
+    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', userId, selectedMonth], ctx.prev),
+    onSuccess: () => { queryClient.invalidateQueries(['expenses', userId]); handleCloseDialog(); }
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id) => base44.entities.Expense.delete(id),
     onMutate: async (id) => {
-      await queryClient.cancelQueries(['expenses', selectedMonth]);
-      const prev = queryClient.getQueryData(['expenses', selectedMonth]);
-      queryClient.setQueryData(['expenses', selectedMonth], (old = []) => old.filter(e => e.id !== id));
+      await queryClient.cancelQueries(['expenses', userId, selectedMonth]);
+      const prev = queryClient.getQueryData(['expenses', userId, selectedMonth]);
+      queryClient.setQueryData(['expenses', userId, selectedMonth], (old = []) => old.filter(e => e.id !== id));
       return { prev };
     },
-    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', selectedMonth], ctx.prev),
-    onSuccess: () => queryClient.invalidateQueries(['expenses'])
+    onError: (_, __, ctx) => queryClient.setQueryData(['expenses', userId, selectedMonth], ctx.prev),
+    onSuccess: () => queryClient.invalidateQueries(['expenses', userId])
   });
 
   const handleOpenDialog = (expense = null) => {
