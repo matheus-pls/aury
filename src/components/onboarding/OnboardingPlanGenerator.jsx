@@ -183,7 +183,9 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
             >
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="w-4 h-4 text-[#5FBDBD]" />
-                <p className="text-sm font-semibold text-[#5FBDBD]">Sugestão de Distribuição</p>
+                <p className="text-sm font-semibold text-[#5FBDBD]">
+                  Seu Plano {PROFILE_EMOJIS[plan.profile]} {PROFILE_NAMES[plan.profile]}
+                </p>
               </div>
 
               <div className="space-y-2 text-left">
