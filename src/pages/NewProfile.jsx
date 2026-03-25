@@ -37,15 +37,18 @@ const formatCurrency = (v) =>
 export default function NewProfile() {
   const { isPremium } = usePremium();
   const navigate = useNavigate();
+  const { userId } = useCurrentUser();
 
   const { data: user } = useQuery({
-    queryKey: ["current-user"],
-    queryFn: () => base44.auth.me()
+    queryKey: ["current-user", userId],
+    queryFn: () => base44.auth.me(),
+    enabled: !!userId,
   });
 
   const { data: incomes = [] } = useQuery({
-    queryKey: ["incomes"],
-    queryFn: () => base44.entities.Income.filter({ is_active: true })
+    queryKey: ["incomes", userId],
+    queryFn: () => base44.entities.Income.filter({ is_active: true }),
+    enabled: !!userId,
   });
 
   const totalIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
