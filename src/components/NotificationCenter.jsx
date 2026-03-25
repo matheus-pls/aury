@@ -29,26 +29,22 @@ const NOTIFICATION_COLORS = {
 export default function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
-
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me()
-  });
+  const { userId, user } = useCurrentUser();
 
   const { data: notifications = [] } = useQuery({
-    queryKey: ['notifications', user?.email],
+    queryKey: ['notifications', userId],
     queryFn: () => base44.entities.Notification.filter({ created_by: user?.email }, '-created_date', 20),
-    enabled: !!user
+    enabled: !!userId && !!user?.email
   });
 
   const markAsReadMutation = useMutation({
     mutationFn: (id) => base44.entities.Notification.update(id, { read: true }),
-    onSuccess: () => queryClient.invalidateQueries(['notifications'])
+    onSuccess: () => queryClient.invalidateQueries(['notifications', userId])
   });
 
   const deleteNotificationMutation = useMutation({
     mutationFn: (id) => base44.entities.Notification.delete(id),
-    onSuccess: () => queryClient.invalidateQueries(['notifications'])
+    onSuccess: () => queryClient.invalidateQueries(['notifications', userId])
   });
 
   const unreadCount = notifications.filter(n => !n.read).length;
