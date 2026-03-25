@@ -27,6 +27,7 @@ import RecentTransactions from "@/components/home/RecentTransactions";
 import MicroInsights from "@/components/home/MicroInsights";
 import PremiumPreview from "@/components/home/PremiumPreview";
 import MonthSituationCard from "@/components/home/MonthSituationCard";
+import DailyInsightBanner from "@/components/home/DailyInsightBanner";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
