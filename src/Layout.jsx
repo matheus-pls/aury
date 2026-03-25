@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { usePremium } from "@/lib/PremiumContext";
+import { useAuth } from "@/lib/AuthContext";
 import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
 import BottomTabBar from "@/components/BottomTabBar";
