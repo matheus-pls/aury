@@ -362,10 +362,81 @@ export default function MinimalOnboarding() {
             </motion.div>
           )}
 
-          {/* STEP 4 — Plan Generator */}
+          {/* STEP 4 — Perfil Financeiro */}
           {step === 4 && (
             <motion.div
               key="step4"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.22 }}
+            >
+              <div className="text-center mb-8">
+                <h1 className="text-2xl font-bold text-white mb-1.5">Qual é seu estilo financeiro?</h1>
+                <p className="text-sm" style={{ color: "hsl(0, 0%, 58%)" }}>
+                  Isso vai personalizar seu plano inicial
+                </p>
+              </div>
+              <div
+                className="rounded-2xl p-5 border space-y-3"
+                style={{ background: "hsl(220, 13%, 11%)", borderColor: "hsl(220, 10%, 20%)" }}
+              >
+                {PROFILES.map((profile) => {
+                  const active = selectedProfile === profile.id;
+                  return (
+                    <button
+                      key={profile.id}
+                      onClick={() => setSelectedProfile(profile.id)}
+                      className="w-full flex items-start gap-3 px-4 py-3.5 rounded-xl border transition-all duration-200 text-left"
+                      style={{
+                        background: active ? "rgba(95,189,189,0.12)" : "transparent",
+                        borderColor: active ? "#5FBDBD" : "hsl(220, 10%, 22%)",
+                      }}
+                    >
+                      <span className="text-2xl mt-0.5">{profile.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className="font-semibold text-sm"
+                          style={{ color: active ? "#5FBDBD" : "hsl(0, 0%, 95%)" }}
+                        >
+                          {profile.label}
+                        </p>
+                        <p className="text-xs mt-0.5" style={{ color: "hsl(0, 0%, 55%)" }}>
+                          {profile.description}
+                        </p>
+                      </div>
+                      {active && <Check className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: "#5FBDBD" }} />}
+                    </button>
+                  );
+                })}
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setStep(3)}
+                    className="flex-1 h-11 text-white/50 hover:text-white hover:bg-white/5"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-1" />
+                    Voltar
+                  </Button>
+                  <Button
+                    onClick={handleComplete}
+                    disabled={!selectedProfile}
+                    className="flex-1 h-11 font-semibold text-white"
+                    style={{ background: "linear-gradient(135deg, #5FBDBD, #1B3A52)" }}
+                  >
+                    Continuar
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+              </div>
+              <ProgressDots step={step} />
+            </motion.div>
+          )}
+
+          {/* STEP 5 — Plan Generator */}
+          {step === 5 && (
+            <motion.div
+              key="step5"
               initial={{ opacity: 0, scale: 0.94 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 }}
@@ -375,6 +446,7 @@ export default function MinimalOnboarding() {
                 monthlyIncome={monthlyIncome}
                 fixedExpenses={fixedExpenses}
                 selectedGoal={selectedGoal}
+                selectedProfile={selectedProfile}
                 onComplete={handlePlanComplete}
               />
             </motion.div>
