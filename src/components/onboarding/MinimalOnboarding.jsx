@@ -26,6 +26,14 @@ export default function MinimalOnboarding() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  // Pega o userId para isolar o localStorage por usuário
+  const getUserId = async () => {
+    try {
+      const u = await base44.auth.me();
+      return u?.id || u?.email || null;
+    } catch { return null; }
+  };
+
   const createIncomeMutation = useMutation({
     mutationFn: (data) => base44.entities.Income.create(data),
   });
