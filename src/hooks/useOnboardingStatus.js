@@ -13,6 +13,7 @@ export function useOnboardingStatus() {
   const { data: settings, isLoading: isLoadingSettings } = useQuery({
     queryKey: ["settings-onboarding", userId],
     queryFn: async () => {
+      // O SDK aplica RLS por created_by automaticamente — retorna apenas dados do usuário autenticado
       const r = await base44.entities.UserSettings.list();
       return r[0] || null;
     },
