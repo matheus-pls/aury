@@ -105,18 +105,18 @@ function buildAlerts({ spentPct, expensesByCategory, totalIncome, balance }) {
     alerts.push({
       priority: 2, type: "opportunity",
       icon: PiggyBank,
-      bg: "bg-[#5FBDBD]/10", border: "border-[#5FBDBD]/25", iconColor: "text-[#5FBDBD]",
-      label: "Dica", labelBg: "bg-[#5FBDBD]/20 text-[#5FBDBD]",
+      accentColor: "#5FBDBD",
+      label: "Dica",
       messageFree: "Você pode economizar ajustando seus supérfluos.",
       messagePremium: `Reduzindo 30% dos supérfluos você economiza ${possibleSaving} esse mês e acelera sua reserva.`,
-      teaserFree: "Ver simulação de economia",
+      teaserFree: "Ver simulação de economia no Premium",
     });
   } else if (balance > totalIncome * 0.15 && spentPct < 70) {
     alerts.push({
       priority: 2, type: "opportunity",
       icon: Zap,
-      bg: "bg-[#5FBDBD]/10", border: "border-[#5FBDBD]/25", iconColor: "text-[#5FBDBD]",
-      label: "Oportunidade", labelBg: "bg-[#5FBDBD]/20 text-[#5FBDBD]",
+      accentColor: "#5FBDBD",
+      label: "Oportunidade",
       messageFree: "Você tem dinheiro sobrando esse mês.",
       messagePremium: `Você tem ${fmt(balance)} sobrando. Direcionar parte disso para a caixinha pode garantir ${(balance / totalIncome * 100).toFixed(0)}% do mês seguinte.`,
       teaserFree: "Veja como usar esse dinheiro com inteligência",
