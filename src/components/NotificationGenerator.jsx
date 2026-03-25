@@ -216,7 +216,7 @@ export default function NotificationGenerator() {
     // Gerar notificações após 2 segundos (dar tempo para queries carregarem)
     const timer = setTimeout(generateNotifications, 2000);
     return () => clearTimeout(timer);
-  }, [user, expenses, goals, settings, incomes, existingNotifications, today]);
+  }, [userId, user, expenses, goals, settings, incomes, existingNotifications, today]);
 
   return null; // Componente invisível
 }
