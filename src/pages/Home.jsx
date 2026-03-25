@@ -253,22 +253,23 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.12 }}
-            className={`relative overflow-hidden rounded-2xl px-5 py-4 bg-gradient-to-br ${tranquilityStatus.color} text-white`}
+            className="relative overflow-hidden rounded-2xl px-5 py-4"
+            style={{ background: tranquilityStatus.bg, border: `1px solid ${tranquilityStatus.border}` }}
           >
             <div className="flex items-center justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <Heart className="w-3.5 h-3.5 text-white/70" />
-                  <p className="text-white/70 text-xs font-medium">Índice de Tranquilidade</p>
+                  <Heart className="w-3.5 h-3.5" style={{ color: tranquilityStatus.accent }} />
+                  <p className="text-muted-foreground text-xs font-medium">Índice de Tranquilidade</p>
                 </div>
-                <p className="text-sm font-semibold text-white">{tranquilityInterpretation}</p>
+                <p className="text-sm font-semibold text-foreground">{tranquilityInterpretation}</p>
               </div>
               <div className="text-right">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold">{tranquilityIndex}</span>
-                  <span className="text-sm text-white/60">/100</span>
+                  <span className="text-3xl font-bold" style={{ color: tranquilityStatus.accent }}>{tranquilityIndex}</span>
+                  <span className="text-sm text-muted-foreground">/100</span>
                 </div>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/20">{tranquilityStatus.label}</span>
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: `${tranquilityStatus.border}`, color: tranquilityStatus.accent }}>{tranquilityStatus.label}</span>
               </div>
             </div>
           </motion.div>
