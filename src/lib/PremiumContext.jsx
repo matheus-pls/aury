@@ -12,10 +12,15 @@ function checkPremium() {
   return Date.now() < Number(until);
 }
 
+function checkTrialUsed() {
+  return localStorage.getItem(TRIAL_USED_KEY) === "true";
+}
+
 const PremiumContext = createContext(null);
 
 export function PremiumProvider({ children }) {
   const [isPremium, setIsPremium] = useState(checkPremium);
+  const [trialUsed, setTrialUsed] = useState(checkTrialUsed);
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const timerRef = useRef(null);
 
