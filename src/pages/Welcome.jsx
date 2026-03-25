@@ -12,18 +12,12 @@ export default function Welcome() {
   const { isLoading, onboardingCompleted } = useOnboardingStatus();
 
   useEffect(() => {
-    if (isLoadingAuth || isLoading) return;
+    if (isLoadingAuth) return;
 
     if (!isAuthenticated) {
-      // Not logged in → go to login
       base44.auth.redirectToLogin(window.location.href);
-      return;
     }
-
-    if (onboardingCompleted) {
-      navigate(createPageUrl("Home"), { replace: true });
-    }
-  }, [isAuthenticated, isLoadingAuth, isLoading, onboardingCompleted, navigate]);
+  }, [isAuthenticated, isLoadingAuth]);
 
   if (isLoadingAuth || isLoading) {
     return (
