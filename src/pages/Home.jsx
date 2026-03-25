@@ -31,6 +31,7 @@ import DailyInsightBanner from "@/components/home/DailyInsightBanner";
 import ShareResultCard from "@/components/home/ShareResultCard";
 import WeeklyChallenge from "@/components/home/WeeklyChallenge";
 import ReferralBanner from "@/components/home/ReferralBanner";
+import InitialPlanModal from "@/components/home/InitialPlanModal";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -221,7 +222,9 @@ export default function Home() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div className="space-y-6 pb-8">
+    <>
+      <InitialPlanModal settings={settings} totalIncome={totalIncome} userId={userId} />
+      <div className="space-y-6 pb-8">
 
       {/* Greeting */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
@@ -541,6 +544,7 @@ export default function Home() {
       </Dialog>
 
     </div>
+    </>
     </PullToRefresh>
   );
 }
