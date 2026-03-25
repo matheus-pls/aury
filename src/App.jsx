@@ -91,6 +91,8 @@ const AuthenticatedApp = () => {
             <Upgrade />
           </LayoutWrapper>
         } />
+        {/* Welcome/Onboarding — sem sidebar, layout isolado */}
+        <Route path="/Welcome" element={<Welcome />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </AnimatePresence>
