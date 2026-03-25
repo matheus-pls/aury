@@ -19,6 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const EXPENSE_CATEGORIES = {
   fixed: "Gastos Fixos",
