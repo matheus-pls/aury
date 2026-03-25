@@ -33,6 +33,7 @@ import WeeklyChallenge from "@/components/home/WeeklyChallenge";
 import ReferralBanner from "@/components/home/ReferralBanner";
 import InitialPlanModal from "@/components/home/InitialPlanModal";
 import SmartHeading from "@/components/home/SmartHeading";
+import UpgradePrompt from "@/components/home/UpgradePrompt";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -243,6 +244,13 @@ export default function Home() {
       {!hasNoData && (
         <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.02, duration: 0.3 }}>
           <SmartHeading spentPct={spentPct} balance={balance} totalIncome={totalIncome} />
+        </motion.div>
+      )}
+
+      {/* Upgrade Prompt - Smart Triggers */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+          <UpgradePrompt spentPct={spentPct} balance={balance} totalIncome={totalIncome} isPremium={isPremium} />
         </motion.div>
       )}
 
