@@ -48,7 +48,7 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
       className="rounded-3xl p-6 text-white shadow-xl overflow-hidden"
-      style={{ background: statusConfig.bg }}
+      style={{ background: statusConfig.bg, border: statusConfig.border }}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
