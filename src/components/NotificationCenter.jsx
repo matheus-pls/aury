@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 const NOTIFICATION_ICONS = {
   bill_due: Calendar,
