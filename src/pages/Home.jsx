@@ -176,6 +176,18 @@ export default function Home() {
 
   const handleRefresh = async () => { await queryClient.invalidateQueries(); };
 
+  // Show loading while checking auth/onboarding
+  if (isLoadingAuth || isLoadingOnboarding) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-[#5FBDBD] rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  // Should not render if not authenticated or onboarding not done (redirects handled above)
+  if (!isAuthenticated || !onboardingCompleted) return null;
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 pb-8">
