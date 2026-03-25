@@ -94,6 +94,15 @@ export const AuthProvider = ({ children }) => {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
       const currentUser = await base44.auth.me();
+
+      // Se o usuário trocou, limpa todo o cache do React Query para evitar
+      // que dados do usuário anterior apareçam para o novo usuário
+      const newUserId = currentUser?.id || currentUser?.email;
+      if (prevUserIdRef.current && prevUserIdRef.current !== newUserId) {
+        queryClientInstance.clear();
+      }
+      prevUserIdRef.current = newUserId;
+
       setUser(currentUser);
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
