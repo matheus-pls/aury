@@ -147,20 +147,15 @@ export default function Home() {
     }
   };
 
-  // Calcular renda com fallback do onboarding
-  let calculatedIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
-  if (calculatedIncome === 0 && settings?.onboarding_income > 0) {
-    calculatedIncome = settings.onboarding_income;
-  }
+  // Renda: usar dados manuais (Income entity) OU fallback do onboarding
+  const manualIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
+  const totalIncome = manualIncome > 0 ? manualIncome : (settings?.onboarding_income || 0);
 
-  // Calcular despesas com fallback do onboarding
-  let calculatedExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
-  if (calculatedExpenses === 0 && settings?.onboarding_fixed_expenses > 0) {
-    calculatedExpenses = settings.onboarding_fixed_expenses;
-  }
+  // Despesas: gastos fixos do onboarding + gastos manuais do mês
+  const fixedExpensesFromOnboarding = settings?.onboarding_fixed_expenses || 0;
+  const manualExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
+  const totalExpenses = fixedExpensesFromOnboarding + manualExpenses;
 
-  const totalIncome = calculatedIncome;
-  const totalExpenses = calculatedExpenses;
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
 
@@ -227,7 +222,7 @@ export default function Home() {
   // Should not render if not authenticated or onboarding not done (redirects handled above)
   if (!isAuthenticated || !onboardingCompleted) return null;
 
-  const hasNoData = totalIncome === 0 && calculatedExpenses === 0;
+  const hasNoData = totalIncome === 0;
 
   const tranquilityInterpretation =
     tranquilityIndex >= 70
