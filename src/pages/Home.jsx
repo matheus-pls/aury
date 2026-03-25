@@ -34,6 +34,7 @@ import ReferralBanner from "@/components/home/ReferralBanner";
 import InitialPlanModal from "@/components/home/InitialPlanModal";
 import SmartHeading from "@/components/home/SmartHeading";
 import UpgradePrompt from "@/components/home/UpgradePrompt";
+import EmotionalFeedback from "@/components/home/EmotionalFeedback";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -150,6 +151,11 @@ export default function Home() {
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
 
+  // Calcular % de gastos do mês anterior para feedback emocional
+  const prevTotalExpenses = prevExpenses.reduce((s, e) => s + e.amount, 0);
+  const prevTotalIncome = Number(settings?.onboarding_income) || totalIncome; // usar mesma renda base
+  const prevSpentPct = prevTotalIncome > 0 ? (prevTotalExpenses / prevTotalIncome) * 100 : undefined;
+
   // Usar Expense entities para distribuição por categoria
   const expensesForCategory = expenses.length > 0 ? expenses : [];
 
@@ -247,9 +253,16 @@ export default function Home() {
         </motion.div>
       )}
 
+      {/* Emotional Feedback */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}>
+          <EmotionalFeedback currentSpentPct={spentPct} previousSpentPct={prevSpentPct} />
+        </motion.div>
+      )}
+
       {/* Upgrade Prompt - Smart Triggers */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.06 }}>
+        <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
           <UpgradePrompt spentPct={spentPct} balance={balance} totalIncome={totalIncome} isPremium={isPremium} />
         </motion.div>
       )}
