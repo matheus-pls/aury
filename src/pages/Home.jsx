@@ -34,6 +34,9 @@ export default function Home() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const queryClient = useQueryClient();
   const { isPremium } = usePremium();
+  const { isAuthenticated, isLoadingAuth } = useAuth();
+  const { isLoading: isLoadingOnboarding, onboardingCompleted } = useOnboardingStatus();
+  const navigate = useNavigate();
 
   const [quickDialog, setQuickDialog] = useState(null); // "expense" | "income"
   const [formData, setFormData] = useState({
@@ -41,9 +44,26 @@ export default function Home() {
     date: new Date().toISOString().slice(0, 10), type: "salary"
   });
 
+  // Redirect unauthenticated users to login
+  useEffect(() => {
+    if (isLoadingAuth) return;
+    if (!isAuthenticated) {
+      base44.auth.redirectToLogin(window.location.href);
+    }
+  }, [isAuthenticated, isLoadingAuth]);
+
+  // Redirect to onboarding if not completed
+  useEffect(() => {
+    if (isLoadingAuth || isLoadingOnboarding) return;
+    if (isAuthenticated && !onboardingCompleted) {
+      navigate(createPageUrl("Welcome"), { replace: true });
+    }
+  }, [isAuthenticated, isLoadingAuth, isLoadingOnboarding, onboardingCompleted, navigate]);
+
   const { data: user } = useQuery({
     queryKey: ["current-user"],
-    queryFn: () => base44.auth.me()
+    queryFn: () => base44.auth.me(),
+    enabled: isAuthenticated,
   });
 
   const { data: incomes = [] } = useQuery({
