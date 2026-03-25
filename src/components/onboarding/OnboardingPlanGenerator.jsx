@@ -17,12 +17,29 @@ const PROFILE_EMOJIS = {
   focused: "🎯",
 };
 
+const LOADING_PHRASES = [
+  "Analisando sua renda...",
+  "Organizando seus gastos...",
+  "Criando sua estratégia...",
+];
+
 export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, selectedGoal, selectedProfile, onComplete }) {
   const [step, setStep] = useState(0);
   const [plan, setPlan] = useState(null);
+  const [phraseIndex, setPhraseIndex] = useState(0);
 
   useEffect(() => {
-    // Simula o processamento do plano
+    // Rotaciona frases a cada 600ms durante o loading
+    if (step === 0) {
+      const phraseTimer = setInterval(() => {
+        setPhraseIndex((prev) => (prev + 1) % LOADING_PHRASES.length);
+      }, 600);
+      return () => clearInterval(phraseTimer);
+    }
+  }, [step]);
+
+  useEffect(() => {
+    // Simula o processamento do plano (2.5s de duração)
     const timer = setTimeout(() => {
       const income = parseFloat(monthlyIncome.replace(/\D/g, '')) / 100;
       const fixed = fixedExpenses ? parseFloat(fixedExpenses.replace(/\D/g, '')) / 100 : 0;
@@ -60,7 +77,7 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
       });
 
       setStep(1);
-    }, 800);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, [monthlyIncome, fixedExpenses, selectedGoal, selectedProfile]);
@@ -98,9 +115,18 @@ export default function OnboardingPlanGenerator({ monthlyIncome, fixedExpenses, 
           className="w-14 h-14 mx-auto rounded-full border-4 border-white/10 border-t-[#5FBDBD]"
         />
         <h2 className="text-xl font-bold text-white">Montando seu plano...</h2>
-        <p className="text-sm" style={{ color: 'hsl(0, 0%, 55%)' }}>
-          Tudo certo. Já vou te mostrar o que preparei 🌱
-        </p>
+        <motion.div
+          key={phraseIndex}
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -5 }}
+          transition={{ duration: 0.3 }}
+          className="h-6 flex items-center justify-center"
+        >
+          <p className="text-sm" style={{ color: '#5FBDBD' }}>
+            {LOADING_PHRASES[phraseIndex]}
+          </p>
+        </motion.div>
       </motion.div>
 
       {/* Plano Gerado */}
