@@ -278,7 +278,8 @@ export default function Home() {
         <div className="grid grid-cols-2 gap-3">
           <Button
             onClick={() => setQuickDialog("expense")}
-            className="h-13 bg-rose-500 hover:bg-rose-600 text-white gap-2 rounded-2xl flex-col py-3"
+            className="h-13 text-white gap-2 rounded-2xl flex-col py-3"
+            style={{ background: "linear-gradient(135deg, #5FBDBD, #3A9A9A)" }}
           >
             <Receipt className="w-4 h-4" />
             <span className="text-xs font-semibold">Registrar gasto</span>
