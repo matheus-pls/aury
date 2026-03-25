@@ -94,7 +94,7 @@ export function PremiumProvider({ children }) {
   };
 
   return (
-    <PremiumContext.Provider value={{ isPremium, trialUsed, activate, deactivate, minutesLeft, showExpiredModal, dismissExpiredModal }}>
+    <PremiumContext.Provider value={{ isPremium, trialUsed, activate, deactivate, minutesLeft, showExpiredModal, dismissExpiredModal, devResetTrial }}>
       {children}
     </PremiumContext.Provider>
   );
