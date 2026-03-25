@@ -16,7 +16,6 @@ import {
   Lock,
   LogIn
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 import { useNavigate } from "react-router-dom";
 import { usePremium } from "@/lib/PremiumContext";
 import { useAuth } from "@/lib/AuthContext";
