@@ -343,23 +343,14 @@ export default function MinimalOnboarding() {
                     Voltar
                   </Button>
                   <Button
-                    onClick={handleComplete}
+                    onClick={() => setStep(4)}
                     className="flex-1 h-11 font-semibold text-white"
                     style={{ background: "linear-gradient(135deg, #5FBDBD, #1B3A52)" }}
                   >
                     Continuar
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
-                </div>
-                <button
-                  onClick={handleComplete}
-                  className="w-full text-xs text-center py-1 transition-colors"
-                  style={{ color: "hsl(0, 0%, 40%)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = "hsl(0, 0%, 65%)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = "hsl(0, 0%, 40%)")}
-                >
-                  Pular por agora
-                </button>
+                  </div>
               </div>
               <ProgressDots step={step} />
             </motion.div>
