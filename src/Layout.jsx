@@ -253,6 +253,7 @@ export default function Layout({ children, currentPageName }) {
                 Entrar / Criar conta
               </button>
             )}
+            <DevResetUser />
             <div className="bg-muted rounded-2xl p-4">
               <p className="text-xs text-muted-foreground mb-1">Você não precisa fazer isso sozinho</p>
               <p className="text-sm font-semibold text-foreground">Estou aqui com você</p>
