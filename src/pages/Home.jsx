@@ -109,6 +109,7 @@ export default function Home() {
       return r[0] || null;
     },
     enabled: isAuthenticated && onboardingCompleted && !!userId,
+    staleTime: 0,
   });
 
   const createExpenseMutation = useMutation({
