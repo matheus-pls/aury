@@ -285,22 +285,26 @@ export default function Home() {
       {/* Quick Actions */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
         <div className="grid grid-cols-2 gap-3">
-          <Button
-            onClick={() => setQuickDialog("expense")}
-            className="h-13 text-white gap-2 rounded-2xl flex-col py-3"
-            style={{ background: "linear-gradient(135deg, #5FBDBD, #3A9A9A)" }}
-          >
-            <Receipt className="w-4 h-4" />
-            <span className="text-xs font-semibold">Registrar gasto</span>
-          </Button>
-          <Button
-            onClick={() => setQuickDialog("income")}
-            className="h-13 text-white gap-2 rounded-2xl flex-col py-3"
-            style={{ background: "linear-gradient(135deg, #34D399, #059669)" }}
-          >
-            <Plus className="w-4 h-4" />
-            <span className="text-xs font-semibold">Adicionar renda</span>
-          </Button>
+          <motion.div whileTap={{ scale: 0.93 }} whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
+            <Button
+              onClick={() => setQuickDialog("expense")}
+              className="w-full h-13 text-white gap-2 rounded-2xl flex-col py-3"
+              style={{ background: "linear-gradient(135deg, #5FBDBD, #3A9A9A)" }}
+            >
+              <Receipt className="w-4 h-4" />
+              <span className="text-xs font-semibold">Registrar gasto</span>
+            </Button>
+          </motion.div>
+          <motion.div whileTap={{ scale: 0.93 }} whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
+            <Button
+              onClick={() => setQuickDialog("income")}
+              className="w-full h-13 text-white gap-2 rounded-2xl flex-col py-3"
+              style={{ background: "linear-gradient(135deg, #34D399, #059669)" }}
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-xs font-semibold">Adicionar renda</span>
+            </Button>
+          </motion.div>
         </div>
       </motion.div>
 
