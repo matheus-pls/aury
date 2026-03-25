@@ -145,11 +145,11 @@ export default function Home() {
   };
 
   const categoryData = [
-    { name: "Fixos",        value: expensesByCategory.fixed,       color: "#1B3A52" },
-    { name: "Essenciais",   value: expensesByCategory.essential,   color: "#5FBDBD" },
-    { name: "Supérfluos",   value: expensesByCategory.superfluous, color: "#7FCFCF" },
-    { name: "Emergência",   value: expensesByCategory.emergency,   color: "#4FA9A5" },
-    { name: "Investimentos",value: expensesByCategory.investment,  color: "#2A4A62" },
+    { name: "Fixos",        value: expensesByCategory.fixed,       color: "#60A5FA" },
+    { name: "Essenciais",   value: expensesByCategory.essential,   color: "#34D399" },
+    { name: "Supérfluos",   value: expensesByCategory.superfluous, color: "#F472B6" },
+    { name: "Emergência",   value: expensesByCategory.emergency,   color: "#FBBF24" },
+    { name: "Investimentos",value: expensesByCategory.investment,  color: "#A78BFA" },
   ].filter(i => i.value > 0);
 
   const currentSettings = settings || { emergency_fund_goal_months: 6, current_emergency_fund: 0 };
@@ -319,7 +319,12 @@ export default function Home() {
                       <Pie data={categoryData} cx="50%" cy="50%" innerRadius={45} outerRadius={75} paddingAngle={4} dataKey="value">
                         {categoryData.map((e, i) => <Cell key={i} fill={e.color} />)}
                       </Pie>
-                      <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", color: "hsl(var(--foreground))" }} />
+                      <Tooltip
+                        formatter={(v) => [formatCurrency(v), ""]}
+                        contentStyle={{ backgroundColor: "#111827", border: "1px solid #374151", borderRadius: "10px", boxShadow: "0 4px 20px rgba(0,0,0,0.6)" }}
+                        itemStyle={{ color: "#FFFFFF", fontWeight: 600 }}
+                        labelStyle={{ color: "#A1A1AA", fontSize: "12px" }}
+                      />
                     </RechartsPieChart>
                   </ResponsiveContainer>
                   <div className="grid grid-cols-2 gap-2 mt-2">
@@ -327,8 +332,8 @@ export default function Home() {
                       <div key={i} className="flex items-center gap-2">
                         <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
                         <div className="min-w-0">
-                          <p className="text-xs text-muted-foreground truncate">{item.name}</p>
-                          <p className="text-sm font-bold text-foreground">{formatCurrency(item.value)}</p>
+                          <p className="text-xs truncate" style={{ color: "#A1A1AA" }}>{item.name}</p>
+                          <p className="text-sm font-bold" style={{ color: "#FFFFFF" }}>{formatCurrency(item.value)}</p>
                         </div>
                       </div>
                     ))}
