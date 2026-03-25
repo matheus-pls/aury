@@ -62,7 +62,8 @@ export default function Home() {
   useEffect(() => {
     if (isLoadingAuth || isLoadingOnboarding) return;
     if (isAuthenticated && !onboardingCompleted) {
-      navigate(createPageUrl("Welcome"), { replace: true });
+      navigate("/Welcome", { replace: true });
+      return;
     }
   }, [isAuthenticated, isLoadingAuth, isLoadingOnboarding, onboardingCompleted, navigate]);
 
