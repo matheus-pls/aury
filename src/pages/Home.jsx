@@ -214,8 +214,9 @@ export default function Home() {
 
   const handleRefresh = async () => { await queryClient.invalidateQueries(); };
 
-  // Show loading while checking auth/onboarding
-  if (isLoadingAuth || isLoadingOnboarding) {
+  // Show loading while checking auth/onboarding or settings
+  const isLoadingSettings = isAuthenticated && onboardingCompleted && !settings;
+  if (isLoadingAuth || isLoadingOnboarding || isLoadingSettings) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="w-8 h-8 border-4 border-slate-200 border-t-[#5FBDBD] rounded-full animate-spin" />
