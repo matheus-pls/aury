@@ -106,8 +106,8 @@ function App() {
           <Router>
             <NavigationTracker />
             <AuthenticatedApp />
+            <PremiumExpiredOverlay />
           </Router>
-          <PremiumExpiredOverlay />
           <Toaster />
           <VisualEditAgent />
         </QueryClientProvider>
