@@ -72,31 +72,31 @@ function buildAlerts({ spentPct, expensesByCategory, totalIncome, balance }) {
     alerts.push({
       priority: 1, type: "warning",
       icon: AlertTriangle,
-      bg: "bg-orange-500/10", border: "border-orange-500/25", iconColor: "text-orange-400",
-      label: "Aviso", labelBg: "bg-orange-500/20 text-orange-400",
+      accentColor: "#FBBF24",
+      label: "Aviso",
       messageFree: "Você usou grande parte do orçamento de supérfluos.",
       messagePremium: `${superfluousPct.toFixed(0)}% do orçamento de supérfluos consumido. Você pode economizar ${possibleSaving} cortando o restante.`,
-      teaserFree: "Veja sugestões de corte de gastos",
+      teaserFree: "Veja exatamente quanto você pode perder no Premium",
     });
   } else if (fixedPct >= 95) {
     alerts.push({
       priority: 1, type: "warning",
       icon: AlertTriangle,
-      bg: "bg-orange-500/10", border: "border-orange-500/25", iconColor: "text-orange-400",
-      label: "Aviso", labelBg: "bg-orange-500/20 text-orange-400",
+      accentColor: "#FBBF24",
+      label: "Aviso",
       messageFree: "Seus gastos fixos estão acima do planejado.",
       messagePremium: `Gastos fixos em ${fixedPct.toFixed(0)}% do limite. Isso pressiona o restante do orçamento.`,
-      teaserFree: "Veja como reorganizar seus gastos fixos",
+      teaserFree: "Veja exatamente quanto você pode perder no Premium",
     });
   } else if (essentialPct >= 95) {
     alerts.push({
       priority: 1, type: "warning",
       icon: AlertTriangle,
-      bg: "bg-orange-500/10", border: "border-orange-500/25", iconColor: "text-orange-400",
-      label: "Aviso", labelBg: "bg-orange-500/20 text-orange-400",
+      accentColor: "#FBBF24",
+      label: "Aviso",
       messageFree: "Seus gastos essenciais estão altos esse mês.",
       messagePremium: `Essenciais em ${essentialPct.toFixed(0)}% do limite previsto. Revise seus hábitos de consumo.`,
-      teaserFree: "Veja análise detalhada por categoria",
+      teaserFree: "Veja exatamente quanto você pode perder no Premium",
     });
   }
 
