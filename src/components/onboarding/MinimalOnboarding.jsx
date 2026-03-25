@@ -39,27 +39,32 @@ export default function MinimalOnboarding() {
         }
       }
 
-      // Create default settings
+      // Create default settings with onboarding_completed = true
       await createSettingsMutation.mutateAsync({
-        risk_profile: "balanced",
+        risk_profile: "moderate",
         fixed_percentage: 50,
-        essential_percentage: 20,
-        superfluous_percentage: 15,
-        emergency_percentage: 10,
-        investment_percentage: 5,
+        essential_percentage: 15,
+        superfluous_percentage: 10,
+        emergency_percentage: 15,
+        investment_percentage: 10,
         emergency_fund_goal_months: 6,
         current_emergency_fund: 0,
-        notifications_enabled: true
+        notifications_enabled: true,
+        onboarding_completed: true
       });
 
       queryClient.invalidateQueries(['incomes']);
       queryClient.invalidateQueries(['settings']);
+      queryClient.invalidateQueries(['settings-onboarding']);
       
+      // Save to localStorage as well for backwards compat
       localStorage.setItem("aury_onboarding_complete", "true");
-      navigate(createPageUrl("DailyCheckIn"));
+      navigate(createPageUrl("Home"));
     } catch (error) {
       console.error("Error completing onboarding:", error);
-      navigate(createPageUrl("DailyCheckIn"));
+      // Even on error, mark as complete and redirect
+      localStorage.setItem("aury_onboarding_complete", "true");
+      navigate(createPageUrl("Home"));
     }
   };
 
