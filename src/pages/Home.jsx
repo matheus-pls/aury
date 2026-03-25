@@ -209,9 +209,15 @@ export default function Home() {
     <div className="space-y-6 pb-8">
 
       {/* Greeting */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
         <h1 className="text-2xl font-bold text-foreground">{greeting()}</h1>
-        <p className="text-muted-foreground text-sm mt-0.5">Aqui está como seu dinheiro está hoje</p>
+        <p className="text-muted-foreground text-sm mt-0.5">
+          {spentPct >= 100
+            ? "Hora de segurar um pouco 🛑"
+            : spentPct >= 80
+            ? "Quase no limite, bora ajustar ⚠️"
+            : "Aqui está como seu dinheiro está hoje"}
+        </p>
       </motion.div>
 
       {/* Empty state */}
