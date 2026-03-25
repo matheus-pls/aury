@@ -201,8 +201,8 @@ export default function Home() {
     tranquilityIndex >= 70
       ? "Você está no controle 💚"
       : tranquilityIndex >= 40
-      ? "Atenção aos seus gastos ⚠️"
-      : "Risco de fechar no negativo 🔴";
+      ? "Quase no limite, bora ajustar ⚠️"
+      : "Hora de segurar um pouco 🛑";
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
