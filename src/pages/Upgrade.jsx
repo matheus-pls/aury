@@ -19,7 +19,7 @@ const BENEFITS = [
 ];
 
 export default function Upgrade() {
-  const { isPremium, activate, deactivate, minutesLeft } = usePremium();
+  const { isPremium, trialUsed, activate, deactivate, minutesLeft } = usePremium();
   const navigate = useNavigate();
   const [activating, setActivating] = useState(false);
   const [minsLeft, setMinsLeft] = useState(minutesLeft());
