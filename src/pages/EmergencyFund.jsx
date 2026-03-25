@@ -41,29 +41,33 @@ export default function EmergencyFund() {
   const currentMonth = new Date().toISOString().slice(0, 7);
 
   const queryClient = useQueryClient();
+  const { userId } = useCurrentUser();
 
   const { data: incomes = [] } = useQuery({
-    queryKey: ['incomes'],
-    queryFn: () => base44.entities.Income.filter({ is_active: true })
+    queryKey: ['incomes', userId],
+    queryFn: () => base44.entities.Income.filter({ is_active: true }),
+    enabled: !!userId,
   });
 
   const { data: expenses = [] } = useQuery({
-    queryKey: ['expenses', currentMonth],
-    queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth })
+    queryKey: ['expenses', userId, currentMonth],
+    queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth }),
+    enabled: !!userId,
   });
 
   const { data: settings } = useQuery({
-    queryKey: ['settings'],
+    queryKey: ['settings', userId],
     queryFn: async () => {
       const result = await base44.entities.UserSettings.list();
       return result[0] || null;
-    }
+    },
+    enabled: !!userId,
   });
 
   const updateSettingsMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.UserSettings.update(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries(['settings']);
+      queryClient.invalidateQueries(['settings', userId]);
       if (showAddDialog) {
         toast.success("Valor adicionado à caixinha!");
       } else if (showWithdrawDialog) {
