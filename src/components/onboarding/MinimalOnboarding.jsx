@@ -91,7 +91,7 @@ export default function MinimalOnboarding() {
   };
 
   const handleComplete = async () => {
-    setStep(4); // show plan generation screen
+    setStep(5); // show plan generation screen
     setFinishing(true);
 
     const incomeValue = monthlyIncome ? parseFloat(monthlyIncome.replace(/\D/g, "")) / 100 : 0;
@@ -122,18 +122,21 @@ export default function MinimalOnboarding() {
       });
     }
 
-    // 3. Criar settings com distribuição sugerida
-    const freeMoney = Math.max(0, incomeValue - fixedValue);
+    // 3. Buscar distribuição do perfil selecionado
+    const selectedProfileData = PROFILES.find(p => p.id === selectedProfile);
+    const profileDistribution = selectedProfileData?.distribution || PROFILES[1].distribution; // default: balanced
+
+    // 4. Criar settings com distribuição baseada no perfil
     const distribution = {
       fixed_percentage: incomeValue > 0 ? (fixedValue / incomeValue) * 100 : 0,
-      essential_percentage: 30, // 30% do dinheiro livre
-      superfluous_percentage: 20, // 20% do dinheiro livre
-      emergency_percentage: 25, // 25% do dinheiro livre (para reserva)
-      investment_percentage: 25, // 25% do dinheiro livre
+      essential_percentage: profileDistribution.essential,
+      superfluous_percentage: profileDistribution.superfluous,
+      emergency_percentage: profileDistribution.emergency,
+      investment_percentage: profileDistribution.investment,
     };
 
     await createSettingsMutation.mutateAsync({
-      risk_profile: selectedGoal === "freedom" ? "moderate" : selectedGoal === "save" ? "conservative" : "moderate",
+      risk_profile: selectedProfile === "focused" ? "aggressive" : selectedProfile === "essential" ? "conservative" : "moderate",
       fixed_percentage: distribution.fixed_percentage,
       essential_percentage: distribution.essential_percentage,
       superfluous_percentage: distribution.superfluous_percentage,
