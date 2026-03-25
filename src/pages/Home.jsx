@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  Wallet, Shield, Heart,
-  PieChart, Plus, Receipt, Info, Sparkles
+  Shield, Heart,
+  PieChart, Plus, Receipt, Sparkles, ArrowRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
