@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from "r
 import { toast } from "sonner";
 
 const STORAGE_KEY = "premiumUntil";
+const SHOWN_KEY = "premiumExpiredShown";
 const TRIAL_DURATION_MS = 15 * 60 * 1000; // 15 minutos
 
 function checkPremium() {
@@ -14,24 +15,28 @@ const PremiumContext = createContext(null);
 
 export function PremiumProvider({ children }) {
   const [isPremium, setIsPremium] = useState(checkPremium);
+  const [showExpiredModal, setShowExpiredModal] = useState(false);
   const timerRef = useRef(null);
 
-  // Agenda o timer de expiração com base no tempo restante
+  function triggerExpiry() {
+    localStorage.removeItem(STORAGE_KEY);
+    setIsPremium(false);
+
+    // Mostra modal apenas se ainda não foi exibido nessa sessão de expiração
+    const alreadyShown = localStorage.getItem(SHOWN_KEY);
+    if (!alreadyShown) {
+      localStorage.setItem(SHOWN_KEY, "true");
+      setShowExpiredModal(true);
+    }
+  }
+
   function scheduleExpiry(until) {
     if (timerRef.current) clearTimeout(timerRef.current);
     const remaining = Number(until) - Date.now();
     if (remaining <= 0) return;
-    timerRef.current = setTimeout(() => {
-      localStorage.removeItem(STORAGE_KEY);
-      setIsPremium(false);
-      toast.info("Seu teste premium terminou", {
-        description: "Continue explorando a Aury e desbloqueie tudo quando a versão oficial estiver disponível.",
-        duration: 6000,
-      });
-    }, remaining);
+    timerRef.current = setTimeout(triggerExpiry, remaining);
   }
 
-  // Na montagem, se já havia premium ativo, agenda a expiração
   useEffect(() => {
     const until = localStorage.getItem(STORAGE_KEY);
     if (until && Date.now() < Number(until)) {
@@ -47,17 +52,21 @@ export function PremiumProvider({ children }) {
   const activate = () => {
     const until = Date.now() + TRIAL_DURATION_MS;
     localStorage.setItem(STORAGE_KEY, String(until));
+    // Limpa flag de "já mostrei" para que expire corretamente na próxima vez
+    localStorage.removeItem(SHOWN_KEY);
     setIsPremium(true);
     scheduleExpiry(until);
   };
 
   const deactivate = () => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(SHOWN_KEY);
     setIsPremium(false);
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
-  // Minutos restantes (0 se não premium)
+  const dismissExpiredModal = () => setShowExpiredModal(false);
+
   const minutesLeft = () => {
     const until = localStorage.getItem(STORAGE_KEY);
     if (!until) return 0;
@@ -66,7 +75,7 @@ export function PremiumProvider({ children }) {
   };
 
   return (
-    <PremiumContext.Provider value={{ isPremium, activate, deactivate, minutesLeft }}>
+    <PremiumContext.Provider value={{ isPremium, activate, deactivate, minutesLeft, showExpiredModal, dismissExpiredModal }}>
       {children}
     </PremiumContext.Provider>
   );
