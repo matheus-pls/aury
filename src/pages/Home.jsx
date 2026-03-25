@@ -435,7 +435,7 @@ export default function Home() {
             </div>
             <div className="flex gap-3">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setQuickDialog(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-rose-500 hover:bg-rose-600" disabled={createExpenseMutation.isPending}>Registrar</Button>
+              <Button type="submit" className="flex-1 text-white" style={{ background: "linear-gradient(135deg, #5FBDBD, #3A9A9A)" }} disabled={createExpenseMutation.isPending}>Registrar</Button>
             </div>
           </form>
         </DialogContent>
