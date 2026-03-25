@@ -1,5 +1,5 @@
 import React from "react";
-import { AlertTriangle, CheckCircle2, XCircle, Zap, TrendingDown, PiggyBank, Star, Sparkles, Lock } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Zap, TrendingDown, PiggyBank, Star, Sparkles, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
