@@ -19,22 +19,31 @@ const BENEFITS = [
 ];
 
 export default function Upgrade() {
-  const { isPremium, activate, deactivate } = usePremium();
+  const { isPremium, activate, deactivate, minutesLeft } = usePremium();
   const navigate = useNavigate();
   const [activating, setActivating] = useState(false);
+  const [minsLeft, setMinsLeft] = useState(minutesLeft());
+
+  // Atualiza o contador a cada 30s enquanto premium estiver ativo
+  useEffect(() => {
+    if (!isPremium) return;
+    setMinsLeft(minutesLeft());
+    const interval = setInterval(() => setMinsLeft(minutesLeft()), 30000);
+    return () => clearInterval(interval);
+  }, [isPremium]);
 
   const handleActivate = async () => {
     setActivating(true);
-    await new Promise(r => setTimeout(r, 800)); // simulate a small delay
+    await new Promise(r => setTimeout(r, 800));
     activate();
     setActivating(false);
-    toast.success("Premium ativado! Aproveite todos os recursos 🎉");
+    toast.success("Premium ativado por 15 minutos! Aproveite 🎉");
     setTimeout(() => navigate(createPageUrl("NewPlanning")), 500);
   };
 
   const handleDeactivate = () => {
     deactivate();
-    toast.info("Premium desativado. Você pode reativar quando quiser.");
+    toast.info("Teste encerrado. Você pode reativar quando quiser.");
   };
 
   return (
