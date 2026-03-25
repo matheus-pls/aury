@@ -187,6 +187,8 @@ export default function Upgrade() {
         >
           Voltar
         </Button>
+
+        <DevResetPremium />
       </motion.div>
     </div>
   );
