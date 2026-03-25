@@ -193,206 +193,207 @@ export default function Home() {
   // Should not render if not authenticated or onboarding not done (redirects handled above)
   if (!isAuthenticated || !onboardingCompleted) return null;
 
+  const hasNoData = totalIncome === 0 && expenses.length === 0;
+
+  const tranquilityInterpretation =
+    tranquilityIndex >= 70
+      ? "Você está no controle 💚"
+      : tranquilityIndex >= 40
+      ? "Atenção aos seus gastos ⚠️"
+      : "Risco de fechar no negativo 🔴";
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 pb-8">
+
       {/* Greeting */}
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-2xl font-bold text-foreground">{greeting()}</h1>
-        <p className="text-muted-foreground text-sm mt-0.5">
-          {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
-        </p>
+        <p className="text-muted-foreground text-sm mt-0.5">Aqui está como seu dinheiro está hoje</p>
       </motion.div>
 
-      {/* Tranquility */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.05 }}
-        className={`relative overflow-hidden rounded-2xl px-6 py-4 bg-gradient-to-br ${tranquilityStatus.color} text-white`}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Heart className="w-4 h-4 text-white/80" />
-            <p className="text-white/80 text-xs font-medium">Índice de Tranquilidade</p>
-          </div>
-          <div className="flex items-baseline gap-1">
-            <span className="text-2xl font-bold">{tranquilityIndex}</span>
-            <span className="text-sm text-white/70">/100</span>
-            <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-white/20">{tranquilityStatus.label}</span>
-          </div>
-        </div>
-      </motion.div>
+      {/* Empty state */}
+      {hasNoData ? (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-3xl p-8 text-center border border-border"
+          style={{ background: "hsl(220, 13%, 11%)" }}
+        >
+          <div className="text-4xl mb-3">📊</div>
+          <h2 className="text-lg font-bold text-foreground mb-1">Você ainda não registrou dados</h2>
+          <p className="text-sm text-muted-foreground mb-5">
+            Adicione sua renda e gastos para eu te mostrar como seu dinheiro está.
+          </p>
+          <Button
+            onClick={() => setQuickDialog("income")}
+            className="h-11 px-6 font-semibold text-white gap-2"
+            style={{ background: "linear-gradient(135deg, #5FBDBD, #1B3A52)" }}
+          >
+            <Plus className="w-4 h-4" />
+            Começar agora
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </motion.div>
+      ) : (
+        <>
+          {/* Month Situation Card */}
+          <MonthSituationCard
+            balance={balance}
+            totalIncome={totalIncome}
+            totalExpenses={totalExpenses}
+            spentPct={spentPct}
+          />
 
-      {/* Balance Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="bg-gradient-to-br from-[#5FBDBD] to-[#1B3A52] rounded-3xl p-7 text-white shadow-xl"
-      >
-        <div className="flex items-start justify-between mb-5">
-          <div>
-            <p className="text-white/70 text-sm mb-1">
-              {balance > 0 ? "Sobrou esse mês" : balance < 0 ? "Você passou do limite" : "No zero a zero"}
-            </p>
-            <h2 className="text-4xl font-bold tabular-nums">{formatCurrency(balance)}</h2>
-          </div>
-          <div className="p-2.5 bg-white/10 rounded-xl">
-            <Wallet className="w-6 h-6" />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/20 mb-4">
-          <div>
-            <p className="text-white/60 text-xs mb-0.5">Entradas</p>
-            <p className="text-lg font-semibold tabular-nums">{formatCurrency(totalIncome)}</p>
-          </div>
-          <div>
-            <p className="text-white/60 text-xs mb-0.5">Saídas</p>
-            <p className="text-lg font-semibold tabular-nums">{formatCurrency(totalExpenses)}</p>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between text-xs text-white/60 mb-1.5">
-            <span>{spentPct <= 70 ? "Você está indo bem" : spentPct <= 100 ? "Atenção nos gastos" : "Passou do limite"}</span>
-            <span className="font-semibold">{spentPct.toFixed(0)}% gasto</span>
-          </div>
-          <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${Math.min(spentPct, 100)}%` }}
-              transition={{ duration: 0.8 }}
-              className={`h-full rounded-full ${spentPct > 100 ? "bg-red-400" : "bg-white"}`}
-            />
-          </div>
-        </div>
-      </motion.div>
+          {/* Tranquility */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.12 }}
+            className={`relative overflow-hidden rounded-2xl px-5 py-4 bg-gradient-to-br ${tranquilityStatus.color} text-white`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <Heart className="w-3.5 h-3.5 text-white/70" />
+                  <p className="text-white/70 text-xs font-medium">Índice de Tranquilidade</p>
+                </div>
+                <p className="text-sm font-semibold text-white">{tranquilityInterpretation}</p>
+              </div>
+              <div className="text-right">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-bold">{tranquilityIndex}</span>
+                  <span className="text-sm text-white/60">/100</span>
+                </div>
+                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-white/20">{tranquilityStatus.label}</span>
+              </div>
+            </div>
+          </motion.div>
+        </>
+      )}
 
       {/* Quick Actions */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}>
         <div className="grid grid-cols-2 gap-3">
           <Button
             onClick={() => setQuickDialog("expense")}
-            className="h-12 bg-rose-500 hover:bg-rose-600 text-white gap-2 rounded-xl"
+            className="h-13 bg-rose-500 hover:bg-rose-600 text-white gap-2 rounded-2xl flex-col py-3"
           >
-            <Receipt className="w-4 h-4" /> Registrar Gasto
+            <Receipt className="w-4 h-4" />
+            <span className="text-xs font-semibold">Registrar gasto</span>
           </Button>
           <Button
             onClick={() => setQuickDialog("income")}
-            className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 rounded-xl"
+            className="h-13 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 rounded-2xl flex-col py-3"
           >
-            <Plus className="w-4 h-4" /> Adicionar Renda
+            <Plus className="w-4 h-4" />
+            <span className="text-xs font-semibold">Adicionar renda</span>
           </Button>
         </div>
       </motion.div>
 
-      {/* Category Distribution */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-2">
-              <PieChart className="w-4 h-4 text-[#5FBDBD]" />
-              <CardTitle className="text-base">Gastos por Categoria</CardTitle>
-            </div>
-            <CardDescription>Para onde seu dinheiro foi esse mês</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {categoryData.length > 0 ? (
-              <>
-                <ResponsiveContainer width="100%" height={180}>
-                  <RechartsPieChart>
-                    <Pie data={categoryData} cx="50%" cy="50%" innerRadius={45} outerRadius={75} paddingAngle={4} dataKey="value">
-                      {categoryData.map((e, i) => <Cell key={i} fill={e.color} />)}
-                    </Pie>
-                    <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", color: "hsl(var(--foreground))" }} />
-                  </RechartsPieChart>
-                </ResponsiveContainer>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {categoryData.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground truncate">{item.name}</p>
-                        <p className="text-sm font-bold text-foreground">{formatCurrency(item.value)}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="h-40 flex items-center justify-center text-center">
-                <div>
-                  <PieChart className="w-10 h-10 mx-auto mb-2 opacity-20" />
-                  <p className="text-sm text-muted-foreground">Sem gastos registrados esse mês</p>
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Emergency Fund Preview */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-        <Card>
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-emerald-500/10 rounded-lg">
-                  <Shield className="w-4 h-4 text-emerald-500" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground text-sm">Caixinha</p>
-                  <p className="text-xs text-muted-foreground">
-                    {emergencyPct < 30 ? "Ainda tá começando" : emergencyPct < 70 ? "Você já tem uma base" : emergencyPct < 100 ? "Quase lá!" : "Você está protegido!"}
-                  </p>
-                </div>
-              </div>
-              <span className="text-xl font-bold text-emerald-600">{emergencyPct.toFixed(0)}%</span>
-            </div>
-            <Progress value={emergencyPct} className="h-1.5" />
-          </CardContent>
-        </Card>
-      </motion.div>
-
       {/* Smart Alert */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}>
-        <SmartAlert spentPct={spentPct} expensesByCategory={expensesByCategory} totalIncome={totalIncome} balance={balance} isPremium={isPremium} />
-      </motion.div>
-
-      {/* Month Progress */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }}>
-        <MonthProgress balance={balance} totalIncome={totalIncome} />
-      </motion.div>
-
-      {/* Micro Insights */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.36 }}>
-        <MicroInsights expenses={allExpenses} totalIncome={totalIncome} />
-      </motion.div>
-
-      {/* Recent Transactions */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-        <RecentTransactions expenses={expenses} />
-      </motion.div>
-
-      {/* Premium Preview */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.44 }}>
-        <PremiumPreview isPremium={isPremium} />
-      </motion.div>
-
-      {/* Info Banner for empty state */}
-      {totalIncome === 0 && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4">
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-            <div>
-              <p className="font-medium text-blue-400 text-sm mb-1">Vamos começar!</p>
-              <p className="text-xs text-blue-400/80">Registre sua renda mensal para eu te ajudar a organizar as finanças.</p>
-            </div>
-          </div>
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.22 }}>
+          <SmartAlert spentPct={spentPct} expensesByCategory={expensesByCategory} totalIncome={totalIncome} balance={balance} isPremium={isPremium} />
         </motion.div>
       )}
+
+      {/* Category Distribution */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.26 }}>
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <PieChart className="w-4 h-4 text-[#5FBDBD]" />
+                <CardTitle className="text-base">Gastos por Categoria</CardTitle>
+              </div>
+              <CardDescription>Para onde seu dinheiro foi esse mês</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {categoryData.length > 0 ? (
+                <>
+                  <ResponsiveContainer width="100%" height={180}>
+                    <RechartsPieChart>
+                      <Pie data={categoryData} cx="50%" cy="50%" innerRadius={45} outerRadius={75} paddingAngle={4} dataKey="value">
+                        {categoryData.map((e, i) => <Cell key={i} fill={e.color} />)}
+                      </Pie>
+                      <Tooltip formatter={(v) => formatCurrency(v)} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", color: "hsl(var(--foreground))" }} />
+                    </RechartsPieChart>
+                  </ResponsiveContainer>
+                  <div className="grid grid-cols-2 gap-2 mt-2">
+                    {categoryData.map((item, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                        <div className="min-w-0">
+                          <p className="text-xs text-muted-foreground truncate">{item.name}</p>
+                          <p className="text-sm font-bold text-foreground">{formatCurrency(item.value)}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="h-36 flex items-center justify-center text-center">
+                  <p className="text-sm text-muted-foreground">Sem gastos registrados esse mês</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Emergency Fund Preview */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card>
+            <CardContent className="p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="p-2 bg-emerald-500/10 rounded-lg">
+                    <Shield className="w-4 h-4 text-emerald-500" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground text-sm">Caixinha</p>
+                    <p className="text-xs text-muted-foreground">
+                      {emergencyPct < 30 ? "Ainda tá começando" : emergencyPct < 70 ? "Você já tem uma base" : emergencyPct < 100 ? "Quase lá!" : "Você está protegido!"}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xl font-bold text-emerald-600">{emergencyPct.toFixed(0)}%</span>
+              </div>
+              <Progress value={emergencyPct} className="h-1.5" />
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Month Progress */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.34 }}>
+          <MonthProgress balance={balance} totalIncome={totalIncome} />
+        </motion.div>
+      )}
+
+      {/* Micro Insights */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38 }}>
+          <MicroInsights expenses={allExpenses} totalIncome={totalIncome} />
+        </motion.div>
+      )}
+
+      {/* Recent Transactions */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.42 }}>
+          <RecentTransactions expenses={expenses} />
+        </motion.div>
+      )}
+
+      {/* Premium Preview */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.46 }}>
+        <PremiumPreview isPremium={isPremium} />
+      </motion.div>
 
       {/* Quick Expense Dialog */}
       <Dialog open={quickDialog === "expense"} onOpenChange={() => setQuickDialog(null)}>
