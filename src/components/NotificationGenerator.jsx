@@ -47,7 +47,7 @@ export default function NotificationGenerator() {
   });
 
   useEffect(() => {
-    if (!user) return;
+    if (!userId || !user) return;
 
     const generateNotifications = async () => {
       const notifications = [];
