@@ -51,28 +51,54 @@ export default function MinimalOnboarding() {
   };
 
   const handleComplete = async () => {
-    setStep(4); // show loading screen
+    setStep(4); // show plan generation screen
     setFinishing(true);
 
-    if (monthlyIncome) {
-      const incomeValue = parseFloat(monthlyIncome.replace(/\D/g, "")) / 100;
-      if (incomeValue > 0) {
-        await createIncomeMutation.mutateAsync({
-          description: "Renda Mensal",
-          amount: incomeValue,
-          type: "salary",
-          is_active: true,
-        });
-      }
+    const incomeValue = monthlyIncome ? parseFloat(monthlyIncome.replace(/\D/g, "")) / 100 : 0;
+    const fixedValue = fixedExpenses ? parseFloat(fixedExpenses.replace(/\D/g, "")) / 100 : 0;
+
+    // 1. Criar renda do usuário
+    if (incomeValue > 0) {
+      await createIncomeMutation.mutateAsync({
+        description: "Renda Mensal",
+        amount: incomeValue,
+        type: "salary",
+        is_active: true,
+      });
     }
 
+    // 2. Criar gastos fixos iniciais (se informado)
+    if (fixedValue > 0) {
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      await base44.entities.Expense.create({
+        description: "Gastos Fixos",
+        amount: fixedValue,
+        category: "fixed",
+        date: new Date().toISOString().slice(0, 10),
+        month_year: currentMonth,
+        is_recurring: true,
+        recurrence_type: "months",
+        recurrence_interval: 1,
+      });
+    }
+
+    // 3. Criar settings com distribuição sugerida
+    const freeMoney = Math.max(0, incomeValue - fixedValue);
+    const distribution = {
+      fixed_percentage: incomeValue > 0 ? (fixedValue / incomeValue) * 100 : 0,
+      essential_percentage: 30, // 30% do dinheiro livre
+      superfluous_percentage: 20, // 20% do dinheiro livre
+      emergency_percentage: 25, // 25% do dinheiro livre (para reserva)
+      investment_percentage: 25, // 25% do dinheiro livre
+    };
+
     await createSettingsMutation.mutateAsync({
-      risk_profile: "moderate",
-      fixed_percentage: 50,
-      essential_percentage: 15,
-      superfluous_percentage: 10,
-      emergency_percentage: 15,
-      investment_percentage: 10,
+      risk_profile: selectedGoal === "freedom" ? "moderate" : selectedGoal === "save" ? "conservative" : "moderate",
+      fixed_percentage: distribution.fixed_percentage,
+      essential_percentage: distribution.essential_percentage,
+      superfluous_percentage: distribution.superfluous_percentage,
+      emergency_percentage: distribution.emergency_percentage,
+      investment_percentage: distribution.investment_percentage,
       emergency_fund_goal_months: 6,
       current_emergency_fund: 0,
       notifications_enabled: true,
@@ -82,6 +108,7 @@ export default function MinimalOnboarding() {
     const userId = await getUserId();
 
     queryClient.invalidateQueries({ queryKey: ["incomes", userId] });
+    queryClient.invalidateQueries({ queryKey: ["expenses", userId] });
     queryClient.invalidateQueries({ queryKey: ["settings", userId] });
     queryClient.invalidateQueries({ queryKey: ["settings-onboarding", userId] });
 
@@ -89,10 +116,10 @@ export default function MinimalOnboarding() {
     if (userId) {
       localStorage.setItem(`aury_onboarding_complete_${userId}`, "true");
     }
+  };
 
-    setTimeout(() => {
-      navigate(createPageUrl("Home"), { replace: true });
-    }, 1800);
+  const handlePlanComplete = () => {
+    navigate(createPageUrl("Home"), { replace: true });
   };
 
   return (
