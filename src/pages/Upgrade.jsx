@@ -11,6 +11,7 @@ import { usePremium } from "@/lib/PremiumContext";
 import { toast } from "sonner";
 import { base44 } from "@/api/base44Client";
 import DevResetPremium from "@/components/DevResetPremium";
+import { useAuth } from "@/lib/AuthContext";
 
 const BENEFITS = [
   { icon: Calculator, label: "Simulações de Futuro", desc: "Veja o impacto de cada decisão financeira" },
