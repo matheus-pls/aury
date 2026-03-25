@@ -39,7 +39,8 @@ export default function Home() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const queryClient = useQueryClient();
   const { isPremium } = usePremium();
-  const { isAuthenticated, isLoadingAuth } = useAuth();
+  const { isAuthenticated, isLoadingAuth, user: authUser } = useAuth();
+  const userId = authUser?.id || authUser?.email || null;
   const { isLoading: isLoadingOnboarding, onboardingCompleted } = useOnboardingStatus();
   const navigate = useNavigate();
 
