@@ -141,6 +141,19 @@ export default function Upgrade() {
               Encerrar teste
             </Button>
           </>
+        ) : trialUsed ? (
+          <div className="flex flex-col items-center gap-2 p-5 bg-muted/40 border border-border rounded-2xl text-center">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center mb-1">
+              <Lock className="w-5 h-5 text-muted-foreground" />
+            </div>
+            <p className="font-semibold text-foreground text-sm">Seu teste grátis já foi utilizado neste dispositivo</p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Continue usando a versão gratuita. O Premium completo será liberado na versão oficial.
+            </p>
+            <span className="mt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground bg-muted px-2 py-1 rounded-full border border-border">
+              Teste já utilizado
+            </span>
+          </div>
         ) : (
           <>
             <Button
