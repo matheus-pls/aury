@@ -289,7 +289,8 @@ export default function Home() {
           </Button>
           <Button
             onClick={() => setQuickDialog("income")}
-            className="h-13 bg-emerald-600 hover:bg-emerald-700 text-white gap-2 rounded-2xl flex-col py-3"
+            className="h-13 text-white gap-2 rounded-2xl flex-col py-3"
+            style={{ background: "linear-gradient(135deg, #34D399, #059669)" }}
           >
             <Plus className="w-4 h-4" />
             <span className="text-xs font-semibold">Adicionar renda</span>
