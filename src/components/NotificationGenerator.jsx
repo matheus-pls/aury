@@ -2,51 +2,48 @@ import { useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 // Componente invisível que gera notificações em background
 export default function NotificationGenerator() {
   const currentMonth = new Date().toISOString().slice(0, 7);
   const today = new Date().toISOString().slice(0, 10);
-
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: () => base44.auth.me()
-  });
+  const { userId, user } = useCurrentUser();
 
   const { data: incomes = [] } = useQuery({
-    queryKey: ['incomes'],
+    queryKey: ['incomes', userId],
     queryFn: () => base44.entities.Income.filter({ is_active: true }),
-    enabled: !!user
+    enabled: !!userId
   });
 
   const { data: expenses = [] } = useQuery({
-    queryKey: ['expenses', currentMonth],
+    queryKey: ['expenses', userId, currentMonth],
     queryFn: () => base44.entities.Expense.filter({ month_year: currentMonth }),
-    enabled: !!user
+    enabled: !!userId
   });
 
   const { data: goals = [] } = useQuery({
-    queryKey: ['goals'],
+    queryKey: ['goals', userId],
     queryFn: () => base44.entities.FinancialGoal.filter({ is_completed: false }),
-    enabled: !!user
+    enabled: !!userId
   });
 
   const { data: settings } = useQuery({
-    queryKey: ['settings'],
+    queryKey: ['settings', userId],
     queryFn: async () => {
       const result = await base44.entities.UserSettings.list();
       return result[0] || null;
     },
-    enabled: !!user
+    enabled: !!userId
   });
 
   const { data: existingNotifications = [] } = useQuery({
-    queryKey: ['notifications', user?.email, today],
+    queryKey: ['notifications', userId, today],
     queryFn: () => base44.entities.Notification.filter({ 
       created_by: user?.email,
       date: today
     }),
-    enabled: !!user
+    enabled: !!userId && !!user?.email
   });
 
   useEffect(() => {
