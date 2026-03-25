@@ -131,7 +131,8 @@ export function PremiumProvider({ children }) {
   };
 
   const minutesLeft = () => {
-    const until = localStorage.getItem(STORAGE_KEY);
+    if (!userId) return 0;
+    const until = localStorage.getItem(storageKey(userId, "premiumUntil"));
     if (!until) return 0;
     const remaining = Number(until) - Date.now();
     return remaining > 0 ? Math.ceil(remaining / 60000) : 0;
