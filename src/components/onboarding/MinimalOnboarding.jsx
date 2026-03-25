@@ -80,9 +80,9 @@ export default function MinimalOnboarding() {
 
     const userId = await getUserId();
 
-    queryClient.invalidateQueries(["incomes", userId]);
-    queryClient.invalidateQueries(["settings", userId]);
-    queryClient.invalidateQueries(["settings-onboarding", userId]);
+    queryClient.invalidateQueries({ queryKey: ["incomes", userId] });
+    queryClient.invalidateQueries({ queryKey: ["settings", userId] });
+    queryClient.invalidateQueries({ queryKey: ["settings-onboarding", userId] });
 
     // Salva localStorage com chave isolada por usuário
     if (userId) {
