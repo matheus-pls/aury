@@ -1,26 +1,29 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 
-const STORAGE_KEY = "premiumUntil";
-const SHOWN_KEY = "premiumExpiredShown";
-const TRIAL_USED_KEY = "premiumTrialUsed";
 const TRIAL_DURATION_MS = 15 * 60 * 1000; // 15 minutos
 
-function checkLocalPremium() {
-  const until = localStorage.getItem(STORAGE_KEY);
+// Chaves por usuário para evitar vazamento entre contas
+function storageKey(userId, suffix) {
+  return `aury_${suffix}_${userId || "anon"}`;
+}
+
+function checkLocalPremium(userId) {
+  const until = localStorage.getItem(storageKey(userId, "premiumUntil"));
   if (!until) return false;
   return Date.now() < Number(until);
 }
 
-function checkTrialUsed() {
-  return localStorage.getItem(TRIAL_USED_KEY) === "true";
+function checkTrialUsed(userId) {
+  return localStorage.getItem(storageKey(userId, "trialUsed")) === "true";
 }
 
 const PremiumContext = createContext(null);
 
 export function PremiumProvider({ children }) {
-  const [isPremium, setIsPremium] = useState(checkLocalPremium);
-  const [trialUsed, setTrialUsed] = useState(checkTrialUsed);
+  const [userId, setUserId] = useState(null);
+  const [isPremium, setIsPremium] = useState(false);
+  const [trialUsed, setTrialUsed] = useState(false);
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const [stripeStatus, setStripeStatus] = useState(null); // null | "active" | "canceled" | etc.
   const [userEmail, setUserEmail] = useState(null);
@@ -38,20 +41,24 @@ export function PremiumProvider({ children }) {
       } else {
         setStripeStatus(data?.status || null);
         // Só remove premium se não havia trial local ativo
-        if (!checkLocalPremium()) {
+        if (!checkLocalPremium(userId)) {
           setIsPremium(false);
         }
       }
     } catch (e) {
       console.error("Failed to check Stripe subscription:", e);
     }
-  }, []);
+  }, [userId]);
 
-  // Carrega o email do usuário autenticado
+  // Carrega o usuário autenticado e inicializa estado por usuário
   useEffect(() => {
     base44.auth.me().then(user => {
-      if (user?.email) {
+      if (user) {
+        const uid = user.id || user.email;
+        setUserId(uid);
         setUserEmail(user.email);
+        setIsPremium(checkLocalPremium(uid));
+        setTrialUsed(checkTrialUsed(uid));
         checkStripeSubscription(user.email);
       }
     }).catch(() => {});
@@ -59,13 +66,14 @@ export function PremiumProvider({ children }) {
 
   // Trial local timer
   function triggerExpiry() {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(storageKey(userId, "premiumUntil"));
     // Se tem Stripe ativo, mantém premium
     if (stripeStatus === "active") return;
     setIsPremium(false);
-    const alreadyShown = localStorage.getItem(SHOWN_KEY);
+    const shownKey = storageKey(userId, "expiredShown");
+    const alreadyShown = localStorage.getItem(shownKey);
     if (!alreadyShown) {
-      localStorage.setItem(SHOWN_KEY, "true");
+      localStorage.setItem(shownKey, "true");
       setShowExpiredModal(true);
     }
   }
@@ -78,31 +86,32 @@ export function PremiumProvider({ children }) {
   }
 
   useEffect(() => {
-    const until = localStorage.getItem(STORAGE_KEY);
+    if (!userId) return;
+    const until = localStorage.getItem(storageKey(userId, "premiumUntil"));
     if (until && Date.now() < Number(until)) {
       scheduleExpiry(until);
     } else if (until) {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(storageKey(userId, "premiumUntil"));
       if (stripeStatus !== "active") setIsPremium(false);
     }
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [stripeStatus]);
+  }, [stripeStatus, userId]);
 
   // Ativa trial local (apenas se não tem Stripe)
   const activate = () => {
-    if (checkTrialUsed()) return;
+    if (checkTrialUsed(userId)) return;
     const until = Date.now() + TRIAL_DURATION_MS;
-    localStorage.setItem(STORAGE_KEY, String(until));
-    localStorage.setItem(TRIAL_USED_KEY, "true");
-    localStorage.removeItem(SHOWN_KEY);
+    localStorage.setItem(storageKey(userId, "premiumUntil"), String(until));
+    localStorage.setItem(storageKey(userId, "trialUsed"), "true");
+    localStorage.removeItem(storageKey(userId, "expiredShown"));
     setIsPremium(true);
     setTrialUsed(true);
     scheduleExpiry(until);
   };
 
   const deactivate = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(SHOWN_KEY);
+    localStorage.removeItem(storageKey(userId, "premiumUntil"));
+    localStorage.removeItem(storageKey(userId, "expiredShown"));
     if (stripeStatus !== "active") setIsPremium(false);
     if (timerRef.current) clearTimeout(timerRef.current);
   };
@@ -110,9 +119,9 @@ export function PremiumProvider({ children }) {
   const dismissExpiredModal = () => setShowExpiredModal(false);
 
   const devResetTrial = () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(TRIAL_USED_KEY);
-    localStorage.removeItem(SHOWN_KEY);
+    localStorage.removeItem(storageKey(userId, "premiumUntil"));
+    localStorage.removeItem(storageKey(userId, "trialUsed"));
+    localStorage.removeItem(storageKey(userId, "expiredShown"));
     if (timerRef.current) clearTimeout(timerRef.current);
     if (stripeStatus !== "active") {
       setIsPremium(false);
