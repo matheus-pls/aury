@@ -56,17 +56,20 @@ export function PremiumProvider({ children }) {
   }, []);
 
   const activate = () => {
+    if (checkTrialUsed()) return; // bloqueia reativação
     const until = Date.now() + TRIAL_DURATION_MS;
     localStorage.setItem(STORAGE_KEY, String(until));
-    // Limpa flag de "já mostrei" para que expire corretamente na próxima vez
+    localStorage.setItem(TRIAL_USED_KEY, "true");
     localStorage.removeItem(SHOWN_KEY);
     setIsPremium(true);
+    setTrialUsed(true);
     scheduleExpiry(until);
   };
 
   const deactivate = () => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(SHOWN_KEY);
+    // mantém TRIAL_USED_KEY para impedir nova ativação
     setIsPremium(false);
     if (timerRef.current) clearTimeout(timerRef.current);
   };
