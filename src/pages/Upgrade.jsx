@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { usePremium } from "@/lib/PremiumContext";
 import { toast } from "sonner";
+import DevResetPremium from "@/components/DevResetPremium";
 
 const BENEFITS = [
   { icon: Calculator, label: "Simulações de Futuro", desc: "Veja o impacto de cada decisão financeira" },
