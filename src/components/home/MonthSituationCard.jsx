@@ -10,13 +10,15 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
   const isNegative = balance < 0;
   const isWarning = spentPct >= 80 && balance >= 0;
 
+  // Paleta suave — nunca saturada
   const statusConfig = isNegative
     ? {
         label: "Você passou do limite",
         interpretation: "Risco de fechar no negativo",
-        interpretColor: "#FCA5A5",
-        bg: "linear-gradient(135deg, #1a0a0a 0%, #2d1212 100%)",
-        border: "1px solid rgba(239,68,68,0.25)",
+        interpretColor: "#F87171",      // vermelho dessaturado
+        bg: "rgba(239,68,68,0.06)",
+        border: "1px solid rgba(239,68,68,0.18)",
+        accentBar: "3px solid rgba(239,68,68,0.5)",
         barColor: "#F87171",
         Icon: TrendingDown,
       }
@@ -24,18 +26,20 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
     ? {
         label: "Atenção — quase no limite",
         interpretation: "Atenção aos seus gastos",
-        interpretColor: "#FCD34D",
-        bg: "linear-gradient(135deg, #1a1200 0%, #2d1f00 100%)",
-        border: "1px solid rgba(251,191,36,0.25)",
-        barColor: "#FCD34D",
+        interpretColor: "#FBBF24",      // âmbar suave
+        bg: "rgba(251,191,36,0.06)",
+        border: "1px solid rgba(251,191,36,0.18)",
+        accentBar: "3px solid rgba(251,191,36,0.5)",
+        barColor: "#FBBF24",
         Icon: Minus,
       }
     : {
         label: "Sobrou esse mês",
         interpretation: "Você está no controle",
-        interpretColor: "#34D399",
-        bg: "linear-gradient(135deg, #021a0e 0%, #052e16 100%)",
-        border: "1px solid rgba(52,211,153,0.2)",
+        interpretColor: "#34D399",      // esmeralda suave
+        bg: "rgba(52,211,153,0.06)",
+        border: "1px solid rgba(52,211,153,0.18)",
+        accentBar: "3px solid rgba(52,211,153,0.4)",
         barColor: "#34D399",
         Icon: TrendingUp,
       };
@@ -47,9 +51,13 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.1 }}
-      className="rounded-3xl p-6 text-white shadow-xl overflow-hidden"
-      style={{ background: statusConfig.bg, border: statusConfig.border }}
+      className="rounded-3xl overflow-hidden shadow-lg"
+      style={{ background: "hsl(220, 13%, 11%)", border: statusConfig.border }}
     >
+      {/* Accent bar lateral */}
+      <div className="flex">
+        <div className="w-1 rounded-l-3xl flex-shrink-0" style={{ background: statusConfig.interpretColor, opacity: 0.7 }} />
+        <div className="flex-1 p-6">
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div>
@@ -100,9 +108,11 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
       </div>
 
       {/* Interpretation badge */}
-      <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: "rgba(255,255,255,0.08)", color: statusConfig.interpretColor }}>
+      <div className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold" style={{ background: "rgba(255,255,255,0.06)", color: statusConfig.interpretColor }}>
         <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusConfig.interpretColor }} />
         {statusConfig.interpretation}
+      </div>
+        </div>
       </div>
     </motion.div>
   );
