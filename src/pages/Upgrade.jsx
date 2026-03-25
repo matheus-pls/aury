@@ -75,6 +75,12 @@ export default function Upgrade() {
   }, []);
 
   const handleStripeCheckout = async () => {
+    if (!isAuthenticated) {
+      // Redireciona para login e volta para esta página depois
+      base44.auth.redirectToLogin(window.location.href);
+      return;
+    }
+
     if (isInIframe()) {
       alert("O checkout do Stripe só funciona no app publicado. Abra o app em uma nova aba para assinar.");
       return;
