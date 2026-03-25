@@ -110,7 +110,7 @@ export default function Home() {
   const createExpenseMutation = useMutation({
     mutationFn: (data) => base44.entities.Expense.create(data),
     onSuccess: (_, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["expenses"] });
+      queryClient.invalidateQueries({ queryKey: ["expenses", userId] });
       const impact = parseFloat(vars.amount) || 0;
       toast.success(`Gasto registrado 👍`, {
         description: `Impacto: -${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(impact)} no mês`,
