@@ -28,6 +28,9 @@ import MicroInsights from "@/components/home/MicroInsights";
 import PremiumPreview from "@/components/home/PremiumPreview";
 import MonthSituationCard from "@/components/home/MonthSituationCard";
 import DailyInsightBanner from "@/components/home/DailyInsightBanner";
+import ShareResultCard from "@/components/home/ShareResultCard";
+import WeeklyChallenge from "@/components/home/WeeklyChallenge";
+import ReferralBanner from "@/components/home/ReferralBanner";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
