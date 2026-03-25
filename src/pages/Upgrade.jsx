@@ -27,6 +27,7 @@ function isInIframe() {
 
 export default function Upgrade() {
   const { isPremium, trialUsed, activate, deactivate, minutesLeft, stripeStatus, refreshSubscription, userEmail } = usePremium();
+  const { isAuthenticated, navigateToLogin } = useAuth();
   const navigate = useNavigate();
   const [activating, setActivating] = useState(false);
   const [minsLeft, setMinsLeft] = useState(minutesLeft());
