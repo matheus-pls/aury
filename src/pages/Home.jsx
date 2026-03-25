@@ -26,6 +26,7 @@ import MonthProgress from "@/components/home/MonthProgress";
 import RecentTransactions from "@/components/home/RecentTransactions";
 import MicroInsights from "@/components/home/MicroInsights";
 import PremiumPreview from "@/components/home/PremiumPreview";
+import MonthSituationCard from "@/components/home/MonthSituationCard";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
