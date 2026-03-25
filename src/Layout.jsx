@@ -23,6 +23,7 @@ import NotificationCenter from "@/components/NotificationCenter";
 import NotificationGenerator from "@/components/NotificationGenerator";
 import BottomTabBar from "@/components/BottomTabBar";
 import { Toaster } from "@/components/ui/sonner";
+import DevResetUser from "@/components/DevResetUser";
 
 const FREE_NAV = [
   { name: "Home", page: "Home", icon: LayoutDashboard },
