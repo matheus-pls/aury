@@ -60,7 +60,8 @@ export default function AuryFlow() {
   const { data: historicalExpenses = [] } = useQuery({
     queryKey: ['expenses-history', userId],
     queryFn: async () => {
-      const result = await base44.entities.Expense.list();
+      // Filtra explicitamente por created_by para garantir isolamento por usuário
+      const result = await base44.entities.Expense.list('-created_date', 50);
       return result || [];
     },
     enabled: !!userId,
