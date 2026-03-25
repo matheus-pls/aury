@@ -37,7 +37,7 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
         Icon: TrendingUp,
       };
 
-  const { Icon } = statusConfig;
+  const StatusIcon = statusConfig.Icon;
 
   return (
     <motion.div
@@ -54,7 +54,7 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
           <p className="text-white/80 text-sm">{statusConfig.label}</p>
         </div>
         <div className="p-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.1)" }}>
-          <Icon className="w-5 h-5 text-white" />
+          <StatusIcon className="w-5 h-5 text-white" />
         </div>
       </div>
 
