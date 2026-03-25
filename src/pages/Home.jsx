@@ -35,6 +35,7 @@ import InitialPlanModal from "@/components/home/InitialPlanModal";
 import SmartHeading from "@/components/home/SmartHeading";
 import UpgradePrompt from "@/components/home/UpgradePrompt";
 import EmotionalFeedback from "@/components/home/EmotionalFeedback";
+import DailyHabitReminder from "@/components/home/DailyHabitReminder";
 
 const formatCurrency = (v) =>
   new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
@@ -228,6 +229,10 @@ export default function Home() {
       ? "Quase no limite, bora ajustar ⚠️"
       : "Hora de segurar um pouco 🛑";
 
+  // Verificar se já registrou algo hoje
+  const today = new Date().toISOString().slice(0, 10);
+  const hasRegisteredToday = expenses.some(e => e.date === today);
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <>
@@ -250,6 +255,13 @@ export default function Home() {
       {!hasNoData && (
         <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.02, duration: 0.3 }}>
           <SmartHeading spentPct={spentPct} balance={balance} totalIncome={totalIncome} />
+        </motion.div>
+      )}
+
+      {/* Daily Habit Reminder */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.02 }}>
+          <DailyHabitReminder hasRegisteredToday={hasRegisteredToday} onOpenExpenseDialog={() => setQuickDialog("expense")} />
         </motion.div>
       )}
 
