@@ -243,7 +243,16 @@ export default function Layout({ children, currentPageName }) {
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-border space-y-3">
+            {!isAuthenticated && (
+              <button
+                onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                className="w-full flex items-center justify-center gap-2 h-10 rounded-xl bg-[#5FBDBD]/10 text-[#5FBDBD] border border-[#5FBDBD]/20 text-sm font-semibold hover:bg-[#5FBDBD]/20 transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                Entrar / Criar conta
+              </button>
+            )}
             <div className="bg-muted rounded-2xl p-4">
               <p className="text-xs text-muted-foreground mb-1">Você não precisa fazer isso sozinho</p>
               <p className="text-sm font-semibold text-foreground">Estou aqui com você</p>
