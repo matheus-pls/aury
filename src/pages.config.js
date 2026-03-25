@@ -73,7 +73,6 @@ import Settings from './pages/Settings';
 import Simulations from './pages/Simulations';
 import SmartAnalysis from './pages/SmartAnalysis';
 import TightMonth from './pages/TightMonth';
-import Welcome from './pages/Welcome';
 import __Layout from './Layout.jsx';
 
 
@@ -104,7 +103,6 @@ export const PAGES = {
     "Simulations": Simulations,
     "SmartAnalysis": SmartAnalysis,
     "TightMonth": TightMonth,
-    "Welcome": Welcome,
 }
 
 export const pagesConfig = {
