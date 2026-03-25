@@ -36,6 +36,11 @@ export default function DevResetUser() {
           onboarding_completed: false,
           last_checkin_date: null,
         });
+      } else {
+        // Criar se não existir
+        await base44.entities.UserSettings.create({
+          onboarding_completed: false,
+        });
       }
 
       // 2. Limpar dados financeiros
@@ -54,20 +59,20 @@ export default function DevResetUser() {
         await base44.entities.FinancialGoal.delete(goal.id);
       }
 
-      // 3. Limpar trial/premium
+      // 3. Limpar localStorage
       localStorage.removeItem(`aury_premiumUntil_${userId}`);
       localStorage.removeItem(`aury_onboarding_${userId}`);
+      localStorage.removeItem(`aury_onboarding_complete_${userId}`);
 
-      // 4. Invalidar caches React Query
-      queryClient.invalidateQueries({ queryKey: ['settings', userId] });
-      queryClient.invalidateQueries({ queryKey: ['settings-onboarding', userId] });
-      queryClient.invalidateQueries({ queryKey: ['incomes', userId] });
-      queryClient.invalidateQueries({ queryKey: ['expenses', userId] });
-      queryClient.invalidateQueries({ queryKey: ['goals', userId] });
-      queryClient.invalidateQueries({ queryKey: ['notifications', userId] });
+      // 4. Invalidar e clear caches React Query
+      queryClient.clear();
 
       setOpen(false);
-      window.location.href = '/Welcome';
+      
+      // 5. Aguardar um tick e redirecionar
+      setTimeout(() => {
+        window.location.href = '/Welcome';
+      }, 100);
     } catch (error) {
       console.error('Reset error:', error);
       alert('Erro ao resetar usuário: ' + error.message);
