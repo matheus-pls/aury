@@ -62,6 +62,7 @@ export default function MinimalOnboarding() {
   const [monthlyIncome, setMonthlyIncome] = useState("");
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [fixedExpenses, setFixedExpenses] = useState("");
+  const [selectedProfile, setSelectedProfile] = useState(null);
   const [finishing, setFinishing] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
