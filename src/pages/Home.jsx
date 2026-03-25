@@ -164,12 +164,15 @@ export default function Home() {
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
 
+  // Se não há expenses registrados, usar gastos fixos do onboarding como fallback
+  const expensesForCategory = expenses.length > 0 ? expenses : (settings?.onboarding_fixed_expenses > 0 ? [{ category: "fixed", amount: settings.onboarding_fixed_expenses }] : []);
+
   const expensesByCategory = {
-    fixed:       expenses.filter(e => e.category === "fixed").reduce((s, e) => s + e.amount, 0),
-    essential:   expenses.filter(e => e.category === "essential").reduce((s, e) => s + e.amount, 0),
-    superfluous: expenses.filter(e => e.category === "superfluous").reduce((s, e) => s + e.amount, 0),
-    emergency:   expenses.filter(e => e.category === "emergency").reduce((s, e) => s + e.amount, 0),
-    investment:  expenses.filter(e => e.category === "investment").reduce((s, e) => s + e.amount, 0),
+    fixed:       expensesForCategory.filter(e => e.category === "fixed").reduce((s, e) => s + e.amount, 0),
+    essential:   expensesForCategory.filter(e => e.category === "essential").reduce((s, e) => s + e.amount, 0),
+    superfluous: expensesForCategory.filter(e => e.category === "superfluous").reduce((s, e) => s + e.amount, 0),
+    emergency:   expensesForCategory.filter(e => e.category === "emergency").reduce((s, e) => s + e.amount, 0),
+    investment:  expensesForCategory.filter(e => e.category === "investment").reduce((s, e) => s + e.amount, 0),
   };
 
   const categoryData = [
