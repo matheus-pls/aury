@@ -423,16 +423,35 @@ export default function Home() {
         </motion.div>
       )}
 
+      {/* Weekly Challenge */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.50, duration: 0.35 }}>
+          <WeeklyChallenge expenses={allExpenses} totalIncome={totalIncome} />
+        </motion.div>
+      )}
+
+      {/* Share Result Card — conquista do mês */}
+      {!hasNoData && (
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.53, duration: 0.35 }}>
+          <ShareResultCard balance={balance} totalIncome={totalIncome} spentPct={spentPct} userName={user?.full_name?.split(" ")[0]} />
+        </motion.div>
+      )}
+
       {/* Recent Transactions */}
       {!hasNoData && (
-        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.52, duration: 0.35 }}>
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.56, duration: 0.35 }}>
           <RecentTransactions expenses={expenses} />
         </motion.div>
       )}
 
       {/* Premium Preview */}
-      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.58, duration: 0.35 }}>
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.60, duration: 0.35 }}>
         <PremiumPreview isPremium={isPremium} />
+      </motion.div>
+
+      {/* Referral Banner */}
+      <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.63, duration: 0.35 }}>
+        <ReferralBanner />
       </motion.div>
 
       {/* Quick Expense Dialog */}
