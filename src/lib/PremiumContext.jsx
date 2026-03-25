@@ -3,6 +3,7 @@ import { toast } from "sonner";
 
 const STORAGE_KEY = "premiumUntil";
 const SHOWN_KEY = "premiumExpiredShown";
+const TRIAL_USED_KEY = "premiumTrialUsed";
 const TRIAL_DURATION_MS = 15 * 60 * 1000; // 15 minutos
 
 function checkPremium() {
