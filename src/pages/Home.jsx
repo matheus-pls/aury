@@ -79,16 +79,7 @@ export default function Home() {
     return d.toISOString().slice(0, 7);
   })();
 
-  const { data: incomes = [] } = useQuery({
-    queryKey: ["incomes", userId],
-    queryFn: async () => {
-      const result = await base44.entities.Income.filter({ is_active: true });
-      console.log("[HOME] Incomes carregados:", result);
-      return result;
-    },
-    enabled: isAuthenticated && onboardingCompleted && !!userId,
-    staleTime: 0,
-  });
+
 
   const { data: expenses = [] } = useQuery({
     queryKey: ["expenses", userId, currentMonth],
@@ -104,13 +95,15 @@ export default function Home() {
     staleTime: 0,
   });
 
-  const allExpenses = [...expenses, ...prevExpenses];
+
 
   const { data: settings } = useQuery({
     queryKey: ["settings", userId],
     queryFn: async () => {
       const r = await base44.entities.UserSettings.list();
       console.log("[HOME] UserSettings carregado:", r[0]);
+      console.log("[HOME] onboarding_income:", r[0]?.onboarding_income, "type:", typeof r[0]?.onboarding_income);
+      console.log("[HOME] onboarding_fixed_expenses:", r[0]?.onboarding_fixed_expenses, "type:", typeof r[0]?.onboarding_fixed_expenses);
       return r[0] || null;
     },
     enabled: isAuthenticated && onboardingCompleted && !!userId,
@@ -130,45 +123,25 @@ export default function Home() {
     }
   });
 
-  const createIncomeMutation = useMutation({
-    mutationFn: (data) => base44.entities.Income.create(data),
-    onSuccess: (_, vars) => {
-      queryClient.invalidateQueries({ queryKey: ["incomes", userId] });
-      const added = parseFloat(vars.amount) || 0;
-      toast.success(`Renda adicionada! 💚`, {
-        description: `+${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(added)} por mês no seu orçamento`,
-      });
-      setQuickDialog(null);
-      setFormData({ description: "", amount: "", category: "essential", date: new Date().toISOString().slice(0, 10), type: "salary" });
-    }
-  });
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (quickDialog === "expense") {
       createExpenseMutation.mutate({ ...formData, amount: parseFloat(formData.amount), month_year: formData.date.slice(0, 7) });
-    } else {
-      createIncomeMutation.mutate({ description: formData.description, amount: parseFloat(formData.amount), type: formData.type, is_active: true });
     }
   };
 
-  // Renda: usar dados manuais (Income entity) OU fallback do onboarding
-  const manualIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
-  const totalIncome = manualIncome > 0 ? manualIncome : (settings?.onboarding_income || 0);
-  console.log("[HOME] Cálculo de Renda:", { manualIncome, onboarding_income: settings?.onboarding_income, totalIncome });
-
-  // Despesas: usar Expense entities. Se não houver, usar onboarding_fixed_expenses como fallback
-  // (porque o onboarding já cria um Expense entity com os gastos fixos)
-  const allMonthExpenses = expenses.reduce((s, e) => s + (e.amount || 0), 0);
-  const totalExpenses = allMonthExpenses > 0 ? allMonthExpenses : (settings?.onboarding_fixed_expenses || 0);
-  console.log("[HOME] Cálculo de Despesas:", { allMonthExpenses, onboarding_fixed_expenses: settings?.onboarding_fixed_expenses, totalExpenses });
+  // FONTE ÚNICA: UserSettings (onboarding_income e onboarding_fixed_expenses)
+  const totalIncome = Number(settings?.onboarding_income) || 0;
+  const totalExpenses = Number(settings?.onboarding_fixed_expenses) || 0;
+  console.log("[HOME] Cálculo FINAL (UserSettings):", { totalIncome, totalExpenses });
 
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
-  console.log("[HOME] Resultado Final:", { totalIncome, totalExpenses, balance, spentPct });
 
-  // Se não há expenses registrados, usar gastos fixos do onboarding como fallback
-  const expensesForCategory = expenses.length > 0 ? expenses : (settings?.onboarding_fixed_expenses > 0 ? [{ category: "fixed", amount: settings.onboarding_fixed_expenses }] : []);
+  // Usar Expense entities para distribuição por categoria
+  const expensesForCategory = expenses.length > 0 ? expenses : [];
 
   const expensesByCategory = {
     fixed:       expensesForCategory.filter(e => e.category === "fixed").reduce((s, e) => s + e.amount, 0),
@@ -258,7 +231,7 @@ export default function Home() {
       {/* Daily Insight Banner */}
       {!hasNoData && (
         <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.04 }}>
-          <DailyInsightBanner expenses={allExpenses} totalIncome={totalIncome} />
+          <DailyInsightBanner expenses={expenses} totalIncome={totalIncome} />
         </motion.div>
       )}
 
@@ -277,12 +250,12 @@ export default function Home() {
             Adicione sua renda e gastos para eu te mostrar como seu dinheiro está.
           </p>
           <Button
-            onClick={() => setQuickDialog("income")}
+            onClick={() => navigate("/Welcome")}
             className="h-11 px-6 font-semibold text-white gap-2"
             style={{ background: "linear-gradient(135deg, #5FBDBD, #1B3A52)" }}
           >
             <Plus className="w-4 h-4" />
-            Começar agora
+            Ir para onboarding
             <ArrowRight className="w-4 h-4" />
           </Button>
         </motion.div>
@@ -337,16 +310,7 @@ export default function Home() {
               <span className="text-xs font-semibold">Registrar gasto</span>
             </Button>
           </motion.div>
-          <motion.div whileTap={{ scale: 0.93 }} whileHover={{ scale: 1.02 }} transition={{ type: "spring", stiffness: 400, damping: 20 }}>
-            <Button
-              onClick={() => setQuickDialog("income")}
-              className="w-full h-13 text-white gap-2 rounded-2xl flex-col py-3"
-              style={{ background: "linear-gradient(135deg, #34D399, #059669)" }}
-            >
-              <Plus className="w-4 h-4" />
-              <span className="text-xs font-semibold">Adicionar renda</span>
-            </Button>
-          </motion.div>
+
         </div>
       </motion.div>
 
@@ -444,14 +408,14 @@ export default function Home() {
       {/* Micro Insights */}
       {!hasNoData && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.46, duration: 0.35 }}>
-          <MicroInsights expenses={allExpenses} totalIncome={totalIncome} />
+          <MicroInsights expenses={expenses} totalIncome={totalIncome} />
         </motion.div>
       )}
 
       {/* Weekly Challenge */}
       {!hasNoData && (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.50, duration: 0.35 }}>
-          <WeeklyChallenge expenses={allExpenses} totalIncome={totalIncome} />
+          <WeeklyChallenge expenses={expenses} totalIncome={totalIncome} />
         </motion.div>
       )}
 
@@ -519,39 +483,7 @@ export default function Home() {
         </DialogContent>
       </Dialog>
 
-      {/* Quick Income Dialog */}
-      <Dialog open={quickDialog === "income"} onOpenChange={() => setQuickDialog(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader><DialogTitle>Adicionar Renda</DialogTitle></DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Input placeholder="Ex: Salário" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} required />
-            </div>
-            <div className="space-y-2">
-              <Label>Valor Mensal</Label>
-              <Input type="number" step="0.01" placeholder="0,00" value={formData.amount} onChange={(e) => setFormData({ ...formData, amount: e.target.value })} required />
-            </div>
-            <div className="space-y-2">
-              <Label>Tipo</Label>
-              <Select value={formData.type} onValueChange={(v) => setFormData({ ...formData, type: v })}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="salary">Salário</SelectItem>
-                  <SelectItem value="freelance">Freelance</SelectItem>
-                  <SelectItem value="investment">Investimento</SelectItem>
-                  <SelectItem value="rental">Aluguel</SelectItem>
-                  <SelectItem value="other">Outros</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex gap-3">
-              <Button type="button" variant="outline" className="flex-1" onClick={() => setQuickDialog(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={createIncomeMutation.isPending}>Adicionar</Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+
     </div>
     </PullToRefresh>
   );
