@@ -35,6 +35,11 @@ const LayoutWrapper = ({ children, currentPageName }) => {
     : pageContent;
 };
 
+const PremiumExpiredOverlay = () => {
+  const { showExpiredModal, dismissExpiredModal } = usePremium();
+  return <PremiumExpiredModal open={showExpiredModal} onClose={dismissExpiredModal} />;
+};
+
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
 
