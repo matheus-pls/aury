@@ -128,8 +128,8 @@ function buildAlerts({ spentPct, expensesByCategory, totalIncome, balance }) {
     alerts.push({
       priority: 3, type: "positive",
       icon: CheckCircle2,
-      bg: "bg-emerald-500/10", border: "border-emerald-500/25", iconColor: "text-emerald-400",
-      label: "Ótimo", labelBg: "bg-emerald-500/20 text-emerald-400",
+      accentColor: "#34D399",
+      label: "Ótimo",
       messageFree: "Você está indo muito bem esse mês!",
       messagePremium: `Apenas ${spentPct.toFixed(0)}% da renda gasta com ${(monthPct * 100).toFixed(0)}% do mês passado. Projeção: fechar com ${fmt(balance)} sobrando.`,
       teaserFree: "Veja sua projeção de fechamento",
@@ -138,8 +138,8 @@ function buildAlerts({ spentPct, expensesByCategory, totalIncome, balance }) {
     alerts.push({
       priority: 3, type: "positive",
       icon: Star,
-      bg: "bg-emerald-500/10", border: "border-emerald-500/25", iconColor: "text-emerald-400",
-      label: "No controle", labelBg: "bg-emerald-500/20 text-emerald-400",
+      accentColor: "#34D399",
+      label: "No controle",
       messageFree: "Seus gastos estão dentro do planejado.",
       messagePremium: `Gastos em ${spentPct.toFixed(0)}% da renda. Se mantiver o ritmo, fechará o mês com ${fmt(balance)} de saldo positivo.`,
       teaserFree: "Ver comparação com mês anterior",
