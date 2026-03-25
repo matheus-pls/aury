@@ -5,16 +5,24 @@ import { useEffect, useRef, useState } from "react";
  * Retorna o valor atual formatado como moeda BRL.
  */
 export function useAnimatedCurrency(target, duration = 700) {
-  const [display, setDisplay] = useState(0);
-  const prev = useRef(target);
+  const [display, setDisplay] = useState(() => {
+    console.log("[useAnimatedCurrency] Iniciando com target:", target);
+    return target ?? 0;
+  });
+  const prev = useRef(target ?? 0);
   const raf = useRef(null);
 
   useEffect(() => {
     const from = prev.current;
-    const to = target;
-    prev.current = target;
+    const to = target ?? 0;
+    console.log("[useAnimatedCurrency] Animando de", from, "para", to);
+    prev.current = to;
 
-    if (from === to) return;
+    if (from === to) {
+      console.log("[useAnimatedCurrency] Valores iguais, sem animação");
+      setDisplay(to);
+      return;
+    }
 
     const start = performance.now();
 
@@ -31,8 +39,10 @@ export function useAnimatedCurrency(target, duration = 700) {
     return () => cancelAnimationFrame(raf.current);
   }, [target, duration]);
 
-  return new Intl.NumberFormat("pt-BR", {
+  const formatted = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
   }).format(display);
+  console.log("[useAnimatedCurrency] Display atual:", display, "Formatado:", formatted);
+  return formatted;
 }

@@ -4,6 +4,7 @@ import { TrendingDown, TrendingUp, Minus } from "lucide-react";
 import { useAnimatedCurrency } from "@/hooks/useAnimatedNumber";
 
 export default function MonthSituationCard({ balance, totalIncome, totalExpenses, spentPct }) {
+  console.log("[MonthSituationCard] Props recebidas:", { balance, totalIncome, totalExpenses, spentPct });
   const isNegative = balance < 0;
   const isWarning = spentPct >= 80 && balance >= 0;
 

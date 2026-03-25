@@ -262,6 +262,7 @@ export default function Home() {
       ) : (
         <>
           {/* Month Situation Card */}
+          {console.log("[HOME] Renderizando MonthSituationCard com:", { balance, totalIncome, totalExpenses, spentPct })}
           <MonthSituationCard
             balance={balance}
             totalIncome={totalIncome}
