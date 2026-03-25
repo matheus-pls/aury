@@ -146,6 +146,8 @@ export default function MinimalOnboarding() {
       current_emergency_fund: 0,
       notifications_enabled: true,
       onboarding_completed: true,
+      onboarding_income: incomeValue,
+      onboarding_fixed_expenses: fixedValue,
     });
 
     const userId = await getUserId();
