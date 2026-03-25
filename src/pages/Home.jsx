@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import {
   Wallet, Shield, Heart,
-  PieChart, Plus, Receipt, Info
+  PieChart, Plus, Receipt, Info, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -17,6 +19,8 @@ import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, ResponsiveContainer }
 import { toast } from "sonner";
 import PullToRefresh from "@/components/PullToRefresh";
 import { usePremium } from "@/lib/PremiumContext";
+import { useAuth } from "@/lib/AuthContext";
+import { useOnboardingStatus } from "@/hooks/useOnboardingStatus";
 import SmartAlert from "@/components/home/SmartAlert";
 import MonthProgress from "@/components/home/MonthProgress";
 import RecentTransactions from "@/components/home/RecentTransactions";
