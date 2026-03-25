@@ -159,56 +159,65 @@ export default function SmartAlert({ spentPct, expensesByCategory, totalIncome, 
 
   const Icon = alert.icon;
 
+  const accent = alert.accentColor;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={`rounded-2xl border p-4 ${alert.bg} ${alert.border}`}
+      className="rounded-2xl overflow-hidden flex"
+      style={{
+        background: "hsl(220, 13%, 11%)",
+        border: `1px solid ${accent}22`,
+      }}
     >
-      {/* Header */}
-      <div className="flex items-start gap-3 mb-0">
-        <div className={`mt-0.5 flex-shrink-0 ${alert.iconColor}`}>
-          <Icon className="w-5 h-5" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${alert.labelBg}`}>
+      {/* Borda lateral de estado — única indicação de cor */}
+      <div className="w-1 flex-shrink-0" style={{ background: accent, opacity: 0.65 }} />
+
+      <div className="flex-1 p-4">
+        <div className="flex items-start gap-3">
+          <Icon className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: accent }} />
+          <div className="flex-1 min-w-0">
+            {/* Label */}
+            <span
+              className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-block mb-1.5"
+              style={{ background: `${accent}18`, color: accent }}
+            >
               {alert.label}
             </span>
-          </div>
 
-          {/* Mensagem principal */}
-          <p className="text-sm font-medium text-foreground leading-snug">
-            {isPremium ? alert.messagePremium : alert.messageFree}
-          </p>
+            {/* Mensagem principal */}
+            <p className="text-sm font-medium text-foreground leading-snug">
+              {isPremium ? alert.messagePremium : alert.messageFree}
+            </p>
 
-          {/* Teaser + CTA para FREE */}
-          {!isPremium && (
-            <div className="mt-3">
-              {/* Linha de detalhe borrada */}
-              <div className="relative mb-2 overflow-hidden rounded-lg">
-                <p className="text-xs text-muted-foreground blur-[4px] select-none pointer-events-none">
-                  {alert.messagePremium}
-                </p>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="flex items-center gap-1 bg-background/80 backdrop-blur-sm px-2 py-0.5 rounded-full border border-border">
-                    <Lock className="w-2.5 h-2.5 text-amber-400" />
-                    <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Premium</span>
+            {/* Teaser + CTA para FREE */}
+            {!isPremium && (
+              <div className="mt-3">
+                {/* Linha borrada */}
+                <div className="relative mb-2 overflow-hidden rounded-lg">
+                  <p className="text-xs text-muted-foreground blur-[4px] select-none pointer-events-none">
+                    {alert.messagePremium}
+                  </p>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="flex items-center gap-1 bg-background/80 backdrop-blur-sm px-2 py-0.5 rounded-full border border-border">
+                      <Lock className="w-2.5 h-2.5 text-amber-400" />
+                      <span className="text-[9px] font-bold text-amber-400 uppercase tracking-wider">Premium</span>
+                    </div>
                   </div>
                 </div>
+                {/* CTA */}
+                <button
+                  onClick={() => navigate(createPageUrl("Upgrade"))}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  {alert.teaserFree} →
+                </button>
               </div>
-
-              {/* CTA */}
-              <button
-                onClick={() => navigate(createPageUrl("Upgrade"))}
-                className="flex items-center gap-1.5 text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors"
-              >
-                <Sparkles className="w-3 h-3" />
-                {alert.teaserFree} →
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
