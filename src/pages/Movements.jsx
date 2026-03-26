@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPageUrl } from "@/utils";
-import { Wallet, Receipt, Zap } from "lucide-react";
+import { Wallet, Receipt, Zap, Upload } from "lucide-react";
 import AuryFlow from "@/components/overview/AuryFlow";
 import Incomes from "./Incomes";
 import Expenses from "./Expenses";
 import PullToRefresh from "@/components/PullToRefresh";
 import { useQueryClient } from "@tanstack/react-query";
+import CsvImportDialog from "@/components/movements/CsvImportDialog";
 
 const TABS = [
   { id: "quick", label: "Registrar", icon: Zap },
@@ -16,6 +17,7 @@ const TABS = [
 
 export default function Movements() {
   const [activeTab, setActiveTab] = useState("quick");
+  const [csvOpen, setCsvOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const handleRefresh = async () => {
@@ -28,10 +30,23 @@ export default function Movements() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
+        className="flex items-start justify-between"
       >
-        <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Movimentações</h1>
-        <p className="text-muted-foreground mt-1">Registre rapidamente com Aury Flow</p>
+        <div>
+          <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Movimentações</h1>
+          <p className="text-muted-foreground mt-1">Registre rapidamente com Aury Flow</p>
+        </div>
+        {activeTab === "expenses" && (
+          <button
+            onClick={() => setCsvOpen(true)}
+            className="flex items-center gap-1.5 text-xs font-medium text-[#5FBDBD] border border-[#5FBDBD]/30 rounded-xl px-3 py-2 hover:bg-[#5FBDBD]/10 transition-colors mt-1"
+          >
+            <Upload className="w-3.5 h-3.5" />
+            Importar CSV
+          </button>
+        )}
       </motion.div>
+      <CsvImportDialog open={csvOpen} onClose={() => setCsvOpen(false)} />
 
       {/* Tabs */}
       <div className="flex gap-2 bg-muted p-1 rounded-xl w-fit">
