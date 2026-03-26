@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -57,14 +57,24 @@ const PROFILES = [
   },
 ];
 
+const PROGRESS_KEY = "aury_onboarding_progress";
+
 export default function MinimalOnboarding() {
-  const [step, setStep] = useState(1);
-  const [monthlyIncome, setMonthlyIncome] = useState("");
-  const [selectedGoal, setSelectedGoal] = useState(null);
-  const [fixedExpenses, setFixedExpenses] = useState("");
-  const [selectedProfile, setSelectedProfile] = useState(null);
+  const saved = (() => { try { return JSON.parse(localStorage.getItem(PROGRESS_KEY) || "{}"); } catch { return {}; } })();
+  const [step, setStep] = useState(saved.step || 1);
+  const [monthlyIncome, setMonthlyIncome] = useState(saved.monthlyIncome || "");
+  const [selectedGoal, setSelectedGoal] = useState(saved.selectedGoal || null);
+  const [fixedExpenses, setFixedExpenses] = useState(saved.fixedExpenses || "");
+  const [selectedProfile, setSelectedProfile] = useState(saved.selectedProfile || null);
   const [finishing, setFinishing] = useState(false);
   const navigate = useNavigate();
+
+  // Salva progresso sempre que algum valor mudar
+  useEffect(() => {
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify({ step, monthlyIncome, selectedGoal, fixedExpenses, selectedProfile }));
+    } catch {}
+  }, [step, monthlyIncome, selectedGoal, fixedExpenses, selectedProfile]);
   const queryClient = useQueryClient();
 
   // Pega o userId para isolar o localStorage por usuário
@@ -165,6 +175,7 @@ export default function MinimalOnboarding() {
   };
 
   const handlePlanComplete = () => {
+    localStorage.removeItem(PROGRESS_KEY);
     navigate(createPageUrl("Home"), { replace: true });
   };
 
