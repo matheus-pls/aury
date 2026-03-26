@@ -182,7 +182,8 @@ export default function Layout({ children, currentPageName }) {
                   const isActive = currentPageName === item.page;
                   const Icon = item.icon;
                   // Parceiros convidados têm acesso ao Modo Casal mesmo sem Premium
-                  const locked = !isPremium && !(item.page === "FamilyMode" && isPartner);
+                  // FamilyMode tem sua própria tela de promoção, nunca bloquear na sidebar
+                  const locked = !isPremium && !(item.page === "FamilyMode") && !isPartner;
                   return locked ? (
                     <button
                       key={item.page}
