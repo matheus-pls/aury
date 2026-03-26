@@ -42,7 +42,7 @@ const BOTTOM_NAV = [
 ];
 
 export default function Layout({ children, currentPageName }) {
-  const { isPremium } = usePremium();
+  const { isPremium, isPartner } = usePremium();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -181,7 +181,8 @@ export default function Layout({ children, currentPageName }) {
                 {PREMIUM_NAV.map((item) => {
                   const isActive = currentPageName === item.page;
                   const Icon = item.icon;
-                  const locked = !isPremium;
+                  // Parceiros convidados têm acesso ao Modo Casal mesmo sem Premium
+                  const locked = !isPremium && !(item.page === "FamilyMode" && isPartner);
                   return locked ? (
                     <button
                       key={item.page}

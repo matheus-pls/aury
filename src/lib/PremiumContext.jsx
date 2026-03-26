@@ -23,6 +23,7 @@ const PremiumContext = createContext(null);
 export function PremiumProvider({ children }) {
   const [userId, setUserId] = useState(null);
   const [isPremium, setIsPremium] = useState(false);
+  const [isPartner, setIsPartner] = useState(false);
   const [trialUsed, setTrialUsed] = useState(false);
   const [showExpiredModal, setShowExpiredModal] = useState(false);
   const [stripeStatus, setStripeStatus] = useState(null); // null | "active" | "canceled" | etc.
@@ -52,7 +53,7 @@ export function PremiumProvider({ children }) {
 
   // Carrega o usuário autenticado e inicializa estado por usuário
   useEffect(() => {
-    base44.auth.me().then(user => {
+    base44.auth.me().then(async user => {
       if (user) {
         const uid = user.id || user.email;
         setUserId(uid);
@@ -60,6 +61,16 @@ export function PremiumProvider({ children }) {
         setIsPremium(checkLocalPremium(uid));
         setTrialUsed(checkTrialUsed(uid));
         checkStripeSubscription(user.email);
+        // Verifica se o usuário é parceiro convidado em algum FamilyGroup
+        try {
+          const groups = await base44.entities.FamilyGroup.list();
+          const partnerGroup = groups.find(g =>
+            g.admin_email !== user.email && g.members?.includes(user.email)
+          );
+          setIsPartner(!!partnerGroup);
+        } catch (e) {
+          // silently ignore
+        }
       }
     }).catch(() => {});
   }, [checkStripeSubscription]);
@@ -147,6 +158,7 @@ export function PremiumProvider({ children }) {
   return (
     <PremiumContext.Provider value={{
       isPremium,
+      isPartner,
       trialUsed,
       stripeStatus,
       activate,
