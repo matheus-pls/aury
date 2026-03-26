@@ -93,6 +93,13 @@ export default function Home() {
     staleTime: 0,
   });
 
+  const { data: incomes = [] } = useQuery({
+    queryKey: ["incomes", userId, currentMonth],
+    queryFn: () => base44.entities.Income.filter({ is_active: true }),
+    enabled: isAuthenticated && onboardingCompleted && !!userId,
+    staleTime: 0,
+  });
+
   const { data: prevExpenses = [] } = useQuery({
     queryKey: ["expenses", userId, prevMonth],
     queryFn: () => base44.entities.Expense.filter({ month_year: prevMonth }),
@@ -154,9 +161,11 @@ export default function Home() {
     }
   };
 
-  // FONTE ÚNICA: UserSettings (onboarding_income e onboarding_fixed_expenses)
-  const totalIncome = Number(settings?.onboarding_income) || 0;
-  const totalExpenses = Number(settings?.onboarding_fixed_expenses) || 0;
+  const totalIncome = incomes.length > 0
+    ? incomes.reduce((s, i) => s + i.amount, 0)
+    : Number(settings?.onboarding_income) || 0;
+  const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0)
+    || Number(settings?.onboarding_fixed_expenses) || 0;
 
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
