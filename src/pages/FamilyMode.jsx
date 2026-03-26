@@ -60,6 +60,10 @@ export default function CoupleMode() {
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isAddGoalOpen, setIsAddGoalOpen] = useState(false);
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [isJoinGroupOpen, setIsJoinGroupOpen] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
+  const [joinError, setJoinError] = useState("");
+  const [joinSuccess, setJoinSuccess] = useState(false);
   const [isGoalDetailsOpen, setIsGoalDetailsOpen] = useState(false);
   const [isEditGoalOpen, setIsEditGoalOpen] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState(null);
@@ -67,6 +71,13 @@ export default function CoupleMode() {
   const [editGoalForm, setEditGoalForm] = useState({});
   const [groupName, setGroupName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
+
+  const generateInviteCode = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "CASAL-";
+    for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+    return code;
+  };
 
   const [expenseForm, setExpenseForm] = useState({
     description: "",
@@ -218,7 +229,28 @@ export default function CoupleMode() {
 
   const handleCreateGroup = () => {
     if (!user?.email || !groupName.trim()) return;
-    createGroupMutation.mutate({ name: groupName.trim(), admin_email: user.email, members: [user.email], active: true });
+    const invite_code = generateInviteCode();
+    createGroupMutation.mutate({ name: groupName.trim(), admin_email: user.email, members: [user.email], active: true, invite_code });
+  };
+
+  const handleJoinGroup = async () => {
+    if (!joinCode.trim() || !user?.email) return;
+    setJoinError("");
+    const results = await base44.entities.FamilyGroup.filter({ invite_code: joinCode.trim().toUpperCase() });
+    if (!results || results.length === 0) {
+      setJoinError("Código inválido. Verifique com seu parceiro.");
+      return;
+    }
+    const group = results[0];
+    if (group.members?.includes(user.email)) {
+      setJoinError("Você já faz parte desse grupo.");
+      return;
+    }
+    const updatedMembers = [...(group.members || []), user.email];
+    await base44.entities.FamilyGroup.update(group.id, { members: updatedMembers });
+    setJoinSuccess(true);
+    queryClient.invalidateQueries({ queryKey: ['family-groups'] });
+    setTimeout(() => { setIsJoinGroupOpen(false); setJoinSuccess(false); setJoinCode(""); }, 1500);
   };
 
   const handleAddMember = () => {
@@ -328,13 +360,58 @@ export default function CoupleMode() {
               <div key={i} className="p-3 bg-rose-500/10 rounded-xl border border-rose-500/20 text-sm text-rose-400 font-medium text-left">{item}</div>
             ))}
           </div>
-          <Button
-            onClick={() => setIsCreateGroupOpen(true)}
-            className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 shadow-lg shadow-rose-200 text-white px-8 h-12 text-base"
-          >
-            <Heart className="w-4 h-4 mr-2 fill-white" />
-            Começar Nossa Jornada
-          </Button>
+          <div className="flex flex-col gap-3">
+            <Button
+              onClick={() => setIsCreateGroupOpen(true)}
+              className="bg-gradient-to-r from-rose-400 to-pink-500 hover:from-rose-500 hover:to-pink-600 shadow-lg shadow-rose-200 text-white px-8 h-12 text-base"
+            >
+              <Heart className="w-4 h-4 mr-2 fill-white" />
+              Começar Nossa Jornada
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setIsJoinGroupOpen(true)}
+              className="border-rose-200 hover:border-rose-400 hover:bg-rose-50 text-rose-600 h-12"
+            >
+              🔑 Tenho um código de convite
+            </Button>
+          </div>
+
+          {/* Dialog: Entrar com código */}
+          <Dialog open={isJoinGroupOpen} onOpenChange={(v) => { setIsJoinGroupOpen(v); setJoinError(""); setJoinCode(""); setJoinSuccess(false); }}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-[#1B3A52] flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-rose-500 fill-rose-500" /> Entrar com código
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                {joinSuccess ? (
+                  <div className="py-8 text-center space-y-3">
+                    <div className="text-5xl">💕</div>
+                    <p className="text-lg font-semibold text-foreground">Vocês estão conectados!</p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-muted-foreground">Digite o código de convite que seu parceiro(a) compartilhou.</p>
+                    <Input
+                      placeholder="Ex: CASAL-4829"
+                      value={joinCode}
+                      onChange={(e) => { setJoinCode(e.target.value.toUpperCase()); setJoinError(""); }}
+                      className="border-slate-200 focus:border-rose-400 h-11 text-center text-lg font-mono tracking-widest uppercase"
+                    />
+                    {joinError && <p className="text-sm text-rose-500 text-center">{joinError}</p>}
+                    <div className="flex gap-3">
+                      <Button variant="outline" className="flex-1 h-11" onClick={() => setIsJoinGroupOpen(false)}>Cancelar</Button>
+                      <Button className="flex-1 bg-gradient-to-r from-rose-400 to-pink-500 text-white h-11" onClick={handleJoinGroup} disabled={!joinCode.trim()}>
+                        Entrar
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <Dialog open={isCreateGroupOpen} onOpenChange={setIsCreateGroupOpen}>
             <DialogContent className="sm:max-w-md">
@@ -392,7 +469,14 @@ export default function CoupleMode() {
           </div>
           <div className="flex gap-2">
             {!partner && (
-              <Button variant="outline" onClick={() => setIsAddMemberOpen(true)} className="border-rose-200 hover:border-rose-400 hover:bg-rose-50 text-rose-600">
+              <Button variant="outline" onClick={async () => {
+                if (!activeGroup?.invite_code) {
+                  const code = generateInviteCode();
+                  await base44.entities.FamilyGroup.update(activeGroup.id, { invite_code: code });
+                  queryClient.invalidateQueries({ queryKey: ['family-groups'] });
+                }
+                setIsAddMemberOpen(true);
+              }} className="border-rose-200 hover:border-rose-400 hover:bg-rose-50 text-rose-600">
                 <UserPlus className="w-4 h-4 mr-2" /> Convidar parceiro(a)
               </Button>
             )}
@@ -438,7 +522,14 @@ export default function CoupleMode() {
               </div>
             ))}
             {activeGroup.members?.length === 1 && (
-              <button onClick={() => setIsAddMemberOpen(true)} className="flex items-center gap-2 bg-white/10 border border-white/20 border-dashed rounded-xl px-3 py-2 hover:bg-white/20 transition-all">
+              <button onClick={async () => {
+                if (!activeGroup?.invite_code) {
+                  const code = generateInviteCode();
+                  await base44.entities.FamilyGroup.update(activeGroup.id, { invite_code: code });
+                  queryClient.invalidateQueries({ queryKey: ['family-groups'] });
+                }
+                setIsAddMemberOpen(true);
+              }} className="flex items-center gap-2 bg-white/10 border border-white/20 border-dashed rounded-xl px-3 py-2 hover:bg-white/20 transition-all">
                 <div className="w-8 h-8 rounded-full border-2 border-dashed border-white/50 flex items-center justify-center">
                   <Plus className="w-4 h-4 text-white/70" />
                 </div>
@@ -524,7 +615,14 @@ export default function CoupleMode() {
               Vocês Dois
             </CardTitle>
             {!partner && (
-              <Button size="sm" variant="outline" onClick={() => setIsAddMemberOpen(true)} className="h-8 border-rose-200 hover:bg-rose-50 text-rose-600 text-xs">
+              <Button size="sm" variant="outline" onClick={async () => {
+                if (!activeGroup?.invite_code) {
+                  const code = generateInviteCode();
+                  await base44.entities.FamilyGroup.update(activeGroup.id, { invite_code: code });
+                  queryClient.invalidateQueries({ queryKey: ['family-groups'] });
+                }
+                setIsAddMemberOpen(true);
+              }} className="h-8 border-rose-200 hover:bg-rose-50 text-rose-600 text-xs">
                 <UserPlus className="w-3 h-3 mr-1" /> Convidar
               </Button>
             )}
@@ -676,18 +774,25 @@ export default function CoupleMode() {
           </DialogHeader>
           <div className="space-y-5 mt-4">
             <div className="p-4 bg-rose-500/10 rounded-xl border border-rose-500/20">
-              <p className="text-sm text-muted-foreground leading-relaxed">Juntos, vocês vão ver gastos, metas e progresso em tempo real. 💕</p>
+              <p className="text-sm text-muted-foreground leading-relaxed">Compartilhe esse código com seu amor para ele(a) entrar no espaço de vocês. 💕</p>
             </div>
             <div className="space-y-2">
-              <Label className="text-[#1B3A52] font-medium">Email do(a) parceiro(a)</Label>
-              <Input type="email" placeholder="parceiro@email.com" value={newMemberEmail} onChange={(e) => setNewMemberEmail(e.target.value)} className="border-slate-200 focus:border-rose-400 h-11" />
+              <Label className="text-[#1B3A52] font-medium">Código de convite</Label>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-14 flex items-center justify-center rounded-xl border-2 border-rose-300 bg-rose-50 font-mono text-2xl font-bold tracking-widest text-rose-600 select-all">
+                  {activeGroup?.invite_code || "—"}
+                </div>
+                <Button
+                  variant="outline"
+                  className="h-14 px-4 border-rose-200 hover:bg-rose-50 text-rose-600"
+                  onClick={() => { navigator.clipboard.writeText(activeGroup?.invite_code || ""); }}
+                >
+                  Copiar
+                </Button>
+              </div>
             </div>
-            <div className="flex gap-3">
-              <Button variant="outline" className="flex-1 h-11" onClick={() => setIsAddMemberOpen(false)}>Cancelar</Button>
-              <Button className="flex-1 bg-gradient-to-r from-rose-400 to-pink-500 text-white h-11" onClick={handleAddMember} disabled={!newMemberEmail || addMemberMutation.isPending}>
-                {addMemberMutation.isPending ? "Enviando..." : "💌 Enviar Convite"}
-              </Button>
-            </div>
+            <p className="text-sm text-center text-muted-foreground">Mande esse código pro seu amor pelo WhatsApp 💕</p>
+            <Button variant="outline" className="w-full h-11" onClick={() => setIsAddMemberOpen(false)}>Fechar</Button>
           </div>
         </DialogContent>
       </Dialog>
