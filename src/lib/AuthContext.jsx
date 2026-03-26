@@ -98,7 +98,8 @@ export const AuthProvider = ({ children }) => {
       // Se o usuário trocou, limpa todo o cache do React Query para evitar
       // que dados do usuário anterior apareçam para o novo usuário
       const newUserId = currentUser?.id || currentUser?.email;
-      if (prevUserIdRef.current && prevUserIdRef.current !== newUserId) {
+      // Se trocou de usuário, limpa TODO o cache para evitar vazamento de dados
+      if (prevUserIdRef.current !== null && prevUserIdRef.current !== newUserId) {
         queryClientInstance.clear();
       }
       prevUserIdRef.current = newUserId;

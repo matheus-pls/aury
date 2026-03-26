@@ -31,10 +31,12 @@ export function useOnboardingStatus() {
     return { isLoading: true, onboardingCompleted: false };
   }
 
-  // Verifica DB primeiro, depois localStorage isolado por userId
+  // Verifica DB primeiro — fonte de verdade
   const dbCompleted = settings?.onboarding_completed === true;
-  const localKey = `aury_onboarding_complete_${userId}`;
-  const localCompleted = localStorage.getItem(localKey) === "true";
+
+  // localStorage apenas como cache local, sempre isolado por userId (nunca sem userId)
+  const localKey = userId ? `aury_onboarding_complete_${userId}` : null;
+  const localCompleted = localKey ? localStorage.getItem(localKey) === "true" : false;
 
   return {
     isLoading: false,

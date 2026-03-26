@@ -106,9 +106,6 @@ export default function Home() {
     queryKey: ["settings", userId],
     queryFn: async () => {
       const r = await base44.entities.UserSettings.list();
-      console.log("[HOME] UserSettings carregado:", r[0]);
-      console.log("[HOME] onboarding_income:", r[0]?.onboarding_income, "type:", typeof r[0]?.onboarding_income);
-      console.log("[HOME] onboarding_fixed_expenses:", r[0]?.onboarding_fixed_expenses, "type:", typeof r[0]?.onboarding_fixed_expenses);
       return r[0] || null;
     },
     enabled: isAuthenticated && onboardingCompleted && !!userId,
@@ -147,7 +144,6 @@ export default function Home() {
   // FONTE ÚNICA: UserSettings (onboarding_income e onboarding_fixed_expenses)
   const totalIncome = Number(settings?.onboarding_income) || 0;
   const totalExpenses = Number(settings?.onboarding_fixed_expenses) || 0;
-  console.log("[HOME] Cálculo FINAL (UserSettings):", { totalIncome, totalExpenses });
 
   const balance = totalIncome - totalExpenses;
   const spentPct = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
@@ -229,7 +225,6 @@ export default function Home() {
       ? "Quase no limite, bora ajustar ⚠️"
       : "Hora de segurar um pouco 🛑";
 
-  // Verificar se já registrou algo hoje
   const today = new Date().toISOString().slice(0, 10);
   const hasRegisteredToday = expenses.some(e => e.date === today);
 
@@ -313,7 +308,6 @@ export default function Home() {
       ) : (
         <>
           {/* Month Situation Card */}
-          {console.log("[HOME] Renderizando MonthSituationCard com:", { balance, totalIncome, totalExpenses, spentPct })}
           <MonthSituationCard
             balance={balance}
             totalIncome={totalIncome}
@@ -501,7 +495,7 @@ export default function Home() {
 
       {/* Referral Banner */}
       <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.63, duration: 0.35 }}>
-        <ReferralBanner />
+        <ReferralBanner userId={userId} />
       </motion.div>
 
       {/* Quick Expense Dialog */}

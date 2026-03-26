@@ -4,16 +4,20 @@ import { Users, Share2, Check, X } from "lucide-react";
 
 const SHARE_TEXT = `Oi! Estou usando o Aury para organizar minhas finanças e tá sendo muito bom.\n\nÉ gratuito e bem simples de usar. Acho que você ia gostar! 👉 aury.app`;
 
-export default function ReferralBanner() {
+export default function ReferralBanner({ userId }) {
+  const storageKey = userId ? `aury_referral_dismissed_${userId}` : null;
   const [dismissed, setDismissed] = useState(() => {
-    try { return localStorage.getItem("aury_referral_dismissed") === "1"; } catch { return false; }
+    if (!storageKey) return false;
+    try { return localStorage.getItem(storageKey) === "1"; } catch { return false; }
   });
   const [shared, setShared] = useState(false);
 
   if (dismissed) return null;
 
   const handleDismiss = () => {
-    try { localStorage.setItem("aury_referral_dismissed", "1"); } catch {}
+    if (storageKey) {
+      try { localStorage.setItem(storageKey, "1"); } catch {}
+    }
     setDismissed(true);
   };
 
