@@ -112,6 +112,18 @@ export default function Home() {
     staleTime: 0,
   });
 
+  const createIncomeMutation = useMutation({
+    mutationFn: (data) => base44.entities.Income.create(data),
+    onSuccess: (_, vars) => {
+      queryClient.invalidateQueries({ queryKey: ["incomes", userId] });
+      toast.success("Renda adicionada 💰", {
+        description: `${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(parseFloat(vars.amount))} registrado`,
+      });
+      setQuickDialog(null);
+      setFormData({ description: "", amount: "", category: "essential", date: new Date().toISOString().slice(0, 10), type: "salary" });
+    }
+  });
+
   const createExpenseMutation = useMutation({
     mutationFn: (data) => base44.entities.Expense.create(data),
     onSuccess: (_, vars) => {
@@ -132,12 +144,13 @@ export default function Home() {
     if (quickDialog === "expense") {
       createExpenseMutation.mutate({ ...formData, amount: parseFloat(formData.amount), month_year: formData.date.slice(0, 7) });
     } else if (quickDialog === "income") {
-      // Para renda, apenas registramos sem necessidade de dialog complexo
-      toast.success("Renda adicionada 💰", {
-        description: `Renda de ${new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(parseFloat(formData.amount))} registrada`,
+      createIncomeMutation.mutate({
+        description: formData.description,
+        amount: parseFloat(formData.amount),
+        type: formData.type,
+        date: formData.date,
+        is_active: true,
       });
-      setQuickDialog(null);
-      setFormData({ description: "", amount: "", category: "essential", date: new Date().toISOString().slice(0, 10), type: "salary" });
     }
   };
 
@@ -572,7 +585,7 @@ export default function Home() {
             </div>
             <div className="flex gap-3">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setQuickDialog(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 text-white" style={{ background: "linear-gradient(135deg, #34D399, #10B981)" }} disabled={false}>Adicionar</Button>
+              <Button type="submit" className="flex-1 text-white" style={{ background: "linear-gradient(135deg, #34D399, #10B981)" }} disabled={createIncomeMutation.isPending}>Adicionar</Button>
             </div>
           </form>
         </DialogContent>
