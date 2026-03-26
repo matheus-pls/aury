@@ -218,16 +218,27 @@ export default function CoupleMode() {
   };
 
   const removeMemberMutation = useMutation({
-    mutationFn: ({ groupId, members }) =>
-      base44.entities.FamilyGroup.update(groupId, { members }),
+    mutationFn: ({ groupId, members, invite_code }) =>
+      base44.entities.FamilyGroup.update(groupId, { members, ...(invite_code ? { invite_code } : {}) }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['family-groups'] })
   });
 
+  // Regra 3: ao remover parceiro, gerar novo invite_code
   const handleRemoveMember = (email) => {
     if (email === user?.email) return;
     if (window.confirm(`Remover ${getMemberName(email)} do Modo Casal?`)) {
       const updatedMembers = activeGroup.members.filter(m => m !== email);
-      removeMemberMutation.mutate({ groupId: activeGroup.id, members: updatedMembers });
+      const newCode = generateInviteCode();
+      removeMemberMutation.mutate({ groupId: activeGroup.id, members: updatedMembers, invite_code: newCode });
+    }
+  };
+
+  // Regra 4: parceiro (não-admin) sair por conta própria
+  const handleLeaveGroup = () => {
+    if (window.confirm("Tem certeza que quer sair do espaço de vocês? 💔")) {
+      const updatedMembers = activeGroup.members.filter(m => m !== user.email);
+      const newCode = generateInviteCode();
+      removeMemberMutation.mutate({ groupId: activeGroup.id, members: updatedMembers, invite_code: newCode });
     }
   };
 
@@ -250,8 +261,14 @@ export default function CoupleMode() {
       setJoinError("Você já faz parte desse grupo.");
       return;
     }
+    // Regra 1: limite de 2 membros
+    if ((group.members || []).length >= 2) {
+      setJoinError("Esse espaço já está completo 💕");
+      return;
+    }
     const updatedMembers = [...(group.members || []), user.email];
-    await base44.entities.FamilyGroup.update(group.id, { members: updatedMembers });
+    // Regra 2: invalidar o código após uso
+    await base44.entities.FamilyGroup.update(group.id, { members: updatedMembers, invite_code: null });
     setJoinSuccess(true);
     queryClient.invalidateQueries({ queryKey: ['family-groups'] });
     setTimeout(() => { setIsJoinGroupOpen(false); setJoinSuccess(false); setJoinCode(""); }, 1500);
@@ -574,7 +591,8 @@ export default function CoupleMode() {
             </div>
           </div>
           <div className="flex gap-2">
-            {!partner && (
+            {/* Regra 1: só mostrar "Convidar" no header se < 2 membros */}
+            {(activeGroup.members?.length || 0) < 2 && (
               <Button variant="outline" onClick={async () => {
                 if (!activeGroup?.invite_code) {
                   const code = generateInviteCode();
@@ -720,7 +738,8 @@ export default function CoupleMode() {
               </div>
               Vocês Dois
             </CardTitle>
-            {!partner && (
+            {/* Regra 1: só mostrar "Convidar" se tiver menos de 2 membros */}
+            {(activeGroup.members?.length || 0) < 2 && (
               <Button size="sm" variant="outline" onClick={async () => {
                 if (!activeGroup?.invite_code) {
                   const code = generateInviteCode();
@@ -754,9 +773,15 @@ export default function CoupleMode() {
                       <p className="text-sm font-bold text-foreground truncate">{getMemberName(email)}</p>
                       <span className="text-xs px-2 py-0.5 bg-rose-500/15 text-rose-400 rounded-full font-medium">{isMe ? "Você" : "Parceiro(a)"}</span>
                     </div>
-                    {!isMe && (
+                    {/* Regra 4: admin vê "Remover" no parceiro; parceiro vê "Sair" no seu próprio card */}
+                    {!isMe && user?.email === activeGroup.admin_email && (
                       <Button variant="ghost" size="icon" onClick={() => handleRemoveMember(email)} className="h-7 w-7 hover:bg-rose-100 opacity-60 hover:opacity-100 transition-all">
                         <Trash2 className="w-3.5 h-3.5 text-rose-500" />
+                      </Button>
+                    )}
+                    {isMe && user?.email !== activeGroup.admin_email && (
+                      <Button variant="ghost" size="sm" onClick={handleLeaveGroup} className="h-7 px-2 text-xs hover:bg-rose-100 text-rose-500 opacity-70 hover:opacity-100 transition-all">
+                        Sair
                       </Button>
                     )}
                   </div>
