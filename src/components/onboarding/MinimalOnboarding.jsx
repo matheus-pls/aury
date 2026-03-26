@@ -159,6 +159,7 @@ export default function MinimalOnboarding() {
       onboarding_income: incomeValue,
       onboarding_fixed_expenses: fixedValue,
       financial_profile: selectedProfile,
+      financial_goal: selectedGoal,
     });
 
     const userId = await getUserId();
