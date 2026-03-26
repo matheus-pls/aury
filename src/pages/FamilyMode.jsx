@@ -120,6 +120,17 @@ export default function CoupleMode() {
 
   const activeGroup = groups.find(g => g.active);
 
+  // Verifica se o admin do grupo ativo é Premium
+  const { data: adminPremiumData } = useQuery({
+    queryKey: ['admin-subscription', activeGroup?.admin_email],
+    queryFn: async () => {
+      const res = await base44.functions.invoke("getSubscriptionStatus", { user_email: activeGroup.admin_email });
+      return res.data;
+    },
+    enabled: !!activeGroup
+  });
+  const isAdminPremium = adminPremiumData?.is_premium ?? null; // null = ainda carregando
+
   const { data: sharedExpenses = [] } = useQuery({
     queryKey: ['shared-expenses', activeGroup?.id],
     queryFn: () => activeGroup
@@ -356,6 +367,34 @@ export default function CoupleMode() {
           <div className="w-12 h-12 border-4 border-rose-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-muted-foreground">Carregando...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Se há grupo ativo mas admin não é Premium — bloquear acesso com mensagem contextual
+  if (activeGroup && isAdminPremium === false) {
+    const isAdmin = user?.email === activeGroup.admin_email;
+    return (
+      <div className="min-h-[80vh] relative overflow-hidden flex flex-col items-center justify-center px-4 py-10">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 50% at 50% 0%, rgba(225,29,72,0.18) 0%, transparent 70%)" }} />
+        <motion.div initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 200, damping: 14 }} className="relative mb-6">
+          <div className="w-28 h-28 bg-gradient-to-br from-rose-400/50 to-pink-600/50 rounded-3xl flex items-center justify-center shadow-xl">
+            <Heart className="w-14 h-14 text-white/60" />
+          </div>
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="text-center mb-8 max-w-sm">
+          <h1 className="text-3xl font-bold text-foreground mb-3">Modo Casal pausado</h1>
+          <p className="text-muted-foreground text-base leading-relaxed">
+            {isAdmin
+              ? "Sua assinatura expirou. Renove para continuar 💔"
+              : "O espaço de vocês está pausado. Peça para seu parceiro renovar o Premium 💔"}
+          </p>
+        </motion.div>
+        {isAdmin && (
+          <Button onClick={() => navigate(createPageUrl("Upgrade"))} className="h-12 px-8 bg-gradient-to-r from-rose-400 to-pink-500 text-white text-base font-semibold">
+            Renovar Premium
+          </Button>
+        )}
       </div>
     );
   }
