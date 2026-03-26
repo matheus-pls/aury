@@ -233,6 +233,36 @@ export default function MinimalOnboarding() {
                     Pode ser um valor aproximado 👍
                   </p>
                 </div>
+                <AnimatePresence>
+                  {monthlyIncome && (() => {
+                    const raw = parseFloat(monthlyIncome.replace(/\D/g, "")) / 100;
+                    const fmt = (v) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(v);
+                    const items = [
+                      { emoji: "🏠", label: "Gastos Fixos", pct: 0.30 },
+                      { emoji: "🛡️", label: "Reserva de Emergência", pct: 0.25 },
+                      { emoji: "📈", label: "Investimentos", pct: 0.25 },
+                      { emoji: "🎯", label: "Supérfluos", pct: 0.20 },
+                    ];
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, y: -6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -6 }}
+                        transition={{ duration: 0.2 }}
+                        className="rounded-xl p-4 space-y-2"
+                        style={{ background: "rgba(95,189,189,0.07)", border: "1px solid rgba(95,189,189,0.15)" }}
+                      >
+                        <p className="text-xs font-semibold mb-2" style={{ color: "hsl(0,0%,55%)" }}>Prévia — perfil Equilibrado</p>
+                        {items.map(({ emoji, label, pct }) => (
+                          <div key={label} className="flex items-center justify-between">
+                            <span className="text-xs" style={{ color: "hsl(0,0%,65%)" }}>{emoji} {label}</span>
+                            <span className="text-xs font-bold" style={{ color: "#5FBDBD" }}>{fmt(raw * pct)}</span>
+                          </div>
+                        ))}
+                      </motion.div>
+                    );
+                  })()}
+                </AnimatePresence>
                 <Button
                   onClick={() => setStep(2)}
                   disabled={!monthlyIncome}
