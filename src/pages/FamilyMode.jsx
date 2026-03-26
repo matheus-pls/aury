@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { usePremium } from "@/lib/PremiumContext";
+import CoupleModePromo from "@/components/CoupleModePromo";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -96,6 +98,7 @@ export default function CoupleMode() {
   });
 
   const queryClient = useQueryClient();
+  const { isPremium, isPartner } = usePremium();
 
   const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ['user'],
@@ -337,6 +340,11 @@ export default function CoupleMode() {
         </div>
       </div>
     );
+  }
+
+  // Usuário não-Premium e não parceiro convidado: mostrar tela de promoção exclusiva
+  if (!activeGroup && !isPremium && !isPartner) {
+    return <CoupleModePromo user={user} />;
   }
 
   if (!activeGroup) {
