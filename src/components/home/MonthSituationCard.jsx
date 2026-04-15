@@ -49,7 +49,7 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
       transition={{ delay: 0.1, duration: 0.4 }}
       whileHover={{ y: -2, boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}
       className="rounded-3xl overflow-hidden shadow-lg transition-shadow"
-      style={{ background: "hsl(220, 13%, 11%)", border: statusConfig.border }}
+      style={{ background: "hsl(var(--card))", border: statusConfig.border }}
     >
       <div className="flex">
         {/* Barra lateral de estado */}
@@ -65,7 +65,7 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
           {/* Header */}
           <div className="flex items-start justify-between mb-4">
             <div>
-              <p className="text-white/60 text-xs font-medium uppercase tracking-wider mb-1">Situação do mês</p>
+              <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">Situação do mês</p>
               <AnimatePresence mode="wait">
                 <motion.p
                   key={statusConfig.label}
@@ -73,7 +73,7 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 6 }}
                   transition={{ duration: 0.25 }}
-                  className="text-white/80 text-sm font-medium"
+                  className="text-foreground/80 text-sm font-medium"
                 >
                   {statusConfig.label}
                 </motion.p>
@@ -83,9 +83,9 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
               whileHover={{ rotate: 10, scale: 1.1 }}
               transition={{ type: "spring", stiffness: 300 }}
               className="p-2.5 rounded-xl"
-              style={{ background: "rgba(255,255,255,0.08)" }}
+              style={{ background: "hsl(var(--muted))" }}
             >
-              <StatusIcon className="w-5 h-5 text-white/70" />
+              <StatusIcon className="w-5 h-5 text-muted-foreground" />
             </motion.div>
           </div>
 
@@ -105,13 +105,13 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
 
           {/* Progress bar */}
           <div className="mb-4">
-            <div className="flex justify-between text-xs text-white/50 mb-1.5">
+            <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
               <span>
                 Você gastou{" "}
-                <span className="font-semibold text-white/80">{spentPct.toFixed(0)}% do que ganha</span>
+                <span className="font-semibold text-foreground/80">{spentPct.toFixed(0)}% do que ganha</span>
               </span>
             </div>
-            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.10)" }}>
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "hsl(var(--muted))" }}>
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${Math.min(spentPct, 100)}%` }}
@@ -123,21 +123,21 @@ export default function MonthSituationCard({ balance, totalIncome, totalExpenses
           </div>
 
           {/* Entradas / Saídas */}
-          <div className="grid grid-cols-2 gap-3 pt-4 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+          <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border">
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-              <p className="text-white/50 text-xs mb-0.5">Entradas</p>
-              <p className="text-base font-semibold tabular-nums text-white">{animIncome}</p>
+              <p className="text-muted-foreground text-xs mb-0.5">Entradas</p>
+              <p className="text-base font-semibold tabular-nums text-foreground">{animIncome}</p>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <p className="text-white/50 text-xs mb-0.5">Saídas</p>
-              <p className="text-base font-semibold tabular-nums text-white">{animExpenses}</p>
+              <p className="text-muted-foreground text-xs mb-0.5">Saídas</p>
+              <p className="text-base font-semibold tabular-nums text-foreground">{animExpenses}</p>
             </motion.div>
           </div>
 
           {/* Badge */}
           <div
             className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
-            style={{ background: "rgba(255,255,255,0.06)", color: statusConfig.interpretColor }}
+            style={{ background: "hsl(var(--muted))", color: statusConfig.interpretColor }}
           >
             <motion.span
               animate={{ scale: [1, 1.4, 1] }}

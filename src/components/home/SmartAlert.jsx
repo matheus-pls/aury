@@ -187,7 +187,7 @@ export default function SmartAlert({ spentPct, expensesByCategory, totalIncome, 
       transition={{ duration: 0.3 }}
       className="rounded-2xl overflow-hidden flex"
       style={{
-        background: "hsl(220, 13%, 11%)",
+        background: "hsl(var(--card))",
         border: `1px solid ${accent}22`,
       }}
     >

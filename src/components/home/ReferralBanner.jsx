@@ -38,7 +38,7 @@ export default function ReferralBanner({ userId }) {
       transition={{ duration: 0.3 }}
       className="relative rounded-2xl p-4"
       style={{
-        background: "hsl(220,13%,11%)",
+        background: "hsl(var(--card))",
         border: "1px solid rgba(95,189,189,0.15)",
       }}
     >
