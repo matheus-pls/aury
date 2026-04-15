@@ -10,8 +10,6 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { usePremium } from "@/lib/PremiumContext";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
@@ -96,17 +94,51 @@ export default function NewProfile() {
             {initials}
           </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold">{user?.full_name || "Carregando..."}</h2>
-              <button
-                type="button"
-                onClick={handleOpenEditName}
-                className="p-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-              >
-                <Pencil className="w-3.5 h-3.5 text-white/70" />
-              </button>
-            </div>
-            <p className="text-white/70 text-sm">{user?.email}</p>
+            {editNameOpen ? (
+              <div className="space-y-2">
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSaveName();
+                    if (e.key === "Escape") setEditNameOpen(false);
+                  }}
+                  autoFocus
+                  className="w-full bg-white/20 text-white placeholder-white/50 rounded-xl px-3 py-1.5 text-base font-bold outline-none border border-white/30 focus:border-white/70"
+                  placeholder="Seu nome"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditNameOpen(false)}
+                    className="flex-1 text-xs text-white/60 bg-white/10 rounded-lg py-1 hover:bg-white/20 transition-colors"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSaveName}
+                    disabled={!newName.trim() || savingName}
+                    className="flex-1 text-xs text-white font-semibold bg-white/25 rounded-lg py-1 hover:bg-white/35 transition-colors disabled:opacity-50"
+                  >
+                    {savingName ? "Salvando..." : "Salvar"}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold">{user?.full_name || authUser?.full_name || "Carregando..."}</h2>
+                <button
+                  type="button"
+                  onClick={handleOpenEditName}
+                  className="p-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-white/70" />
+                </button>
+              </div>
+            )}
+            {!editNameOpen && <p className="text-white/70 text-sm">{user?.email || authUser?.email}</p>}
           </div>
         </div>
         <div className="pt-4 border-t border-white/20 grid grid-cols-2 gap-4">
@@ -218,35 +250,7 @@ export default function NewProfile() {
       {/* Version */}
       <p className="text-center text-xs text-muted-foreground pb-2">Aury v2.0 · Feito com 💙</p>
 
-      {/* Dialog: Editar Nome */}
-      <Dialog open={editNameOpen} onOpenChange={setEditNameOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Pencil className="w-4 h-4 text-[#5FBDBD]" /> Mudar nome
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 mt-2">
-            <Input
-              placeholder="Seu nome"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
-              autoFocus
-            />
-            <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={() => setEditNameOpen(false)}>Cancelar</Button>
-              <Button
-                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white"
-                onClick={handleSaveName}
-                disabled={!newName.trim() || savingName}
-              >
-                {savingName ? "Salvando..." : "Salvar"}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+
     </div>
   );
 }
