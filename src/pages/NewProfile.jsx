@@ -50,8 +50,11 @@ export default function NewProfile() {
     initialData: authUser || undefined,
   });
 
-  const handleOpenEditName = () => {
-    setNewName(user?.full_name || authUser?.full_name || "");
+  const handleOpenEditName = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const name = user?.full_name || authUser?.full_name || "";
+    setNewName(name);
     setEditNameOpen(true);
   };
 
@@ -132,9 +135,10 @@ export default function NewProfile() {
                 <button
                   type="button"
                   onClick={handleOpenEditName}
-                  className="p-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+                  style={{ zIndex: 10, position: "relative" }}
+                  className="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors touch-manipulation"
                 >
-                  <Pencil className="w-3.5 h-3.5 text-white/70" />
+                  <Pencil className="w-4 h-4 text-white" />
                 </button>
               </div>
             )}
