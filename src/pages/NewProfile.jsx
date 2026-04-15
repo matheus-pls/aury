@@ -1,15 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Settings, Heart, TrendingUp, Shield,
-  ChevronRight, LogOut, Bell, Crown, Star, Lock
+  ChevronRight, LogOut, Bell, Crown, Star, Lock, Pencil
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { usePremium } from "@/lib/PremiumContext";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
@@ -38,12 +40,25 @@ export default function NewProfile() {
   const { isPremium } = usePremium();
   const navigate = useNavigate();
   const { userId } = useCurrentUser();
+  const queryClient = useQueryClient();
+  const [editNameOpen, setEditNameOpen] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [savingName, setSavingName] = useState(false);
 
   const { data: user } = useQuery({
     queryKey: ["current-user", userId],
     queryFn: () => base44.auth.me(),
     enabled: !!userId,
   });
+
+  const handleSaveName = async () => {
+    if (!newName.trim()) return;
+    setSavingName(true);
+    await base44.auth.updateMe({ full_name: newName.trim() });
+    queryClient.invalidateQueries({ queryKey: ["current-user"] });
+    setSavingName(false);
+    setEditNameOpen(false);
+  };
 
   const { data: incomes = [] } = useQuery({
     queryKey: ["incomes", userId],
@@ -74,8 +89,16 @@ export default function NewProfile() {
           <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center text-2xl font-bold">
             {initials}
           </div>
-          <div>
-            <h2 className="text-xl font-bold">{user?.full_name || "Carregando..."}</h2>
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold">{user?.full_name || "Carregando..."}</h2>
+              <button
+                onClick={() => { setNewName(user?.full_name || ""); setEditNameOpen(true); }}
+                className="p-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                <Pencil className="w-3.5 h-3.5 text-white/70" />
+              </button>
+            </div>
             <p className="text-white/70 text-sm">{user?.email}</p>
           </div>
         </div>
@@ -187,6 +210,36 @@ export default function NewProfile() {
 
       {/* Version */}
       <p className="text-center text-xs text-muted-foreground pb-2">Aury v2.0 · Feito com 💙</p>
+
+      {/* Dialog: Editar Nome */}
+      <Dialog open={editNameOpen} onOpenChange={setEditNameOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Pencil className="w-4 h-4 text-[#5FBDBD]" /> Mudar nome
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 mt-2">
+            <Input
+              placeholder="Seu nome"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSaveName()}
+              autoFocus
+            />
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1" onClick={() => setEditNameOpen(false)}>Cancelar</Button>
+              <Button
+                className="flex-1 bg-gradient-to-r from-[#5FBDBD] to-[#1B3A52] text-white"
+                onClick={handleSaveName}
+                disabled={!newName.trim() || savingName}
+              >
+                {savingName ? "Salvando..." : "Salvar"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
