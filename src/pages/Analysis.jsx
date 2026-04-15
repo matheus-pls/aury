@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
 import {
   TrendingUp,
   BarChart3,
@@ -17,6 +16,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import UpgradeModal from "@/components/UpgradeModal";
 import PremiumBadge from "@/components/PremiumBadge";
 import UpgradeBanner from "@/components/UpgradeBanner";
+import { usePremium } from "@/lib/PremiumContext";
 
 const ANALYSIS_SECTIONS = [
   {
@@ -54,21 +54,17 @@ const ANALYSIS_SECTIONS = [
 ];
 
 export default function Analysis() {
-  const [isPremium, setIsPremium] = useState(null);
+  const { isPremium } = usePremium();
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [lockedFeature, setLockedFeature] = useState("");
 
-  useEffect(() => {
-    base44.auth.me().then(u => setIsPremium(true /* u?.is_premium || false */)).catch(() => setIsPremium(true));
-  }, []);
-
   const handleSection = (section) => {
-    if (isPremium === null) return;
     if (!isPremium) {
       setLockedFeature(section.title);
       setShowModal(true);
     } else {
-      window.location.href = createPageUrl(section.page);
+      navigate(createPageUrl(section.page));
     }
   };
 
