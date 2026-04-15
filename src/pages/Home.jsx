@@ -72,11 +72,7 @@ export default function Home() {
     }
   }, [isAuthenticated, isLoadingAuth, isLoadingOnboarding, onboardingCompleted, navigate]);
 
-  const { data: user } = useQuery({
-    queryKey: ["current-user", userId],
-    queryFn: () => base44.auth.me(),
-    enabled: isAuthenticated && !!userId,
-  });
+  const user = authUser;
 
   const prevMonth = (() => {
     const d = new Date();
