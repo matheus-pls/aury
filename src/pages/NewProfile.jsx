@@ -39,7 +39,7 @@ const formatCurrency = (v) =>
 export default function NewProfile() {
   const { isPremium } = usePremium();
   const navigate = useNavigate();
-  const { userId } = useCurrentUser();
+  const { user: authUser, userId } = useCurrentUser();
   const queryClient = useQueryClient();
   const [editNameOpen, setEditNameOpen] = useState(false);
   const [newName, setNewName] = useState("");
@@ -49,7 +49,13 @@ export default function NewProfile() {
     queryKey: ["current-user", userId],
     queryFn: () => base44.auth.me(),
     enabled: !!userId,
+    initialData: authUser || undefined,
   });
+
+  const handleOpenEditName = () => {
+    setNewName(user?.full_name || authUser?.full_name || "");
+    setEditNameOpen(true);
+  };
 
   const handleSaveName = async () => {
     if (!newName.trim()) return;
@@ -93,7 +99,8 @@ export default function NewProfile() {
             <div className="flex items-center gap-2">
               <h2 className="text-xl font-bold">{user?.full_name || "Carregando..."}</h2>
               <button
-                onClick={() => { setNewName(user?.full_name || ""); setEditNameOpen(true); }}
+                type="button"
+                onClick={handleOpenEditName}
                 className="p-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5 text-white/70" />
