@@ -121,15 +121,19 @@ export default function CoupleMode() {
   const activeGroup = groups.find(g => g.active);
 
   // Verifica se o admin do grupo ativo é Premium
+  // Se o usuário atual É o admin e já é Premium localmente (trial), não precisa checar o Stripe
+  const isCurrentUserAdmin = !!user && !!activeGroup && user.email === activeGroup.admin_email;
   const { data: adminPremiumData } = useQuery({
     queryKey: ['admin-subscription', activeGroup?.admin_email],
     queryFn: async () => {
       const res = await base44.functions.invoke("getSubscriptionStatus", { user_email: activeGroup.admin_email });
       return res.data;
     },
-    enabled: !!activeGroup
+    // Só busca quando: há grupo ativo E (não é o admin atual OU o admin atual não é premium localmente)
+    enabled: !!activeGroup && !(isCurrentUserAdmin && isPremium)
   });
-  const isAdminPremium = adminPremiumData?.is_premium ?? null; // null = ainda carregando
+  // Se o usuário atual é o admin e tem premium local (trial), considerar como premium
+  const isAdminPremium = (isCurrentUserAdmin && isPremium) ? true : (adminPremiumData?.is_premium ?? null);
 
   const { data: sharedExpenses = [] } = useQuery({
     queryKey: ['shared-expenses', activeGroup?.id],

@@ -6,7 +6,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import {
   Settings, Heart, TrendingUp, Shield,
-  ChevronRight, LogOut, Bell, Crown, Star
+  ChevronRight, LogOut, Bell, Crown, Star, Lock
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,8 +25,8 @@ const MENU_ITEMS = [
     group: "Finanças",
     items: [
       { label: "Modo Casal", icon: Heart, page: "FamilyMode", color: "text-rose-500", bg: "bg-rose-500/10" },
-      { label: "Análise de Comportamento", icon: TrendingUp, page: "BehaviorAnalysis", color: "text-amber-500", bg: "bg-amber-500/10" },
-      { label: "Caixinha", icon: Shield, page: "EmergencyFund", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+      { label: "Análise de Comportamento", icon: TrendingUp, page: "BehaviorAnalysis", color: "text-amber-500", bg: "bg-amber-500/10", premium: true },
+      { label: "Caixinha", icon: Shield, page: "EmergencyFund", color: "text-emerald-500", bg: "bg-emerald-500/10", premium: true },
     ]
   }
 ];
@@ -141,6 +141,21 @@ export default function NewProfile() {
             <CardContent className="p-0 divide-y divide-border">
               {group.items.map((item) => {
                 const Icon = item.icon;
+                const locked = item.premium && !isPremium;
+                if (locked) {
+                  return (
+                    <button key={item.label} className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-accent transition-colors opacity-60" onClick={() => navigate(createPageUrl("Upgrade"))}>
+                      <div className={`w-9 h-9 rounded-xl ${item.bg} flex items-center justify-center flex-shrink-0`}>
+                        <Icon className={`w-4 h-4 ${item.color}`} />
+                      </div>
+                      <span className="flex-1 font-medium text-foreground text-sm text-left">{item.label}</span>
+                      <span className="flex items-center gap-1 bg-amber-500/10 text-amber-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-amber-500/20">
+                        <Lock className="w-2.5 h-2.5" />
+                        PRO
+                      </span>
+                    </button>
+                  );
+                }
                 return (
                   <Link key={item.label} to={createPageUrl(item.page)}>
                     <div className="flex items-center gap-3 px-4 py-3.5 hover:bg-accent transition-colors">
