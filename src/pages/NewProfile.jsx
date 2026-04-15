@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   Settings, Heart, TrendingUp, Shield,
   ChevronRight, LogOut, Bell, Crown, Star, Lock, Pencil
@@ -38,21 +38,13 @@ export default function NewProfile() {
   const { isPremium } = usePremium();
   const navigate = useNavigate();
   const { user: authUser, userId, updateUser } = useCurrentUser();
-  const queryClient = useQueryClient();
   const [editNameOpen, setEditNameOpen] = useState(false);
   const [newName, setNewName] = useState("");
   const [savingName, setSavingName] = useState(false);
 
   const [localName, setLocalName] = useState(null);
 
-  const { data: user } = useQuery({
-    queryKey: ["current-user", userId],
-    queryFn: () => base44.auth.me(),
-    enabled: !!userId,
-    initialData: authUser || undefined,
-  });
-
-  const displayName = localName !== null ? localName : (user?.full_name || authUser?.full_name || "");
+  const displayName = localName !== null ? localName : (authUser?.full_name || "");
 
   const handleOpenEditName = (e) => {
     e.stopPropagation();
@@ -67,7 +59,6 @@ export default function NewProfile() {
     await base44.auth.updateMe({ full_name: newName.trim() });
     setLocalName(newName.trim());
     if (updateUser) updateUser({ full_name: newName.trim() });
-    queryClient.invalidateQueries({ queryKey: ["current-user"] });
     setSavingName(false);
     setEditNameOpen(false);
   };
@@ -147,7 +138,7 @@ export default function NewProfile() {
                 </button>
               </div>
             )}
-            {!editNameOpen && <p className="text-white/70 text-sm">{user?.email || authUser?.email}</p>}
+            {!editNameOpen && <p className="text-white/70 text-sm">{authUser?.email}</p>}
           </div>
         </div>
         <div className="pt-4 border-t border-white/20 grid grid-cols-2 gap-4">
