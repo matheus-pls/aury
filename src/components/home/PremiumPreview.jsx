@@ -16,7 +16,7 @@ export default function PremiumPreview({ isPremium }) {
   if (isPremium) return null;
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(245,158,11,0.2)", background: "hsl(220,13%,11%)" }}>
+    <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(245,158,11,0.2)", background: "hsl(var(--card))" }}>
       {/* Header */}
       <div className="px-5 pt-5 pb-3">
         <div className="flex items-center gap-2 mb-1">
