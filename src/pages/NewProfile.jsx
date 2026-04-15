@@ -37,7 +37,7 @@ const formatCurrency = (v) =>
 export default function NewProfile() {
   const { isPremium } = usePremium();
   const navigate = useNavigate();
-  const { user: authUser, userId, checkAppState } = useCurrentUser();
+  const { user: authUser, userId, updateUser } = useCurrentUser();
   const queryClient = useQueryClient();
   const [editNameOpen, setEditNameOpen] = useState(false);
   const [newName, setNewName] = useState("");
@@ -66,8 +66,8 @@ export default function NewProfile() {
     setSavingName(true);
     await base44.auth.updateMe({ full_name: newName.trim() });
     setLocalName(newName.trim());
+    if (updateUser) updateUser({ full_name: newName.trim() });
     queryClient.invalidateQueries({ queryKey: ["current-user"] });
-    if (checkAppState) await checkAppState();
     setSavingName(false);
     setEditNameOpen(false);
   };

@@ -142,6 +142,10 @@ export const AuthProvider = ({ children }) => {
     base44.auth.redirectToLogin(window.location.href);
   };
 
+  const updateUser = (updatedFields) => {
+    setUser(prev => prev ? { ...prev, ...updatedFields } : prev);
+  };
+
   return (
     <AuthContext.Provider value={{ 
       user, 
@@ -152,7 +156,8 @@ export const AuthProvider = ({ children }) => {
       appPublicSettings,
       logout,
       navigateToLogin,
-      checkAppState
+      checkAppState,
+      updateUser
     }}>
       {children}
     </AuthContext.Provider>

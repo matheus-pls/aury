@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/AuthContext";
  * Usado para isolar queryKeys do React Query por usuário.
  */
 export function useCurrentUser() {
-  const { user, isAuthenticated, checkAppState } = useAuth();
+  const { user, isAuthenticated, checkAppState, updateUser } = useAuth();
   const userId = user?.id || user?.email || null;
-  return { userId, isAuthenticated, user, checkAppState };
+  return { userId, isAuthenticated, user, checkAppState, updateUser };
 }
