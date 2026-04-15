@@ -43,6 +43,8 @@ export default function NewProfile() {
   const [newName, setNewName] = useState("");
   const [savingName, setSavingName] = useState(false);
 
+  const [localName, setLocalName] = useState(null);
+
   const { data: user } = useQuery({
     queryKey: ["current-user", userId],
     queryFn: () => base44.auth.me(),
@@ -50,11 +52,12 @@ export default function NewProfile() {
     initialData: authUser || undefined,
   });
 
+  const displayName = localName !== null ? localName : (user?.full_name || authUser?.full_name || "");
+
   const handleOpenEditName = (e) => {
     e.stopPropagation();
     e.preventDefault();
-    const name = user?.full_name || authUser?.full_name || "";
-    setNewName(name);
+    setNewName(displayName);
     setEditNameOpen(true);
   };
 
@@ -62,6 +65,7 @@ export default function NewProfile() {
     if (!newName.trim()) return;
     setSavingName(true);
     await base44.auth.updateMe({ full_name: newName.trim() });
+    setLocalName(newName.trim());
     queryClient.invalidateQueries({ queryKey: ["current-user"] });
     setSavingName(false);
     setEditNameOpen(false);
@@ -74,7 +78,7 @@ export default function NewProfile() {
   });
 
   const totalIncome = incomes.reduce((s, i) => s + (i.amount || 0), 0);
-  const initials = user?.full_name?.split(" ").map(n => n[0]).slice(0, 2).join("").toUpperCase() || "??";
+  const initials = displayName.split(" ").filter(Boolean).map(n => n[0]).slice(0, 2).join("").toUpperCase() || "??";
 
   const handleLogout = () => { base44.auth.logout(); };
 
@@ -131,7 +135,7 @@ export default function NewProfile() {
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold">{user?.full_name || authUser?.full_name || "Carregando..."}</h2>
+                <h2 className="text-xl font-bold">{displayName || "Carregando..."}</h2>
                 <button
                   type="button"
                   onClick={handleOpenEditName}
